@@ -1,13 +1,25 @@
+from enum import Enum
+from typing import Optional
+
 from fastapi_users import schemas
 
 
+class Role(str, Enum):
+    user = 'user'
+    manager = 'manager'
+    admin = 'admin'
+
+
 class UserRead(schemas.BaseUser[int]):
-    pass
+    role: Role
+    username: str
 
 
 class UserCreate(schemas.BaseUserCreate):
-    pass
+    role: Role
+    username: str
 
 
 class UserUpdate(schemas.BaseUserUpdate):
-    pass
+    role: Optional[Role]
+    username: Optional[str]
