@@ -12,11 +12,14 @@ class Role(str, enum.Enum):
 
 class UserRead(schemas.BaseUser[int]):
     role: Role
+    username: str
 
 
 class UserCreate(schemas.BaseUserCreate):
     role: Role
+    username: str
 
 
 class UserUpdate(schemas.BaseUserUpdate):
     role: Optional[Role]
+    username: Optional[str]
