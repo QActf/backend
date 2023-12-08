@@ -13,4 +13,5 @@ class UserRoleEnum(enum.Enum):
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
-    role = sa.Column(sa.Enum(UserRoleEnum))
+    role = sa.Column(sa.Enum(UserRoleEnum), default=UserRoleEnum.user,
+                     nullable=False)
