@@ -1,1 +1,9 @@
 from .user import User  # noqa
+from .group import Group  # noqa
+from .achievements import Achievement  # noqa
+from .courses import Course  # noqa
+from .examinations import Examination  # noqa
+from .notifications import Notification  # noqa
+from .profiles import Profile  # noqa
+from .tariffs import Tariff  # noqa
+from .tasks import Task  # noqa
