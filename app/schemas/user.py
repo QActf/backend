@@ -1,10 +1,10 @@
-import enum
+from enum import Enum
 from typing import Optional
 
 from fastapi_users import schemas
 
 
-class Role(str, enum.Enum):
+class Role(str, Enum):
     user = 'user'
     manager = 'manager'
     admin = 'admin'
