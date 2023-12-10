@@ -23,7 +23,7 @@ async def create_group(
     group: GroupCreate,
     session: AsyncSession = Depends(get_async_session)
 ):
-    """Создать группу"""  #For admin?
+    """Создать группу"""  # For admin?
     # TODO Check name duplicate
     group = await group_crud.create(
         obj_in=group, session=session
