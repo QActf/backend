@@ -29,7 +29,4 @@ async def create_group(
     group = await group_crud.create(
         obj_in=group, session=session
     )
-    session.add(group)
-    await session.commit()
-    await session.refresh(group)
     return group
