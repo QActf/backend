@@ -2,7 +2,7 @@ import enum
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 from sqlalchemy import Enum, Column, String, Integer, ForeignKey
-from sqlalchemy.orm import relationship, Mapped
+from sqlalchemy.orm import relationship
 
 from app.core.db import Base
 from app.models.associations import (

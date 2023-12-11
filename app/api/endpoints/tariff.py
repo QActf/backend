@@ -1,7 +1,6 @@
 from typing import List
 
 from fastapi import APIRouter, Depends
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.user import current_user
@@ -31,7 +30,9 @@ async def update_users_tariff(
 ) -> UserRead:
     """Привязывает тариф к юзеру"""
     await check_obj_exists(tariff_id, tariff_crud, session)
-    user = await user_crud.update_id(session=session, db_obj=user, field='tariff_id', field_value=tariff_id)
+    user = await user_crud.update_id(
+        session=session, db_obj=user, field='tariff_id', field_value=tariff_id
+    )
     return user
 
 

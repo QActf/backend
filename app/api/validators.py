@@ -12,7 +12,8 @@ async def check_obj_exists(
     obj = await crud.get(obj_id, session)
     if obj is None:
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail=f"Объект {crud.model.__tablename__} не найден!"
+            status_code=HTTPStatus.NOT_FOUND,
+            detail=f"Объект {crud.model.__tablename__} не найден!"
         )
     return obj
 
@@ -28,5 +29,6 @@ async def check_name_duplicate(
     if obj is not None:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail=f"Объект {crud.model.__tablename__} с таким именем уже существует!",
+            detail=f"Объект {crud.model.__tablename__}"
+                   f" с таким именем уже существует!",
         )
