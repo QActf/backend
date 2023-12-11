@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, SmallInteger, Integer, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, mapped_column
 
 from app.core.db import Base
 from app.core.config import settings
@@ -16,3 +16,4 @@ class Profile(Base):
         back_populates='profiles'
     )
     user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship('User', back_populates="profile")

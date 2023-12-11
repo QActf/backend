@@ -9,5 +9,5 @@ class Achievement(AbstractBaseMixin, Base):
     profiles = relationship(
         'Profile',
         secondary=achievement_profile_association,
-        back_populates='profiles'
+        back_populates='achievements'
     )

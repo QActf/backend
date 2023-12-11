@@ -2,7 +2,7 @@ import enum
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 from sqlalchemy import Enum, Column, String, Integer, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped
 
 from app.core.db import Base
 from app.models.associations import (
@@ -33,8 +33,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
         'Notification', secondary=user_notification_association,
         back_populates='users'
     )
-    profile = relationship(
-        'Profile', uselist=False, backref='user'
-    )
+    profile = relationship("Profile", uselist=False, back_populates='user')
+
     tariff_id = Column(Integer, ForeignKey('tariff.id'))
     tariff = relationship('Tariff', back_populates='users')
