@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel
 
@@ -9,5 +9,9 @@ class GroupCreate(BaseModel):
 
 
 class GroupRead(BaseModel):
+    id: int
     name: Optional[str]
     description: Optional[str]
+
+    class Config:
+        orm_mode = True
