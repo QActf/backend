@@ -1,5 +1,5 @@
 from app.crud.base import CRUDBase
-from app.models.group import Group
+from app.models import Group
 
 
 class CRUDGroup(CRUDBase):

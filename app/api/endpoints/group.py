@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.schemas.group import GroupRead, GroupCreate
 from app.core.db import get_async_session
 from app.crud import group_crud
+from app.api.validators import check_name_duplicate
 
 router = APIRouter()
 
@@ -24,7 +25,7 @@ async def create_group(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Создать группу"""  # For admin?
-    # TODO Check name duplicate
+    await check_name_duplicate(group.name, group_crud, session)
     group = await group_crud.create(
         obj_in=group, session=session
     )
