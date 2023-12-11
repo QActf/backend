@@ -6,10 +6,12 @@ from sqlalchemy import Enum, Column, String, ForeignKey
 from sqlalchemy.orm import Mapped, relationship
 
 from app.core.db import Base
+from .group import group_user_association
 
 if TYPE_CHECKING:
     from .tariff import Tariff
     from .profile import Profile
+    from .group import Group
 
 
 class UserRoleEnum(enum.Enum):
@@ -28,3 +30,5 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     )
     tariff: Mapped['Tariff'] = relationship(back_populates='users')
     profile: Mapped['Profile'] = relationship(back_populates='user')
+    groups: Mapped['Group'] = relationship(secondary=group_user_association,
+                                           back_populates='users')
