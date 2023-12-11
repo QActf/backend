@@ -9,6 +9,7 @@ from app.core.db import Base
 
 if TYPE_CHECKING:
     from .tariff import Tariff
+    from .profile import Profile
 
 
 class UserRoleEnum(enum.Enum):
@@ -26,3 +27,4 @@ class User(SQLAlchemyBaseUserTable[int], Base):
         ForeignKey('tariff.id'),
     )
     tariff: Mapped['Tariff'] = relationship(back_populates='users')
+    profile: Mapped['Profile'] = relationship(back_populates='user')

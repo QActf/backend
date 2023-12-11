@@ -14,4 +14,4 @@ class Tariff(Base):
     name: Mapped[str] = Column(String(length=settings.max_length_string),
                                unique=True, nullable=False)
     description: Mapped[str] = Column(Text)
-    users: Mapped[list['User']] = relationship(back_populates='users')
+    users: Mapped[list['User'] | None] = relationship(back_populates='tariff')
