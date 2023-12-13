@@ -26,7 +26,7 @@ async def create_examination(
 ):
     """Создать Examination"""
     await check_name_duplicate(examination.name, examination_crud, session)
-    group = await examination_crud.create(
+    examination = await examination_crud.create(
         obj_in=examination, session=session
     )
-    return group
+    return examination
