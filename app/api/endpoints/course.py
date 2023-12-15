@@ -24,9 +24,19 @@ async def create_course(
         course: CourseCreate,
         session: AsyncSession = Depends(get_async_session)
 ):
-    """Создать Examination"""
+    """Создать Course"""
     await check_name_duplicate(course.name, CourseCreate, session)
     course = await course_crud.create(
         obj_in=course, session=session
     )
     return course
+
+
+@router.delete('/')
+async def delete_course(
+        obj_id: str,
+        session: AsyncSession = Depends(get_async_session),
+):
+    """Удалить объект"""
+    course = await course_crud.get(obj_id=obj_id, session=session)
+    return await course_crud.remove(db_obj=course, session=session)

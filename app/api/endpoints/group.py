@@ -13,7 +13,7 @@ router = APIRouter()
 
 @router.get('/', response_model=List[GroupRead])
 async def get_all_groups(
-    session: AsyncSession = Depends(get_async_session)
+        session: AsyncSession = Depends(get_async_session)
 ) -> List[GroupRead]:
     """Возвращает все группы."""
     return await group_crud.get_multi(session)
@@ -21,8 +21,8 @@ async def get_all_groups(
 
 @router.post('/', response_model=GroupRead)
 async def create_group(
-    group: GroupCreate,
-    session: AsyncSession = Depends(get_async_session)
+        group: GroupCreate,
+        session: AsyncSession = Depends(get_async_session)
 ):
     """Создать группу"""  # For admin?
     await check_name_duplicate(group.name, group_crud, session)
@@ -30,3 +30,13 @@ async def create_group(
         obj_in=group, session=session
     )
     return group
+
+
+@router.delete('/')
+async def delete_group(
+        obj_id: str,
+        session: AsyncSession = Depends(get_async_session),
+):
+    """Удалить объект"""
+    group = await group_crud.get(obj_id=obj_id, session=session)
+    return await group_crud.remove(db_obj=group, session=session)

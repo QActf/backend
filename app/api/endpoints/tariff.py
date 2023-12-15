@@ -16,7 +16,7 @@ router = APIRouter()
 
 @router.get('/', response_model=List[TariffRead])
 async def get_all_tariffs(
-    session: AsyncSession = Depends(get_async_session)
+        session: AsyncSession = Depends(get_async_session)
 ) -> List[TariffRead]:
     """Возвращает все тарифы."""
     return await tariff_crud.get_multi(session)
@@ -24,9 +24,9 @@ async def get_all_tariffs(
 
 @router.put('/', response_model=UserRead)
 async def update_users_tariff(
-    tariff_id: int,
-    user: User = Depends(current_user),
-    session: AsyncSession = Depends(get_async_session)
+        tariff_id: int,
+        user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
 ) -> UserRead:
     """Привязывает тариф к юзеру"""
     await check_obj_exists(tariff_id, tariff_crud, session)
@@ -38,8 +38,8 @@ async def update_users_tariff(
 
 @router.post('/', response_model=TariffRead)
 async def create_tariff(
-    tariff: TariffCreate,
-    session: AsyncSession = Depends(get_async_session)
+        tariff: TariffCreate,
+        session: AsyncSession = Depends(get_async_session)
 ):
     """Создать Тариф"""
     await check_name_duplicate(tariff.name, tariff_crud, session)
@@ -47,3 +47,13 @@ async def create_tariff(
         obj_in=tariff, session=session
     )
     return tariff
+
+
+@router.delete('/')
+async def delete_tariff(
+        obj_id: str,
+        session: AsyncSession = Depends(get_async_session),
+):
+    """Удалить объект"""
+    tariff = await tariff_crud.get(obj_id=obj_id, session=session)
+    return await tariff_crud.remove(db_obj=tariff, session=session)

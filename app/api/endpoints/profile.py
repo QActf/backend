@@ -15,8 +15,8 @@ router = APIRouter()
 
 @router.get('/', response_model=List[ProfileRead])
 async def get_all_profiles(
-    session: AsyncSession = Depends(get_async_session),
-    user: User = Depends(current_user)
+        session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(current_user)
 ) -> List[ProfileRead]:
     """Возвращает все profile юзера."""
     return await profile_crud.get_users_obj(
@@ -26,8 +26,8 @@ async def get_all_profiles(
 
 @router.post('/', response_model=ProfileRead)
 async def create_profile(
-    profile: ProfileCreate,
-    session: AsyncSession = Depends(get_async_session)
+        profile: ProfileCreate,
+        session: AsyncSession = Depends(get_async_session)
 ):
     """Создать Profile"""
     await check_obj_exists(
@@ -37,3 +37,13 @@ async def create_profile(
         obj_in=profile, session=session
     )
     return profile
+
+
+@router.delete('/')
+async def delete_profile(
+        obj_id: str,
+        session: AsyncSession = Depends(get_async_session),
+):
+    """Удалить объект"""
+    profile = await profile_crud.get(obj_id=obj_id, session=session)
+    return await profile_crud.remove(db_obj=profile, session=session)

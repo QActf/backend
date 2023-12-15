@@ -17,3 +17,10 @@ async def create_notification(
 ):
     """Создать Notification"""
     pass
+
+
+@router.delete('/')
+async def delete_profile(
+):
+    """Удалить объект"""
+    pass
