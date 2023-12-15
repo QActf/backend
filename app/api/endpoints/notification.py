@@ -17,4 +17,3 @@ async def create_notification(
 ):
     """Создать Notification"""
     pass
-
