@@ -9,9 +9,12 @@ from sqlalchemy.orm import Mapped, relationship
 from app.core.db import Base
 from app.core.config import settings
 
+from .task import task_course_association
+
 if TYPE_CHECKING:
     from .user import User
     from .tariff import Tariff
+    from .task import Task
 
 
 course_user_association = Table(
@@ -43,5 +46,9 @@ class Course(Base):
     )
     tariffs: Mapped[list[Tariff]] = relationship(
         secondary=course_tariff_association,
+        back_populates='courses'
+    )
+    tasks: Mapped[list[Task]] = relationship(
+        secondary=task_course_association,
         back_populates='courses'
     )
