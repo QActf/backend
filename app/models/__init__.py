@@ -5,3 +5,5 @@ from .tariff import Tariff  # noqa
 from .notification import Notification  # noqa
 from .examination import Examination  # noqa
 from .achievement import Achievement  # noqa
+from .course import Course  # noqa
+from .task import Task  # noqa
