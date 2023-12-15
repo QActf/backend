@@ -1,10 +1,9 @@
-from pydantic import BaseModel
+from app.schemas.base import BaseRead, BaseCreate
 
 
-class CourseRead(BaseModel):
-    name: str
-    description: str
+class CourseRead(BaseRead):
+    pass
 
 
-class CourseCreate(CourseRead):
+class CourseCreate(BaseCreate):
     pass

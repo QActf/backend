@@ -1,10 +1,9 @@
-from pydantic import BaseModel
+from app.schemas.base import BaseRead, BaseCreate
 
 
-class TaskRead(BaseModel):
-    name: str
-    description: str
+class TaskRead(BaseRead):
+    pass
 
 
-class TaskCreate(TaskRead):
+class TaskCreate(BaseCreate):
     pass

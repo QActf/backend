@@ -1,10 +1,9 @@
-from pydantic import BaseModel
+from app.schemas.base import BaseRead, BaseCreate
 
 
-class TariffRead(BaseModel):
-    name: str
-    description: str
+class TariffRead(BaseRead):
+    pass
 
 
-class TariffCreate(TariffRead):
+class TariffCreate(BaseCreate):
     pass

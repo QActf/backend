@@ -1,10 +1,9 @@
-from pydantic import BaseModel
+from app.schemas.base import BaseRead, BaseCreate
 
 
-class GroupRead(BaseModel):
-    name: str
-    description: str
+class GroupRead(BaseRead):
+    pass
 
 
-class GroupCreate(GroupRead):
+class GroupCreate(BaseCreate):
     pass

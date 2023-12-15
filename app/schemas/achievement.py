@@ -1,9 +1,9 @@
 from app.schemas.base import BaseRead, BaseCreate
 
 
-class ExaminationRead(BaseRead):
+class AchievementRead(BaseRead):
     pass
 
 
-class ExaminationCreate(BaseCreate):
+class AchievementCreate(BaseCreate):
     pass
