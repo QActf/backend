@@ -11,6 +11,7 @@ from app.core.db import Base
 from .group import group_user_association
 from .notification import notification_user_association
 from .examination import examination_user_association
+from .course import course_user_association
 
 if TYPE_CHECKING:
     from .tariff import Tariff
@@ -18,6 +19,7 @@ if TYPE_CHECKING:
     from .group import Group
     from .notification import Notification
     from .examination import Examination
+    from .course import Course
 
 
 class UserRoleEnum(enum.Enum):
@@ -46,5 +48,9 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     )
     examinations: Mapped[Examination] = relationship(
         secondary=examination_user_association,
+        back_populates='users'
+    )
+    courses: Mapped[Course] = relationship(
+        secondary=course_user_association,
         back_populates='users'
     )
