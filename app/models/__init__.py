@@ -4,3 +4,4 @@ from .profile import Profile  # noqa
 from .tariff import Tariff  # noqa
 from .notification import Notification  # noqa
 from .examination import Examination  # noqa
+from .achievement import Achievement  # noqa
