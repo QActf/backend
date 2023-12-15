@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from app.api.endpoints import (
     user_router, group_router, profile_router, tariff_router,
-    notification_router,
+    notification_router, examination_router
 )
 
 main_router = APIRouter()
@@ -14,3 +14,5 @@ main_router.include_router(profile_router, prefix='/profiles',
 main_router.include_router(tariff_router, prefix='/tariffs', tags=['Tariff'])
 main_router.include_router(notification_router, prefix='/notifications',
                            tags=['Notification'])
+main_router.include_router(examination_router, prefix='/examinations',
+                           tags=['Examination'])
