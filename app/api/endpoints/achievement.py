@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import check_name_duplicate, check_obj_exists
+from app.api.validators import check_name_duplicate
 from app.schemas.achievement import AchievementRead, AchievementCreate
 from app.core.db import get_async_session
 from app.crud import achievement_crud
+from app.services.endpoints_services import delete_obj
 
 router = APIRouter()
 
@@ -35,6 +36,4 @@ async def delete_achievement(
         session: AsyncSession = Depends(get_async_session),
 ):
     """Удалить объект"""
-    await check_obj_exists(obj_id, achievement_crud, session)
-    achievement = await achievement_crud.get(obj_id=obj_id, session=session)
-    return await achievement_crud.remove(db_obj=achievement, session=session)
+    return await delete_obj(obj_id=obj_id, crud=achievement_crud, session=session)

@@ -6,7 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.schemas.task import TaskRead, TaskCreate
 from app.core.db import get_async_session
 from app.crud import task_crud
-from app.api.validators import check_name_duplicate, check_obj_exists
+from app.api.validators import check_name_duplicate
+from app.services.endpoints_services import delete_obj
 
 router = APIRouter()
 
@@ -37,6 +38,4 @@ async def delete_task(
         session: AsyncSession = Depends(get_async_session),
 ):
     """Удалить объект"""
-    await check_obj_exists(obj_id, task_crud, session)
-    task = await task_crud.get(obj_id=obj_id, session=session)
-    return await task_crud.remove(db_obj=task, session=session)
+    return await delete_obj(obj_id=obj_id, crud=task_crud, session=session)

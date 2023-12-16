@@ -4,7 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.schemas.group import GroupRead, GroupCreate
 from app.core.db import get_async_session
 from app.crud import group_crud
-from app.api.validators import check_name_duplicate, check_obj_exists
+from app.api.validators import check_name_duplicate
+from app.services.endpoints_services import delete_obj
 
 router = APIRouter()
 
@@ -35,6 +36,4 @@ async def delete_group(
         session: AsyncSession = Depends(get_async_session),
 ):
     """Удалить объект"""
-    await check_obj_exists(obj_id, group_crud, session)
-    group = await group_crud.get(obj_id=obj_id, session=session)
-    return await group_crud.remove(db_obj=group, session=session)
+    return await delete_obj(obj_id=obj_id, crud=group_crud, session=session)

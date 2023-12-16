@@ -7,7 +7,8 @@ from app.schemas.tariff import TariffRead, TariffCreate
 from app.schemas.user import UserRead
 from app.core.db import get_async_session
 from app.crud import tariff_crud, user_crud
-from app.api.validators import check_obj_exists, check_name_duplicate
+from app.api.validators import check_name_duplicate
+from app.services.endpoints_services import delete_obj
 
 router = APIRouter()
 
@@ -52,6 +53,4 @@ async def delete_tariff(
         session: AsyncSession = Depends(get_async_session),
 ):
     """Удалить объект"""
-    await check_obj_exists(obj_id, tariff_crud, session)
-    tariff = await tariff_crud.get(obj_id=obj_id, session=session)
-    return await tariff_crud.remove(db_obj=tariff, session=session)
+    return await delete_obj(obj_id=obj_id, crud=tariff_crud, session=session)

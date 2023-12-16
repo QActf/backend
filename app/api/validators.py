@@ -13,9 +13,8 @@ async def check_obj_exists(
     if obj is None:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
-            detail=f"Объект {crud.model.__tablename__} не найден!"
+            detail=f"Объект {crud.model.__tablename__} с id {obj_id} не найден."
         )
-    return obj
 
 
 async def check_name_duplicate(

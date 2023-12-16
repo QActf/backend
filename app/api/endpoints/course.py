@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import check_name_duplicate, check_obj_exists
+from app.api.validators import check_name_duplicate
 from app.schemas.course import CourseCreate, CourseRead
 from app.core.db import get_async_session
 from app.crud import course_crud
+from app.services.endpoints_services import delete_obj
 
 router = APIRouter()
 
@@ -35,6 +36,4 @@ async def delete_course(
         session: AsyncSession = Depends(get_async_session),
 ):
     """Удалить объект"""
-    await check_obj_exists(obj_id, course_crud, session)
-    course = await course_crud.get(obj_id=obj_id, session=session)
-    return await course_crud.remove(db_obj=course, session=session)
+    return await delete_obj(obj_id=obj_id, crud=course_crud, session=session)

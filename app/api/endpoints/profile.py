@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import check_obj_exists
 from app.models import User
 from app.schemas.profile import ProfileRead, ProfileCreate
 from app.core.db import get_async_session
 from app.crud import profile_crud, user_crud
 from app.core.user import current_user
+from app.services.endpoints_services import delete_obj
 
 router = APIRouter()
 
@@ -42,6 +42,4 @@ async def delete_profile(
         session: AsyncSession = Depends(get_async_session),
 ):
     """Удалить объект"""
-    await check_obj_exists(obj_id, profile_crud, session)
-    profile = await profile_crud.get(obj_id=obj_id, session=session)
-    return await profile_crud.remove(db_obj=profile, session=session)
+    return await delete_obj(obj_id=obj_id, crud=profile_crud, session=session)
