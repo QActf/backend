@@ -6,7 +6,7 @@ from sqlalchemy.orm.exc import UnmappedInstanceError
 
 from app.core.db import get_async_session
 from app.crud import group_crud
-from app.schemas.group import GroupCreate, GroupRead, GroupRemove
+from app.schemas.group import GroupCreate, GroupRead
 
 
 router = APIRouter()
