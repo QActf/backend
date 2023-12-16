@@ -25,6 +25,26 @@ class CRUDBase:
         db_objs = await session.execute(select(self.model))
         return db_objs.scalars().all()
 
+    async def get_obj_by_name(
+            self,
+            name: str,
+            session: AsyncSession,
+    ):
+        db_obj = await session.execute(
+            select(self.model).where(self.model.name == name)
+        )
+        return db_obj.scalars().first()
+
+    async def get_users_obj(
+        self,
+        user_id: int,
+        session: AsyncSession,
+    ):
+        db_obj = await session.execute(
+            select(self.model).where(self.model.user_id == user_id)
+        )
+        return db_obj.scalars().all()
+
     async def create(
             self, obj_in, session: AsyncSession, user: Optional[User] = None
     ):
