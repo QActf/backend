@@ -15,3 +15,7 @@ class GroupRead(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class GroupRemove(GroupRead):
+    id: Optional[int]
