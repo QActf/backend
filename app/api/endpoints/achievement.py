@@ -36,4 +36,6 @@ async def delete_achievement(
         session: AsyncSession = Depends(get_async_session),
 ):
     """Удалить объект"""
-    return await delete_obj(obj_id=obj_id, crud=achievement_crud, session=session)
+    return await delete_obj(
+        obj_id=obj_id, crud=achievement_crud, session=session
+    )

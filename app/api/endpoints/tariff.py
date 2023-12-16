@@ -7,7 +7,7 @@ from app.schemas.tariff import TariffRead, TariffCreate
 from app.schemas.user import UserRead
 from app.core.db import get_async_session
 from app.crud import tariff_crud, user_crud
-from app.api.validators import check_name_duplicate
+from app.api.validators import check_name_duplicate, check_obj_exists
 from app.services.endpoints_services import delete_obj
 
 router = APIRouter()

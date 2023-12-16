@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.validators import check_obj_exists
 from app.models import User
 from app.schemas.profile import ProfileRead, ProfileCreate
 from app.core.db import get_async_session
