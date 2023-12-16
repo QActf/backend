@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,11 +11,11 @@ from app.core.user import current_user
 router = APIRouter()
 
 
-@router.get('/', response_model=List[ProfileRead])
+@router.get('/', response_model=list[ProfileRead])
 async def get_all_profiles(
         session: AsyncSession = Depends(get_async_session),
         user: User = Depends(current_user)
-) -> List[ProfileRead]:
+) -> list[ProfileRead]:
     """Возвращает все profile юзера."""
     return await profile_crud.get_users_obj(
         user_id=user.id, session=session
@@ -33,17 +31,17 @@ async def create_profile(
     await check_obj_exists(
         obj_id=profile.user_id, crud=user_crud, session=session
     )
-    profile = await profile_crud.create(
+    return await profile_crud.create(
         obj_in=profile, session=session
     )
-    return profile
 
 
-@router.delete('/')
+@router.delete('/{obj_id}')
 async def delete_profile(
-        obj_id: str,
+        obj_id: int,
         session: AsyncSession = Depends(get_async_session),
 ):
     """Удалить объект"""
+    await check_obj_exists(obj_id, profile_crud, session)
     profile = await profile_crud.get(obj_id=obj_id, session=session)
     return await profile_crud.remove(db_obj=profile, session=session)

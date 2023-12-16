@@ -1,13 +1,11 @@
-from typing import List
-
 from fastapi import APIRouter
 
 router = APIRouter()
 
 
-@router.get('/', response_model=List[None])
+@router.get('/', response_model=list[None])
 async def get_all_notifications(
-) -> List[None]:
+) -> list[None]:
     """Возвращает все Notification."""
     pass
 
@@ -19,7 +17,7 @@ async def create_notification(
     pass
 
 
-@router.delete('/')
+@router.delete('/{obj_id}')
 async def delete_profile(
 ):
     """Удалить объект"""

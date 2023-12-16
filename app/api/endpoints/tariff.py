@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -14,10 +12,10 @@ from app.api.validators import check_obj_exists, check_name_duplicate
 router = APIRouter()
 
 
-@router.get('/', response_model=List[TariffRead])
+@router.get('/', response_model=list[TariffRead])
 async def get_all_tariffs(
         session: AsyncSession = Depends(get_async_session)
-) -> List[TariffRead]:
+) -> list[TariffRead]:
     """Возвращает все тарифы."""
     return await tariff_crud.get_multi(session)
 
@@ -43,17 +41,17 @@ async def create_tariff(
 ):
     """Создать Тариф"""
     await check_name_duplicate(tariff.name, tariff_crud, session)
-    tariff = await tariff_crud.create(
+    return await tariff_crud.create(
         obj_in=tariff, session=session
     )
-    return tariff
 
 
-@router.delete('/')
+@router.delete('/{obj_id}')
 async def delete_tariff(
-        obj_id: str,
+        obj_id: int,
         session: AsyncSession = Depends(get_async_session),
 ):
     """Удалить объект"""
+    await check_obj_exists(obj_id, tariff_crud, session)
     tariff = await tariff_crud.get(obj_id=obj_id, session=session)
     return await tariff_crud.remove(db_obj=tariff, session=session)

@@ -10,23 +10,23 @@ main_router = APIRouter()
 
 main_router.include_router(user_router)
 main_router.include_router(
-    group_router, prefix='/group', tags=['Group']
+    group_router, prefix='/groups', tags=['Groups']
 )
 main_router.include_router(
-    tariff_router, prefix='/tariff', tags=['Tariff']
+    tariff_router, prefix='/tariffs', tags=['Tariffs']
 )
 main_router.include_router(
-    examination_router, prefix='/examination', tags=['Examination']
+    examination_router, prefix='/examinations', tags=['Examinations']
 )
 main_router.include_router(
-    course_router, prefix='/course', tags=['Course']
+    course_router, prefix='/courses', tags=['Courses']
 )
 main_router.include_router(
-    task_router, prefix='/task', tags=['Task']
+    task_router, prefix='/tasks', tags=['Tasks']
 )
 main_router.include_router(
-    achievement_router, prefix='/achievement', tags=['Achievement']
+    achievement_router, prefix='/achievements', tags=['Achievements']
 )
 main_router.include_router(
-    profile_router, prefix='/profile', tags=['Profile']
+    profile_router, prefix='/profiles', tags=['Profiles']
 )
