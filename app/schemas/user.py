@@ -13,6 +13,10 @@ class Role(str, Enum):
 class UserRead(schemas.BaseUser[int]):
     role: Role
     username: str
+    tariff_id: Optional[int]
+
+    class Config:
+        from_attributes = True
 
 
 class UserCreate(schemas.BaseUserCreate):
