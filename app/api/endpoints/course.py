@@ -24,7 +24,7 @@ async def create_course(
         session: AsyncSession = Depends(get_async_session)
 ):
     """Создать Course"""
-    await check_name_duplicate(course.name, CourseCreate, session)
+    await check_name_duplicate(course.name, course_crud, session)
     return await course_crud.create(
         obj_in=course, session=session
     )

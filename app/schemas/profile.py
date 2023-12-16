@@ -18,3 +18,4 @@ class ProfileCreate(BaseModel):
     first_name: Optional[str]
     last_name: Optional[str]
     age: Optional[int]
+    user_id: int

@@ -33,7 +33,7 @@ async def create_profile(
         obj_id=profile.user_id, crud=user_crud, session=session
     )
     return await profile_crud.create(
-        obj_in=profile, session=session
+        obj_in=profile, user_id=profile.user_id, session=session
     )
 
 

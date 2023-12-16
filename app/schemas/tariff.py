@@ -12,12 +12,12 @@ class TariffRead(BaseModel):
         from_attributes = True
 
 
-class TarifCreate(BaseModel):
+class TariffCreate(BaseModel):
     name: str
     description: Optional[str]
 
 
-class TariffCreated(TarifCreate):
+class TariffCreated(TariffCreate):
     id: int
 
     class Config:
