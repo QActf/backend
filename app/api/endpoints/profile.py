@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends
+from typing import Optional
+
+from fastapi import APIRouter, Depends, File, UploadFile, Form, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_obj_exists
@@ -8,6 +10,7 @@ from app.core.db import get_async_session
 from app.crud import profile_crud, user_crud
 from app.core.user import current_user
 from app.services.endpoints_services import delete_obj
+from app.models import Profile
 
 router = APIRouter()
 
@@ -26,7 +29,7 @@ async def get_all_profiles(
 @router.post('/', response_model=ProfileRead)
 async def create_profile(
         profile: ProfileCreate,
-        session: AsyncSession = Depends(get_async_session)
+        session: AsyncSession = Depends(get_async_session),
 ):
     """Создать Profile"""
     await check_obj_exists(
