@@ -26,3 +26,8 @@ class Profile(Base):
         secondary=achievement_profile_association,
         back_populates='profiles'
     )
+    image: Mapped[str] = Column(
+        String(),
+        nullable=True,
+        default=f'{settings.media_url}cat1.png'
+    )

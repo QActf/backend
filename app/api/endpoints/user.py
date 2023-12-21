@@ -24,6 +24,13 @@ router.include_router(
 )
 
 
+# @router.post('users/{id}/profile', tags=['users'])
+# async def create_profile(
+#     id: int,
+#     profile:
+# )
+
+
 @router.delete("/users/{id}", tags=["users"], deprecated=True)
 def delete_user(id: str):
     """Не используйте удаление, деактивируйте пользователей."""

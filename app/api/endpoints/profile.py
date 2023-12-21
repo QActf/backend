@@ -1,6 +1,5 @@
-from typing import Optional
-
-from fastapi import APIRouter, Depends, File, UploadFile, Form, Body
+from fastapi import APIRouter, Depends
+from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_obj_exists
@@ -10,19 +9,41 @@ from app.core.db import get_async_session
 from app.crud import profile_crud, user_crud
 from app.core.user import current_user
 from app.services.endpoints_services import delete_obj
-from app.models import Profile
+from app.core.config import settings
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 router = APIRouter()
 
 
-@router.get('/', response_model=list[ProfileRead])
+@router.get('/', response_model=ProfileRead)
 async def get_all_profiles(
         session: AsyncSession = Depends(get_async_session),
         user: User = Depends(current_user)
-) -> list[ProfileRead]:
+) -> ProfileRead:
     """Возвращает все profile юзера."""
     return await profile_crud.get_users_obj(
-        user_id=user.id, session=session
+        user_id=user.id,
+        session=session
+    )
+
+
+@router.get('/photo')
+async def get_user_photo(
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    _user = await session.execute(
+        select(User).where(
+            User.id == user.id
+        ).options(
+            selectinload(User.profile)
+        )
+    )
+    _user = _user.scalars().first()
+    image: str = _user.profile.image
+    return FileResponse(
+        f'{settings.base_dir}/{image}'
     )
 
 

@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class ProfileRead(BaseModel):
@@ -9,6 +9,7 @@ class ProfileRead(BaseModel):
     last_name: Optional[str]
     age: Optional[int]
     user_id: int
+    image: Optional[str]
 
     class Config:
         from_attributes = True

@@ -1,5 +1,6 @@
 from typing import Optional
 from pydantic_settings import BaseSettings
+from pathlib import Path
 
 
 class Settings(BaseSettings):
@@ -14,6 +15,8 @@ class Settings(BaseSettings):
     max_password_length: int = 3
     max_length_string: int = 100
     min_length_string: int = 1
+    media_url: str = 'media/'
+    base_dir: Path = Path(__file__).parent.parent.parent
 
     class Config:
         env_file = ".env"
