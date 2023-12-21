@@ -2,15 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import (
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-    Table,
-    Text,
-    UniqueConstraint,
-)
+from sqlalchemy import (Column, ForeignKey, Integer, String, Table, Text,
+                        UniqueConstraint)
 from sqlalchemy.orm import Mapped, relationship
 
 from app.core.config import settings
@@ -27,7 +20,8 @@ achievement_profile_association = Table(
     Column("achievement_id", ForeignKey("achievement.id")),
     Column("profile_id", ForeignKey("profile.id")),
     UniqueConstraint(
-        "achievement_id", "profile_id", name="constraint_achievement_profile"
+        "achievement_id", "profile_id",
+        name="constraint_achievement_profile"
     ),
 )
 
@@ -38,5 +32,6 @@ class Achievement(Base):
     )
     description: str = Column(Text)
     profiles: Mapped[list[Profile]] = relationship(
-        secondary=achievement_profile_association, back_populates="achievements"
+        secondary=achievement_profile_association,
+        back_populates="achievements"
     )

@@ -2,15 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import (
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-    Table,
-    Text,
-    UniqueConstraint,
-)
+from sqlalchemy import (Column, ForeignKey, Integer, String, Table, Text,
+                        UniqueConstraint)
 from sqlalchemy.orm import Mapped, relationship
 
 from app.core.config import settings
@@ -39,7 +32,9 @@ course_tariff_association = Table(
     Column("id", Integer, primary_key=True),
     Column("course_id", ForeignKey("course.id")),
     Column("tariff_id", ForeignKey("tariff.id")),
-    UniqueConstraint("course_id", "tariff_id", name="constraint_course_tariff"),
+    UniqueConstraint(
+        "course_id", "tariff_id", name="constraint_course_tariff"
+    ),
 )
 
 

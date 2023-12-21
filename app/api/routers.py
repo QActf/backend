@@ -1,15 +1,9 @@
 from fastapi import APIRouter
 
-from app.api.endpoints import (
-    achievement_router,
-    course_router,
-    examination_router,
-    group_router,
-    profile_router,
-    tariff_router,
-    task_router,
-    user_router,
-)
+from app.api.endpoints import (achievement_router, course_router,
+                               examination_router, group_router,
+                               profile_router, tariff_router, task_router,
+                               user_router)
 
 main_router = APIRouter()
 
@@ -24,4 +18,6 @@ main_router.include_router(task_router, prefix="/tasks", tags=["Tasks"])
 main_router.include_router(
     achievement_router, prefix="/achievements", tags=["Achievements"]
 )
-main_router.include_router(profile_router, prefix="/profiles", tags=["Profiles"])
+main_router.include_router(
+    profile_router, prefix="/profiles", tags=["Profiles"]
+)

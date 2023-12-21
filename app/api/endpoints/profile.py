@@ -26,7 +26,9 @@ async def create_profile(
     profile: ProfileCreate, session: AsyncSession = Depends(get_async_session)
 ):
     """Создать Profile"""
-    await check_obj_exists(obj_id=profile.user_id, crud=user_crud, session=session)
+    await check_obj_exists(
+        obj_id=profile.user_id, crud=user_crud, session=session
+    )
     return await profile_crud.create(
         obj_in=profile, user_id=profile.user_id, session=session
     )
@@ -38,4 +40,6 @@ async def delete_profile(
     session: AsyncSession = Depends(get_async_session),
 ):
     """Удалить объект"""
-    return await delete_obj(obj_id=obj_id, crud=profile_crud, session=session)
+    return await delete_obj(
+        obj_id=obj_id, crud=profile_crud, session=session
+    )
