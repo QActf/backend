@@ -24,6 +24,19 @@ async def create_examination(
         session: AsyncSession = Depends(get_async_session)
 ):
     """Создать Examination"""
+
+
+
+
+
+
+
+
+
+
+
+
+
     await check_name_duplicate(examination.name, examination_crud, session)
     return await examination_crud.create(
         obj_in=examination, session=session
