@@ -23,7 +23,6 @@ jobs:
         uses: py-actions/flake8@v2
         with:
           path: "app"
-      - name: Run isort
-        uses: olance/isort-action@v1.0.0
+      - uses: isort/isort-action@master
         with:
           args: ./app
