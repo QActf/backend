@@ -24,5 +24,3 @@ jobs:
         with:
           path: "app"
       - uses: isort/isort-action@master
-        with:
-          args: ./app

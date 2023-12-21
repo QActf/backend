@@ -1,2 +1,3 @@
+# isort
 [tool.isort]
 skip=["alembic", ]
