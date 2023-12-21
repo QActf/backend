@@ -25,4 +25,5 @@ jobs:
           path: "app"
       - uses: isort/isort-action@v1
         with:
+          path: "app"
           requirements-files: "./requirements.txt"
