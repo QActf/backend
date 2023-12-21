@@ -26,9 +26,9 @@ class CRUDBase:
         return db_objs.scalars().all()
 
     async def get_obj_by_name(
-            self,
-            name: str,
-            session: AsyncSession,
+        self,
+        name: str,
+        session: AsyncSession,
     ):
         db_obj = await session.execute(
             select(self.model).where(self.model.name == name)
@@ -45,9 +45,7 @@ class CRUDBase:
         )
         return db_obj.scalars().all()
 
-    async def create(
-            self, obj_in, session: AsyncSession, user: Optional[User] = None
-    ):
+    async def create(self, obj_in, session: AsyncSession, user: Optional[User] = None):
         obj_in_data = obj_in.dict()
         if user is not None:
             obj_in_data["user_id"] = user.id

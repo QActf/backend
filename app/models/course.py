@@ -25,37 +25,35 @@ if TYPE_CHECKING:
 
 
 course_user_association = Table(
-    'course_user_association', Base.metadata,
-    Column('id', Integer, primary_key=True),
-    Column('course_id', ForeignKey('course.id')),
-    Column('user_id', ForeignKey('user.id')),
-    UniqueConstraint('course_id', 'user_id',
-                     name='constraint_course_user')
+    "course_user_association",
+    Base.metadata,
+    Column("id", Integer, primary_key=True),
+    Column("course_id", ForeignKey("course.id")),
+    Column("user_id", ForeignKey("user.id")),
+    UniqueConstraint("course_id", "user_id", name="constraint_course_user"),
 )
 
 course_tariff_association = Table(
-    'course_tariff_association', Base.metadata,
-    Column('id', Integer, primary_key=True),
-    Column('course_id', ForeignKey('course.id')),
-    Column('tariff_id', ForeignKey('tariff.id')),
-    UniqueConstraint('course_id', 'tariff_id',
-                     name='constraint_course_tariff')
+    "course_tariff_association",
+    Base.metadata,
+    Column("id", Integer, primary_key=True),
+    Column("course_id", ForeignKey("course.id")),
+    Column("tariff_id", ForeignKey("tariff.id")),
+    UniqueConstraint("course_id", "tariff_id", name="constraint_course_tariff"),
 )
 
 
 class Course(Base):
-    name: str = Column(String(length=settings.max_length_string), unique=True,
-                       nullable=False)
+    name: str = Column(
+        String(length=settings.max_length_string), unique=True, nullable=False
+    )
     description: str = Column(Text)
     users: Mapped[list[User]] = relationship(
-        secondary=course_user_association,
-        back_populates='courses'
+        secondary=course_user_association, back_populates="courses"
     )
     tariffs: Mapped[list[Tariff]] = relationship(
-        secondary=course_tariff_association,
-        back_populates='courses'
+        secondary=course_tariff_association, back_populates="courses"
     )
     tasks: Mapped[list[Task]] = relationship(
-        secondary=task_course_association,
-        back_populates='courses'
+        secondary=task_course_association, back_populates="courses"
     )

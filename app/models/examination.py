@@ -21,20 +21,20 @@ if TYPE_CHECKING:
 
 
 examination_user_association = Table(
-    'examination_user_association', Base.metadata,
-    Column('id', Integer, primary_key=True),
-    Column('examination_id', ForeignKey('examination.id')),
-    Column('user_id', ForeignKey('user.id')),
-    UniqueConstraint('examination_id', 'user_id',
-                     name='constraint_examination_user')
+    "examination_user_association",
+    Base.metadata,
+    Column("id", Integer, primary_key=True),
+    Column("examination_id", ForeignKey("examination.id")),
+    Column("user_id", ForeignKey("user.id")),
+    UniqueConstraint("examination_id", "user_id", name="constraint_examination_user"),
 )
 
 
 class Examination(Base):
-    name: str = Column(String(length=settings.max_length_string), unique=True,
-                       nullable=False)
+    name: str = Column(
+        String(length=settings.max_length_string), unique=True, nullable=False
+    )
     description: str = Column(Text)
     users: Mapped[list[User]] = relationship(
-        secondary=examination_user_association,
-        back_populates='examinations'
+        secondary=examination_user_association, back_populates="examinations"
     )

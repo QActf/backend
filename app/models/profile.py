@@ -19,11 +19,8 @@ class Profile(Base):
     first_name: Mapped[str] = Column(String(length=settings.max_length_string))
     last_name: Mapped[str] = Column(String(length=settings.max_length_string))
     age: Mapped[int] = Column(SmallInteger)
-    user_id: Mapped[int] = Column(
-        ForeignKey('user.id'), unique=True
-    )
-    user: Mapped[User] = relationship(back_populates='profile')
+    user_id: Mapped[int] = Column(ForeignKey("user.id"), unique=True)
+    user: Mapped[User] = relationship(back_populates="profile")
     achievements: Mapped[Achievement] = relationship(
-        secondary=achievement_profile_association,
-        back_populates='profiles'
+        secondary=achievement_profile_association, back_populates="profiles"
     )
