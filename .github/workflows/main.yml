@@ -24,5 +24,6 @@ jobs:
         with:
           path: "app"
       - name: Run isort
-        run: |
-          isort --check ./app
+        uses: olance/isort-action@v1.0.0
+        with:
+          args: ./app
