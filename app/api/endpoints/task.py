@@ -3,10 +3,10 @@ from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.schemas.task import TaskRead, TaskCreate
+from app.api.validators import check_name_duplicate
 from app.core.db import get_async_session
 from app.crud import task_crud
-from app.api.validators import check_name_duplicate
+from app.schemas.task import TaskCreate, TaskRead
 from app.services.endpoints_services import delete_obj
 
 router = APIRouter()

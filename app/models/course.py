@@ -2,19 +2,19 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import (Column, String, Text, Table, ForeignKey, Integer,
+from sqlalchemy import (Column, ForeignKey, Integer, String, Table, Text,
                         UniqueConstraint)
 from sqlalchemy.orm import Mapped, relationship
 
-from app.core.db import Base
 from app.core.config import settings
+from app.core.db import Base
 
 from .task import task_course_association
 
 if TYPE_CHECKING:
-    from .user import User
     from .tariff import Tariff
     from .task import Task
+    from .user import User
 
 
 course_user_association = Table(

@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
-from sqlalchemy import (Column, String, Text, Table, ForeignKey, Integer,
+from sqlalchemy import (Column, ForeignKey, Integer, String, Table, Text,
                         UniqueConstraint)
 from sqlalchemy.orm import Mapped, relationship
 
-from app.core.db import Base
 from app.core.config import settings
+from app.core.db import Base
 
 if TYPE_CHECKING:
     from app.models import User

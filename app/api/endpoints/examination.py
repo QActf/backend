@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
-from app.schemas.examination import ExaminationRead, ExaminationCreate
 from app.core.db import get_async_session
 from app.crud import examination_crud
+from app.schemas.examination import ExaminationCreate, ExaminationRead
 from app.services.endpoints_services import delete_obj
 
 router = APIRouter()

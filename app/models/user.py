@@ -4,22 +4,23 @@ import enum
 from typing import TYPE_CHECKING
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
-from sqlalchemy import Enum, Column, String, ForeignKey
+from sqlalchemy import Column, Enum, ForeignKey, String
 from sqlalchemy.orm import Mapped, relationship
 
 from app.core.db import Base
+
+from .course import course_user_association
+from .examination import examination_user_association
 from .group import group_user_association
 from .notification import notification_user_association
-from .examination import examination_user_association
-from .course import course_user_association
 
 if TYPE_CHECKING:
-    from .tariff import Tariff
-    from .profile import Profile
+    from .course import Course
+    from .examination import Examination
     from .group import Group
     from .notification import Notification
-    from .examination import Examination
-    from .course import Course
+    from .profile import Profile
+    from .tariff import Tariff
 
 
 class UserRoleEnum(enum.Enum):

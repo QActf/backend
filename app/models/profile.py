@@ -2,16 +2,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, String, SmallInteger, ForeignKey
+from sqlalchemy import Column, ForeignKey, SmallInteger, String
 from sqlalchemy.orm import Mapped, relationship
 
-from app.core.db import Base
 from app.core.config import settings
+from app.core.db import Base
+
 from .achievement import achievement_profile_association
 
 if TYPE_CHECKING:
-    from .user import User
     from .achievement import Achievement
+    from .user import User
 
 
 class Profile(Base):

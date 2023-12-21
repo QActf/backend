@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_obj_exists
-from app.models import User
-from app.schemas.profile import ProfileRead, ProfileCreate
 from app.core.db import get_async_session
-from app.crud import profile_crud, user_crud
 from app.core.user import current_user
+from app.crud import profile_crud, user_crud
+from app.models import User
+from app.schemas.profile import ProfileCreate, ProfileRead
 from app.services.endpoints_services import delete_obj
 
 router = APIRouter()

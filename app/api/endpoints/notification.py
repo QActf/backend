@@ -5,7 +5,6 @@ from app.core.db import get_async_session
 from app.crud import notification_crud
 from app.schemas.notification import NotificationCreate, NotificationRead
 
-
 router = APIRouter()
 
 
