@@ -1,3 +1,8 @@
 # isort
 [tool.isort]
 skip=["alembic", ]
+profile = "black"
+
+[tool.black]
+target-version = ['py310']
+exclude = 'alembic'
