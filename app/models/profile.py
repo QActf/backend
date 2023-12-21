@@ -1,7 +1,6 @@
 from __future__ import annotations
 from pathlib import Path
 from random import randint
-from typing import Optional
 
 from typing import TYPE_CHECKING
 
