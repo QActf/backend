@@ -23,3 +23,6 @@ jobs:
         uses: py-actions/flake8@v2
         with:
           path: "app"
+      - uses: isort/isort-action@v1
+        with:
+          requirements-files: "./requirements.txt"
