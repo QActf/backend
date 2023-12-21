@@ -2,7 +2,7 @@ name: Django-app workflow
 
 on:
   push:
-    branches: [ "develop", "feat/linters"]
+    branches: [ "develop"]
   pull_request:
     branches: [ "develop" ]
   workflow_dispatch:
