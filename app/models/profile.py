@@ -1,4 +1,6 @@
 from __future__ import annotations
+from pathlib import Path
+from random import randint
 
 from typing import TYPE_CHECKING
 
@@ -12,6 +14,13 @@ from .achievement import achievement_profile_association
 if TYPE_CHECKING:
     from .user import User
     from .achievement import Achievement
+
+
+def _random_photo(path: Path):
+    """Возвращает рандомный файл из указанной папки."""
+    files = [f'cats/{file.name}' for file in path.iterdir()]
+    random_index = randint(0, len(files) - 1)
+    return str(files[random_index])
 
 
 class Profile(Base):
@@ -29,5 +38,5 @@ class Profile(Base):
     image: Mapped[str] = Column(
         String(),
         nullable=True,
-        default=f'{settings.base_dir}{settings.media_url}cat1.png'
+        default=_random_photo(settings.base_dir / settings.media_url / 'cats/')
     )
