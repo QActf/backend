@@ -2,7 +2,7 @@ name: Django-app workflow
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "develop"]
   pull_request:
     branches: [ "develop" ]
   workflow_dispatch:
@@ -23,3 +23,4 @@ jobs:
         uses: py-actions/flake8@v2
         with:
           path: "app"
+      - uses: isort/isort-action@master
