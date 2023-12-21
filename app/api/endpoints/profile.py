@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends
+from uuid import uuid4
+
+from fastapi import APIRouter, Depends, UploadFile, File
 from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -21,7 +23,7 @@ async def get_all_profiles(
         session: AsyncSession = Depends(get_async_session),
         user: User = Depends(current_user)
 ) -> ProfileRead:
-    """Возвращает все profile юзера."""
+    """Возвращает profile юзера."""
     return await profile_crud.get_users_obj(
         user_id=user.id,
         session=session
@@ -33,6 +35,7 @@ async def get_user_photo(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session)
 ):
+    """Возвращает фото профиля."""
     _user = await session.execute(
         select(User).where(
             User.id == user.id
@@ -43,8 +46,27 @@ async def get_user_photo(
     _user = _user.scalars().first()
     image: str = _user.profile.image
     return FileResponse(
-        f'{settings.base_dir}/{image}'
+        f'{settings.base_dir}/{settings.media_url}{image}'
     )
+
+
+@router.patch('/update_photo', response_model=ProfileRead)
+async def update_photo(
+    file: UploadFile = File(...),
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Обновить фото профиля."""
+    file.filename: str = f'{uuid4()}.jpg'
+    contents = await file.read()
+    with open(f'{settings.media_url}{file.filename}', 'wb') as f:
+        f.write(contents)
+    updated_profile = await profile_crud.update_photo(
+        user.id,
+        file.filename,
+        session
+    )
+    return updated_profile
 
 
 @router.post('/', response_model=ProfileRead)

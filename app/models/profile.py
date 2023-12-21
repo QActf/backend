@@ -29,5 +29,5 @@ class Profile(Base):
     image: Mapped[str] = Column(
         String(),
         nullable=True,
-        default=f'{settings.media_url}cat1.png'
+        default=f'{settings.base_dir}{settings.media_url}cat1.png'
     )

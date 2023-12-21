@@ -31,5 +31,24 @@ class CRUDProfile(CRUDBase):
         )
         return db_obj.scalars().first()
 
+    async def update_photo(
+            self,
+            user_id: int,
+            image_url: str,
+            session: AsyncSession
+    ):
+        profile = await session.execute(
+            select(Profile)
+            .where(
+                Profile.user_id == user_id
+            )
+        )
+        profile = profile.scalars().first()
+        setattr(profile, 'image', image_url)
+        session.add(profile)
+        await session.commit()
+        await session.refresh(profile)
+        return profile
+
 
 profile_crud = CRUDProfile(Profile)
