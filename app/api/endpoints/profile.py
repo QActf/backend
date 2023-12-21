@@ -5,8 +5,8 @@ from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_obj_exists
-from app.models import User
-from app.schemas.profile import ProfileRead, ProfileCreate
+from app.models import User, Profile
+from app.schemas.profile import ProfileRead, ProfileCreate, ProfileUpdate
 from app.core.db import get_async_session
 from app.crud import profile_crud, user_crud
 from app.core.user import current_user
@@ -47,6 +47,26 @@ async def get_user_photo(
     image: str = _user.profile.image
     return FileResponse(
         f'{settings.base_dir}/{settings.media_url}{image}'
+    )
+
+
+@router.patch('/', response_model=ProfileRead)
+async def update_profile(
+    profile: ProfileUpdate,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    _profile = await session.execute(
+        select(Profile)
+        .where(
+            Profile.user_id == user.id
+        )
+    )
+    _profile = _profile.scalars().first()
+    return await profile_crud.update(
+        _profile,
+        profile,
+        session
     )
 
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 from pathlib import Path
 from random import randint
+from typing import Optional
 
 from typing import TYPE_CHECKING
 
@@ -24,9 +25,15 @@ def _random_photo(path: Path):
 
 
 class Profile(Base):
-    first_name: Mapped[str] = Column(String(length=settings.max_length_string))
-    last_name: Mapped[str] = Column(String(length=settings.max_length_string))
-    age: Mapped[int] = Column(SmallInteger)
+    first_name: Mapped[str] = Column(
+        String(length=settings.max_length_string)
+    )
+    last_name: Mapped[str] = Column(
+        String(length=settings.max_length_string)
+    )
+    age: Mapped[int] = Column(
+        SmallInteger
+    )
     user_id: Mapped[int] = Column(
         ForeignKey('user.id'), unique=True
     )
