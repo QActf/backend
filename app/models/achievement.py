@@ -21,20 +21,22 @@ if TYPE_CHECKING:
 
 
 achievement_profile_association = Table(
-    'achievement_profile_association', Base.metadata,
-    Column('id', Integer, primary_key=True),
-    Column('achievement_id', ForeignKey('achievement.id')),
-    Column('profile_id', ForeignKey('profile.id')),
-    UniqueConstraint('achievement_id', 'profile_id',
-                     name='constraint_achievement_profile')
+    "achievement_profile_association",
+    Base.metadata,
+    Column("id", Integer, primary_key=True),
+    Column("achievement_id", ForeignKey("achievement.id")),
+    Column("profile_id", ForeignKey("profile.id")),
+    UniqueConstraint(
+        "achievement_id", "profile_id", name="constraint_achievement_profile"
+    ),
 )
 
 
 class Achievement(Base):
-    name: str = Column(String(length=settings.max_length_string), unique=True,
-                       nullable=False)
+    name: str = Column(
+        String(length=settings.max_length_string), unique=True, nullable=False
+    )
     description: str = Column(Text)
     profiles: Mapped[list[Profile]] = relationship(
-        secondary=achievement_profile_association,
-        back_populates='achievements'
+        secondary=achievement_profile_association, back_populates="achievements"
     )

@@ -16,6 +16,5 @@ async def delete_obj(
     except UnmappedInstanceError:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
-            detail=f'Объект {crud.model.__tablename__}'
-                   f' с id {obj_id} не найден.'
+            detail=f"Объект {crud.model.__tablename__}" f" с id {obj_id} не найден.",
         )

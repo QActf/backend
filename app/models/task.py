@@ -21,20 +21,20 @@ if TYPE_CHECKING:
 
 
 task_course_association = Table(
-    'task_course_association', Base.metadata,
-    Column('id', Integer, primary_key=True),
-    Column('task_id', ForeignKey('task.id')),
-    Column('course_id', ForeignKey('course.id')),
-    UniqueConstraint('task_id', 'course_id',
-                     name='constraint_task_course')
+    "task_course_association",
+    Base.metadata,
+    Column("id", Integer, primary_key=True),
+    Column("task_id", ForeignKey("task.id")),
+    Column("course_id", ForeignKey("course.id")),
+    UniqueConstraint("task_id", "course_id", name="constraint_task_course"),
 )
 
 
 class Task(Base):
-    name: str = Column(String(length=settings.max_length_string), unique=True,
-                       nullable=False)
+    name: str = Column(
+        String(length=settings.max_length_string), unique=True, nullable=False
+    )
     description: str = Column(Text)
     courses: Mapped[list[Course]] = relationship(
-        secondary=task_course_association,
-        back_populates='tasks'
+        secondary=task_course_association, back_populates="tasks"
     )

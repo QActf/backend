@@ -16,11 +16,11 @@ if TYPE_CHECKING:
 
 
 class Tariff(Base):
-    name: Mapped[str] = Column(String(length=settings.max_length_string),
-                               unique=True, nullable=False)
+    name: Mapped[str] = Column(
+        String(length=settings.max_length_string), unique=True, nullable=False
+    )
     description: Mapped[str] = Column(Text)
-    users: Mapped[list[User]] = relationship(back_populates='tariff')
+    users: Mapped[list[User]] = relationship(back_populates="tariff")
     courses: Mapped[list[Course]] = relationship(
-        secondary=course_tariff_association,
-        back_populates='tariffs'
+        secondary=course_tariff_association, back_populates="tariffs"
     )

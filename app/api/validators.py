@@ -13,8 +13,7 @@ async def check_obj_exists(
     if obj is None:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
-            detail=f"Объект {crud.model.__tablename__}"
-                   f" с id {obj_id} не найден."
+            detail=f"Объект {crud.model.__tablename__}" f" с id {obj_id} не найден.",
         )
 
 
@@ -23,12 +22,10 @@ async def check_name_duplicate(
     crud,
     session: AsyncSession,
 ) -> None:
-    obj = await crud.get_obj_by_name(
-        name, session
-    )
+    obj = await crud.get_obj_by_name(name, session)
     if obj is not None:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
             detail=f"Объект {crud.model.__tablename__}"
-                   f" с таким именем уже существует!",
+            f" с таким именем уже существует!",
         )
