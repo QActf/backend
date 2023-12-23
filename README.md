@@ -49,3 +49,28 @@ sudo docker compose --file=docker-compose.yaml up --build -d
 ```
 
 Документация будет доступна по http://127.0.0.1/docs/
+
+## Разработчики 
+
+-----
+
+ - [Семён Новиков](https://github.com/Sovraska)
+
+ - [Дмитрий Абрамов](https://github.com/D-Abramoc)
+
+ - [Ильгиз Галлямов](https://github.com/ilgiz-tat)
+
+ - [Иван Кудьяров](https://github.com/LicrimoVor)
+
+ - [Илона Петина](https://github.com/ilonka05)
+
+ - [Вячеслав Мельник](https://github.com/dmsvalik)
+
+ - Андрей Легкий
+
+ - [Дарья Илий](https://github.com/DariaEaly)
+
+ - [Глеб Кондратьев](https://github.com/gleb60)
+----
+
+
