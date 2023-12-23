@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import hashlib
+
+import bcrypt
 import enum
 from typing import TYPE_CHECKING
 
@@ -51,3 +54,6 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     courses: Mapped[Course] = relationship(
         secondary=course_user_association, back_populates="users"
     )
+
+    def __repr__(self):
+        return self.username
