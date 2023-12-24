@@ -1,8 +1,6 @@
-import hashlib
-
-from fastapi_users.password import PasswordHelper
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.crud.base import CRUDBase
 from app.crud.hasher import Hasher
 from app.models import User
@@ -33,7 +31,9 @@ class CRUDUser(CRUDBase):
             select(self.model).where(self.model.username == username)
         )
         res = db_obj.scalars().first()
-        is_password_pass = Hasher.verify_password(password, hashed_password=res.hashed_password)
+        is_password_pass = Hasher.verify_password(
+            password, hashed_password=res.hashed_password
+        )
         if not is_password_pass:
             return None
         return res

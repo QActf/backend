@@ -17,7 +17,9 @@ class AdminAuth(AuthenticationBackend):
     ) -> bool:
         form = await request.form()
         username, password = form["username"], form["password"]
-        user = await user_crud.get_user_by_credentials(username, password, session)
+        user = await user_crud.get_user_by_credentials(
+            username, password, session
+        )
         if not user:
             return False
         token = await strategy.write_token(user)
@@ -30,7 +32,11 @@ class AdminAuth(AuthenticationBackend):
         request.session.clear()
         return True
 
-    async def authenticate(self, request: Request, session: AsyncSession = AsyncSessionLocal()) -> bool:
+    async def authenticate(
+            self,
+            request: Request,
+            session: AsyncSession = AsyncSessionLocal()
+    ) -> bool:
         token = request.session.get("token")
         if not token:
             return False

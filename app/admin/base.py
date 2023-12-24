@@ -1,4 +1,4 @@
-from app.admin import UserAdmin, TariffAdmin
+from app.admin import TariffAdmin, UserAdmin
 
 admin_models = [
     UserAdmin,
