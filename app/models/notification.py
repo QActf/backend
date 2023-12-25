@@ -33,3 +33,6 @@ class Notification(Base):
     users: Mapped[list[User]] = relationship(
         secondary=notification_user_association, back_populates="notifications"
     )
+
+    def __repr__(self):
+        return self.name

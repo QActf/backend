@@ -31,3 +31,6 @@ class Group(Base):
     users: Mapped[List[User]] = relationship(
         secondary=group_user_association, back_populates="groups"
     )
+
+    def __repr__(self):
+        return self.name

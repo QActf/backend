@@ -35,3 +35,6 @@ class Achievement(Base):
         secondary=achievement_profile_association,
         back_populates="achievements"
     )
+
+    def __repr__(self):
+        return self.name
