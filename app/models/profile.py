@@ -24,3 +24,6 @@ class Profile(Base):
     achievements: Mapped[Achievement] = relationship(
         secondary=achievement_profile_association, back_populates="profiles"
     )
+
+    def __repr__(self):
+        return self.first_name

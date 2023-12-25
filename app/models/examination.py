@@ -33,3 +33,6 @@ class Examination(Base):
     users: Mapped[list[User]] = relationship(
         secondary=examination_user_association, back_populates="examinations"
     )
+
+    def __repr__(self):
+        return self.name

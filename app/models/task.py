@@ -31,3 +31,6 @@ class Task(Base):
     courses: Mapped[list[Course]] = relationship(
         secondary=task_course_association, back_populates="tasks"
     )
+
+    def __repr__(self):
+        return self.name
