@@ -51,3 +51,6 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     courses: Mapped[Course] = relationship(
         secondary=course_user_association, back_populates="users"
     )
+
+    def __repr__(self):
+        return self.username

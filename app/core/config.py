@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     first_superuser_email: Optional[str] = None
     first_superuser_password: Optional[str] = None
 
-    lifetime_seconds: int = 3600
+    lifetime_seconds: int = 1
     max_password_length: int = 3
     max_length_string: int = 100
     min_length_string: int = 1

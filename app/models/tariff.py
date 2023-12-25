@@ -24,3 +24,6 @@ class Tariff(Base):
     courses: Mapped[list[Course]] = relationship(
         secondary=course_tariff_association, back_populates="tariffs"
     )
+
+    def __repr__(self):
+        return self.name
