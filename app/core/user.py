@@ -1,5 +1,9 @@
 import logging
 from typing import Optional, Union
+import contextlib
+# from .init_db import get_async_session_context
+from app.schemas.profile import ProfileCreate
+from app.crud.profile import profile_crud
 
 from fastapi import Depends, Request
 from fastapi_users import (
@@ -61,6 +65,19 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
             self, user: User, request: Optional[Request] = None
     ):
         logging.info(f"Пользователь {user.email} зарегистрирован.")
+        get_async_session_context = contextlib.asynccontextmanager(
+            get_async_session
+        )
+        async with get_async_session_context() as session:
+            await profile_crud.create(
+                ProfileCreate(
+                    user_id=user.id,
+                    first_name='',
+                    last_name='',
+                    age=0
+                ),
+                session=session,
+            )
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):
