@@ -76,8 +76,8 @@ def create_profile():
     )
 
 
-@router.delete('/{obj_id}')
-def delete_profile():
+@router.delete('/{obj_id}', deprecated=True)
+def delete_profile(obg_id: str):
     """Удалить объект"""
     raise HTTPException(
         status_code=status.HTTP_405_METHOD_NOT_ALLOWED,
