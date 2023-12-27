@@ -1,3 +1,7 @@
+"""
+Любая задача = тестирование чего-то
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -10,10 +14,10 @@ from sqlalchemy.orm import Mapped, relationship
 from app.core.db import Base
 from app.core.config import settings
 from .abstract import SomeTask
-from .task_case import TaskCase
-from .task_api import TaskAPI
-from .task_db import TaskDB
-from .task_test import TaskTest
+from .task_case import TaskCase # noqa
+from .task_api import TaskAPI   # noqa
+from .task_db import TaskDB     # noqa
+from .task_test import TaskTest # noqa
 
 if TYPE_CHECKING:
     from ..user import Course
@@ -38,8 +42,18 @@ class TaskTypes(Enum):
     task_test = 'TaskTest'
 
 
+TASK_CLASSES = {
+    TaskTypes.task_case: TaskCase,
+    TaskTypes.task_api: TaskAPI,
+    TaskTypes.task_db: TaskDB,
+    TaskTypes.task_test: TaskTest,
+}
+
+
 class Task(Base):
     """Модель БД задач."""
+
+    __tablename__ = 'task'
 
     name: str = Column(
         String(length=settings.max_length_string),
@@ -56,6 +70,6 @@ class Task(Base):
     )
 
     @staticmethod
-    def get_concrete_task(type_task: Enum) -> SomeTask:
+    def get_concrete_task(type_task: TaskTypes) -> SomeTask:
         """Возвращает модель конретного типа задач."""
-        return locals()[type_task.value]
+        return TASK_CLASSES[type_task.value]

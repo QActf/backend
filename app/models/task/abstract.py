@@ -1,21 +1,27 @@
-from sqlalchemy import Column, ForeignKey, Integer
-from sqlalchemy.orm import Mapped
+from typing import TYPE_CHECKING
 
-from app.models.user import User
+from sqlalchemy.ext.declarative import AbstractConcreteBase
+from sqlalchemy import Integer
+from sqlalchemy.orm import Mapped, mapped_column
+
 from app.core.db import Base
 
+if TYPE_CHECKING:
+    from app.models.user import User
 
-class SomeTaskUserAssociation(Base):
+
+
+class SomeTaskUserAssociation(AbstractConcreteBase, Base):
     """АК для ассоциаций задач-пользователей."""
 
     __abstract__ = True
-    scores: int = Column(Integer, default=0)
-    user: Mapped[User] = Column(ForeignKey('user.id'))
+    scores: Mapped['Integer'] = mapped_column(Integer, default=0)
+    user: Mapped['User']
     task: Mapped['SomeTask']
 
 
-class SomeTask(Base):
+class SomeTask(AbstractConcreteBase, Base):
     """АК конкретной задачи."""
 
     __abstract__ = True
-    task_id: int = Column(Integer, nullable=False,)
+    task_id: Mapped['Integer'] = mapped_column(Integer, nullable=False,)
