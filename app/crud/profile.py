@@ -1,12 +1,33 @@
+from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
+from app.core.config import settings
 from app.crud.base import CRUDBase
-from app.models import Profile
+from app.models import Profile, User
 from app.schemas.profile import ProfileCreate
 
 
 class CRUDProfile(CRUDBase):
+
+    async def get_user_photo(
+            self,
+            user_id: int,
+            session: AsyncSession
+    ):
+        _user = await session.execute(
+            select(User).where(
+                User.id == user_id
+            ).options(
+                selectinload(User.profile)
+            )
+        )
+        _user = _user.scalars().first()
+        image: str = _user.profile.image
+        return FileResponse(
+            f'{settings.base_dir}/{settings.media_url}{image}'
+        )
 
     async def create(
             self, obj_in: ProfileCreate,

@@ -1,7 +1,6 @@
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, UploadFile, File, status, HTTPException
-from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import User, Profile
@@ -11,7 +10,6 @@ from app.crud import profile_crud
 from app.core.user import current_user
 from app.core.config import settings
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 
 router = APIRouter()
 
@@ -34,18 +32,7 @@ async def get_user_photo(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Возвращает фото профиля."""
-    _user = await session.execute(
-        select(User).where(
-            User.id == user.id
-        ).options(
-            selectinload(User.profile)
-        )
-    )
-    _user = _user.scalars().first()
-    image: str = _user.profile.image
-    return FileResponse(
-        f'{settings.base_dir}/{settings.media_url}{image}'
-    )
+    return await profile_crud.get_user_photo(user.id, session)
 
 
 @router.patch('/', response_model=ProfileRead)
