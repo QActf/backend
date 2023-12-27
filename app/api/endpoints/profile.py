@@ -1,3 +1,4 @@
+import re
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, UploadFile, File, status, HTTPException
@@ -10,6 +11,7 @@ from app.crud import profile_crud
 from app.core.user import current_user
 from app.core.config import settings
 from sqlalchemy import select
+from app.services.utils import create_filename, save_content, remove_content
 
 router = APIRouter()
 
@@ -52,19 +54,19 @@ async def update_photo(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Обновить фото профиля."""
-    file.filename: str = f'{uuid4()}.jpg'
-    contents = await file.read()
-    with open(f'{settings.media_url}{file.filename}', 'wb') as f:
-        f.write(contents)
-    updated_profile = await profile_crud.update_photo(
+    _profile: Profile = await profile_crud.get_users_obj(user.id, session)
+    if not re.match(r'^.+cat\d+\.png$', _profile.image):
+        remove_content(_profile.image)
+    file.filename: str = create_filename(file)
+    await save_content(file)
+    return await profile_crud.update_photo(
         user.id,
         file.filename,
         session
     )
-    return updated_profile
 
 
-@router.post('/', response_model=ProfileRead)
+@router.post('/', response_model=ProfileRead, deprecated=True)
 def create_profile():
     """Профиль создаётся при создании юзера."""
     raise HTTPException(

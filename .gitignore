@@ -1,4 +1,6 @@
 media/*jpg
+media/*.png
+media/*.PNG
 .vscode
 # Byte-compiled / optimized / DLL files
 __pycache__/
