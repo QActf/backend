@@ -7,9 +7,6 @@ from app.core.config import settings
 from app.core.db import get_async_session
 from app.core.user import get_user_db, get_user_manager
 from app.schemas.user import UserCreate
-from app.models import Profile
-from app.schemas.profile import ProfileCreate
-from app.crud.profile import profile_crud
 
 get_async_session_context = contextlib.asynccontextmanager(get_async_session)
 get_user_db_context = contextlib.asynccontextmanager(get_user_db)
