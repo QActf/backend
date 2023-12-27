@@ -41,18 +41,8 @@ async def update_profile(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session)
 ):
-    _profile = await session.execute(
-        select(Profile)
-        .where(
-            Profile.user_id == user.id
-        )
-    )
-    _profile = _profile.scalars().first()
-    return await profile_crud.update(
-        _profile,
-        profile,
-        session
-    )
+    _profile = await profile_crud.get_users_obj(user.id, session)
+    return await profile_crud.update(_profile, profile, session)
 
 
 @router.patch('/update_photo', response_model=ProfileRead)
