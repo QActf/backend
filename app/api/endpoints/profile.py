@@ -1,5 +1,4 @@
 import re
-from uuid import uuid4
 
 from fastapi import APIRouter, Depends, UploadFile, File, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,8 +8,6 @@ from app.schemas.profile import ProfileRead, ProfileUpdate
 from app.core.db import get_async_session
 from app.crud import profile_crud
 from app.core.user import current_user
-from app.core.config import settings
-from sqlalchemy import select
 from app.services.utils import create_filename, save_content, remove_content
 
 router = APIRouter()
