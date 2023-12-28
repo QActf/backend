@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from app.models.user import User
 
 
-class TaskQuestionUserAssocation(SomeTaskUserAssociation):
+class TaskQuestionUserAssociation(SomeTaskUserAssociation):
     """Модель тестов АПИ - пользователей."""
 
     __tablename__ = 'task_question_user_assoc'

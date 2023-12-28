@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from app.models.user import User
 
 
-class TaskDBUserAssocation(SomeTaskUserAssociation):
+class TaskDBUserAssociation(SomeTaskUserAssociation):
     """Модель тестов БД - пользователей"""
 
     __tablename__ = 'task_db_user_assoc'

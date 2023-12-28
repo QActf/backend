@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from app.models.user import User
 
 
-class TaskAPIUserAssocation(SomeTaskUserAssociation):
+class TaskAPIUserAssociation(SomeTaskUserAssociation):
     """Модель тестов АПИ - пользователей."""
 
     __tablename__ = 'task_api_user_assoc'
