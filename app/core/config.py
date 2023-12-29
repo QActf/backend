@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     first_superuser_email: Optional[str] = None
     first_superuser_password: Optional[str] = None
 
-    lifetime_seconds: int = 1
+    lifetime_seconds: int = 3000
     max_password_length: int = 3
     max_length_string: int = 100
     min_length_string: int = 1
@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     base_dir: Path = Path(__file__).parent.parent.parent
 
     class Config:
-        env_file = ".env"
+        env_file = "infra/.env"
 
 
 settings = Settings()

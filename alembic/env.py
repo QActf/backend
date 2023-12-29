@@ -11,7 +11,7 @@ from app.core.base import Base
 
 config = context.config
 
-load_dotenv('.env')
+load_dotenv('infra/.env')
 
 config.set_main_option('sqlalchemy.url', os.environ['DATABASE_URL'])
 
