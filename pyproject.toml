@@ -1,0 +1,6 @@
+# isort
+[tool.isort]
+skip=["alembic", "venv"]
+
+[tool.flake8]
+exclude=["alembic", "venv"]

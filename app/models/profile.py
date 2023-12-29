@@ -4,16 +4,17 @@ from random import randint
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, String, SmallInteger, ForeignKey
+from sqlalchemy import Column, ForeignKey, SmallInteger, String
 from sqlalchemy.orm import Mapped, relationship
 
-from app.core.db import Base
 from app.core.config import settings
+from app.core.db import Base
+
 from .achievement import achievement_profile_association
 
 if TYPE_CHECKING:
-    from .user import User
     from .achievement import Achievement
+    from .user import User
 
 
 def _random_photo(path: Path):
@@ -38,11 +39,13 @@ class Profile(Base):
     )
     user: Mapped[User] = relationship(back_populates='profile')
     achievements: Mapped[Achievement] = relationship(
-        secondary=achievement_profile_association,
-        back_populates='profiles'
+        secondary=achievement_profile_association, back_populates="profiles"
     )
     image: Mapped[str] = Column(
         String(),
         nullable=True,
         default=_random_photo(settings.base_dir / settings.media_url / 'cats/')
     )
+
+    def __repr__(self):
+        return self.first_name
