@@ -33,7 +33,7 @@ async def register_client(
     prepare_database: FastAPI,
     db_session: AsyncSessionLocalTest
 ) -> AsyncGenerator:
-    """Фикстура для регистрации пользователя."""
+    """Фикстура для регистрации клиента."""
     hashed_password = bcrypt.hash(USER_PASSWORD)
     register_user = User(
         email=USER_EMAIL,
@@ -52,7 +52,7 @@ async def auth_client(
     new_client,
     register_client
 ) -> AsyncGenerator | TestClient:
-    """Фикстура для аутентификации клиента."""
+    """Фикстура для клиента, вошедшего в систему."""
     response = new_client.post(
         '/auth/jwt/login',
         data={'username': USER_EMAIL, 'password': USER_PASSWORD})

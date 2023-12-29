@@ -66,14 +66,15 @@ class TestRegister:
                 'reason': 'Password should not contain e-mail',
             },
         }, (
-            'Пароль не может содержать в себе email.'
+            'Нельзя зарегистрировать пользователя с паролем, '
+            'содержащим в себе email.'
         )
 
     async def test_register_invalid_json(self, new_client):
         """Тест регистрации пользователя с недопустимыми данными."""
         response = new_client.post('/auth/register', json={})
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, (
-            'Некорректные данные при регистрации пользователя, '
+            'Недопустимые данные при регистрации пользователя, '
             'должен возвращаться статус-код 422.'
         )
 
@@ -108,7 +109,7 @@ class TestLogin:
            data={'username': WRONG_EMAIL, 'password': USER_PASSWORD},
         )
         assert response.json().get('email') != register_client.email, (
-            'Пользователя с данным email нет в БД.'
+            'Нельзя войти в систему по email, которого нет в БД. '
         )
 
     async def test_login_invalid_data(self, new_client, register_client):
@@ -125,16 +126,18 @@ class TestLogin:
 
 class TestLogout:
     async def test_logout_auth_client(self, auth_client):
-        """Тест выхода из системы аутентифицированного пользователя."""
+        """Тест выхода из системы залогиненного пользователя."""
         response = auth_client.post('/auth/jwt/logout')
 
-        assert response.status_code == status.HTTP_204_NO_CONTENT
-        #assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_204_NO_CONTENT, (
+            'При попытке выхода из системы залогиненного пользователя, '
+            'должен возвращаться статус-код 204.'
+        )
 
     async def test_logout_new_client(self, new_client):
-        """Тест выхода из системы неаутентифицированного пользователя."""
+        """Тест выхода из системы незалогиненного пользователя."""
         response = new_client.post('/auth/jwt/logout')
         assert response.status_code == status.HTTP_401_UNAUTHORIZED, (
-            'При попытке выхода из системы незалогиненого пользователя, '
+            'При попытке выхода из системы незалогиненного пользователя, '
             'должен возвращаться статус-код 401.'
         )

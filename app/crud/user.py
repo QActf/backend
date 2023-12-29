@@ -7,6 +7,7 @@ from app.models import User
 
 
 class CRUDUser(CRUDBase):
+
     async def update_id(
             self,
             db_obj,

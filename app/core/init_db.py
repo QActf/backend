@@ -29,7 +29,6 @@ async def create_user(
                             role="admin",
                         )
                     )
-
     except UserAlreadyExists:
         pass
 
