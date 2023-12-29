@@ -13,7 +13,7 @@ from app.services.utils import create_filename, save_content, remove_content
 router = APIRouter()
 
 
-@router.get('/', response_model=ProfileRead)
+@router.get('/me', response_model=ProfileRead)
 async def get_current_user_profile(
         session: AsyncSession = Depends(get_async_session),
         user: User = Depends(current_user)
@@ -25,7 +25,7 @@ async def get_current_user_profile(
     )
 
 
-@router.get('/photo')
+@router.get('/me/photo')
 async def get_user_photo(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session)
@@ -34,7 +34,7 @@ async def get_user_photo(
     return await profile_crud.get_user_photo(user.id, session)
 
 
-@router.patch('/', response_model=ProfileRead)
+@router.patch('/me', response_model=ProfileRead)
 async def update_profile(
     profile: ProfileUpdate,
     user: User = Depends(current_user),
@@ -44,7 +44,7 @@ async def update_profile(
     return await profile_crud.update(_profile, profile, session)
 
 
-@router.patch('/update_photo', response_model=ProfileRead)
+@router.patch('/me/update_photo', response_model=ProfileRead)
 async def update_photo(
     file: UploadFile = File(...),
     user: User = Depends(current_user),
@@ -63,7 +63,7 @@ async def update_photo(
     )
 
 
-@router.post('/', response_model=ProfileRead, deprecated=True)
+@router.post('/me', response_model=ProfileRead, deprecated=True)
 def create_profile():
     """Профиль создаётся при создании юзера."""
     raise HTTPException(
