@@ -7,10 +7,18 @@ from app.models import User, Profile
 from app.schemas.profile import ProfileRead, ProfileUpdate
 from app.core.db import get_async_session
 from app.crud import profile_crud
-from app.core.user import current_user
+from app.core.user import current_user, current_superuser
 from app.services.utils import create_filename, save_content, remove_content
 
 router = APIRouter()
+
+
+@router.get('/', response_model=list[ProfileRead],
+            dependencies=[Depends(current_superuser)])
+async def get_all_profiles(
+    session: AsyncSession = Depends(get_async_session)
+):
+    return await profile_crud.get_multi(session)
 
 
 @router.get('/me', response_model=ProfileRead)
