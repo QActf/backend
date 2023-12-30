@@ -1,13 +1,12 @@
 from fastapi.responses import FileResponse
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.core.config import settings
 from app.crud.base import CRUDBase
 from app.models import Profile, User
 from app.schemas.profile import ProfileCreate
-
 from app.services.filters import ProfileFilter
 
 

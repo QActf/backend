@@ -1,7 +1,7 @@
 import os
 from uuid import uuid4
 
-from fastapi import UploadFile, Query
+from fastapi import Query, UploadFile
 
 from app.core.config import settings
 
