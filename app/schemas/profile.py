@@ -2,6 +2,8 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from app.schemas.achievement import AchievementRead
+
 
 class ProfileRead(BaseModel):
     id: int
@@ -10,6 +12,7 @@ class ProfileRead(BaseModel):
     age: Optional[int]
     user_id: int
     image: Optional[str]
+    achievements: Optional[list[AchievementRead]]
 
     class Config:
         from_attributes = True

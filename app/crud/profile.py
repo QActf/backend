@@ -11,6 +11,15 @@ from app.schemas.profile import ProfileCreate
 
 class CRUDProfile(CRUDBase):
 
+    async def get_multi(self, session: AsyncSession):
+        db_objs = await session.execute(
+            select(self.model)
+            .options(
+                selectinload(Profile.achievements)
+            )
+        )
+        return db_objs.scalars().all()
+
     async def get_user_photo(
             self,
             user_id: int,
@@ -48,6 +57,9 @@ class CRUDProfile(CRUDBase):
         db_obj = await session.execute(
                 select(self.model)
                 .where(self.model.user_id == user_id)
+                .options(
+                    selectinload(self.model.achievements)
+                )
         )
         return db_obj.scalars().first()
 
