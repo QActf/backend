@@ -25,6 +25,7 @@ async def get_all_profiles(
     session: AsyncSession = Depends(get_async_session),
     pagination: dict = Depends(get_pagination_params)
 ):
+    """Получить все профили. Только для суперюзера."""
     offset = pagination['offset']
     limit = pagination['limit']
     end = offset + limit
