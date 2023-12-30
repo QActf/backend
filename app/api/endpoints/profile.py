@@ -19,7 +19,8 @@ router = APIRouter()
 
 
 @router.get('/', response_model=list[ProfileRead],
-            dependencies=[Depends(current_superuser)])
+            dependencies=[Depends(current_superuser)],
+            response_model_exclude_none=True)
 async def get_all_profiles(
     response: Response,
     session: AsyncSession = Depends(get_async_session),
@@ -35,7 +36,8 @@ async def get_all_profiles(
     return profiles[offset:end]
 
 
-@router.get('/me', response_model=ProfileRead)
+@router.get('/me', response_model=ProfileRead,
+            response_model_exclude_none=True)
 async def get_current_user_profile(
         session: AsyncSession = Depends(get_async_session),
         user: User = Depends(current_user)
