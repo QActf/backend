@@ -15,21 +15,27 @@ from app.services.utils import (
     create_filename, save_content, remove_content, get_pagination_params
 )
 
+from fastapi_filter import FilterDepends
+from app.services.filters import ProfileFilter
+
+
 router = APIRouter()
 
 
 @router.get('/', response_model=list[ProfileRead],
-            dependencies=[Depends(current_superuser)],
-            response_model_exclude_none=True)
+            response_model_exclude_none=True,
+            dependencies=[Depends(current_superuser)])
 async def get_all_profiles(
     response: Response,
+    profile_filter: ProfileFilter = FilterDepends(ProfileFilter),
     session: AsyncSession = Depends(get_async_session),
     pagination: dict = Depends(get_pagination_params)
 ):
-    """Получить все профили. Только для суперюзера."""
     offset, limit = pagination.values()
     end = offset + limit
-    profiles = await profile_crud.get_multi(session)
+    profiles = await profile_crud.get_profile_filter(
+        profile_filter, session
+    )
     response.headers['X-Total-Count'] = str(len(profiles))
     response.headers['X-Offset'] = str(offset)
     response.headers['X-Limit'] = str(limit)

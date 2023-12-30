@@ -26,8 +26,8 @@ def remove_content(path: str) -> None:
 
 def get_pagination_params(
     # offset must be greater than or equal to 0
-    offset: int = Query(0, ge=0),
+    offset: int = Query(settings.offset, ge=0),
     # limit must be greater than 0
-    limit: int = Query(10, gt=0)
+    limit: int = Query(settings.limit, gt=0)
 ):
     return {"offset": offset, "limit": limit}

@@ -8,8 +8,24 @@ from app.crud.base import CRUDBase
 from app.models import Profile, User
 from app.schemas.profile import ProfileCreate
 
+from app.services.filters import ProfileFilter
+
 
 class CRUDProfile(CRUDBase):
+
+    async def get_profile_filter(
+            self,
+            profile_filter: ProfileFilter,
+            sesion: AsyncSession
+    ):
+        query_filter = profile_filter.filter(select(self.model))
+        db_objs = await sesion.execute(
+            query_filter
+            .options(
+                selectinload(self.model.achievements)
+            )
+        )
+        return db_objs.scalars().all()
 
     async def get_multi(self, session: AsyncSession):
         db_objs = await session.execute(
