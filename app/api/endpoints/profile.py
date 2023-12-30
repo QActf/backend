@@ -1,7 +1,7 @@
 import re
 
 from fastapi import (
-    APIRouter, Depends, UploadFile, File, status, HTTPException, Query,
+    APIRouter, Depends, UploadFile, File, status, HTTPException,
     Response
 )
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,18 +11,11 @@ from app.schemas.profile import ProfileRead, ProfileUpdate
 from app.core.db import get_async_session
 from app.crud import profile_crud
 from app.core.user import current_user, current_superuser
-from app.services.utils import create_filename, save_content, remove_content
+from app.services.utils import (
+    create_filename, save_content, remove_content, get_pagination_params
+)
 
 router = APIRouter()
-
-
-def get_pagination_params(
-    # offset must be greater than or equal to 0
-    offset: int = Query(0, ge=0),
-    # limit must be greater than 0
-    limit: int = Query(10, gt=0)
-):
-    return {"offset": offset, "limit": limit}
 
 
 @router.get('/', response_model=list[ProfileRead],

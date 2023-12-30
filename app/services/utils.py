@@ -1,7 +1,7 @@
 import os
 from uuid import uuid4
 
-from fastapi import UploadFile
+from fastapi import UploadFile, Query
 
 from app.core.config import settings
 
@@ -22,3 +22,12 @@ async def save_content(file: UploadFile):
 def remove_content(path: str) -> None:
     """Удаление файла."""
     os.remove(f'{settings.base_dir}/{settings.media_url}{path}')
+
+
+def get_pagination_params(
+    # offset must be greater than or equal to 0
+    offset: int = Query(0, ge=0),
+    # limit must be greater than 0
+    limit: int = Query(10, gt=0)
+):
+    return {"offset": offset, "limit": limit}
