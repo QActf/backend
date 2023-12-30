@@ -26,8 +26,7 @@ async def get_all_profiles(
     pagination: dict = Depends(get_pagination_params)
 ):
     """Получить все профили. Только для суперюзера."""
-    offset = pagination['offset']
-    limit = pagination['limit']
+    offset, limit = pagination.values()
     end = offset + limit
     profiles = await profile_crud.get_multi(session)
     response.headers['X-Total-Count'] = str(len(profiles))
