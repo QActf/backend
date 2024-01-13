@@ -11,7 +11,11 @@ from app.services.endpoints_services import delete_obj
 router = APIRouter()
 
 
-@router.get("/", response_model=list[CourseRead], dependencies=[Depends(current_user)])
+@router.get(
+    "/",
+    response_model=list[CourseRead],
+    dependencies=[Depends(current_user)]
+)
 async def get_all_courses(
     session: AsyncSession = Depends(get_async_session),
 ) -> list[CourseRead]:
@@ -19,7 +23,11 @@ async def get_all_courses(
     return await course_crud.get_multi(session)
 
 
-@router.post("/", response_model=CourseRead, dependencies=[Depends(current_superuser)])
+@router.post(
+    "/",
+    response_model=CourseRead,
+    dependencies=[Depends(current_superuser)]
+)
 async def create_course(
     course: CourseCreate, session: AsyncSession = Depends(get_async_session)
 ):
