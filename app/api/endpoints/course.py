@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
 from app.core.db import get_async_session
-from app.core.user import current_user, current_superuser
+from app.core.user import current_superuser, current_user
 from app.crud import course_crud
 from app.schemas.course import CourseCreate, CourseRead
 from app.services.endpoints_services import delete_obj

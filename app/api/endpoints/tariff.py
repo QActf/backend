@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate, check_obj_exists
 from app.core.db import get_async_session
-from app.core.user import current_user, current_superuser
+from app.core.user import current_superuser, current_user
 from app.crud import tariff_crud, user_crud
 from app.models import User
 from app.schemas.tariff import TariffCreate, TariffRead
