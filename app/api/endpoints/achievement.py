@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
 from app.core.db import get_async_session
+from app.core.user import current_superuser, current_user
 from app.crud import achievement_crud
 from app.schemas.achievement import AchievementCreate, AchievementRead
 from app.services.endpoints_services import delete_obj
@@ -10,7 +11,11 @@ from app.services.endpoints_services import delete_obj
 router = APIRouter()
 
 
-@router.get("/", response_model=list[AchievementRead])
+@router.get(
+    "/",
+    response_model=list[AchievementRead],
+    dependencies=[Depends(current_user)]
+)
 async def get_all_achievements(
     session: AsyncSession = Depends(get_async_session),
 ) -> list[AchievementRead]:
@@ -18,7 +23,11 @@ async def get_all_achievements(
     return await achievement_crud.get_multi(session)
 
 
-@router.post("/", response_model=AchievementRead)
+@router.post(
+    "/",
+    response_model=AchievementRead,
+    dependencies=[Depends(current_superuser)]
+)
 async def create_achievement(
     achievement: AchievementCreate,
     session: AsyncSession = Depends(get_async_session)
@@ -28,7 +37,7 @@ async def create_achievement(
     return await achievement_crud.create(obj_in=achievement, session=session)
 
 
-@router.delete("/{obj_id}")
+@router.delete("/{obj_id}", dependencies=[Depends(current_superuser)])
 async def delete_achievement(
     obj_id: int,
     session: AsyncSession = Depends(get_async_session),
