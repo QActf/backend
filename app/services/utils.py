@@ -1,9 +1,9 @@
-from collections import namedtuple
 import os
+from collections import namedtuple
 from typing import Any, Sequence
 from uuid import uuid4
 
-from fastapi import Query, UploadFile, Response
+from fastapi import Query, Response, UploadFile
 
 from app.core.config import settings
 

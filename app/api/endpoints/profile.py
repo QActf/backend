@@ -11,9 +11,9 @@ from app.crud import profile_crud
 from app.models import Profile, User
 from app.schemas.profile import ProfileRead, ProfileUpdate
 from app.services.filters import ProfileFilter
-from app.services.utils import (create_filename, get_pagination_params,
-                                remove_content, save_content, Pagination,
-                                paginated, add_response_headers)
+from app.services.utils import (Pagination, add_response_headers,
+                                create_filename, get_pagination_params,
+                                paginated, remove_content, save_content)
 
 router = APIRouter()
 
