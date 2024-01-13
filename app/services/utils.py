@@ -1,8 +1,9 @@
 from collections import namedtuple
 import os
+from typing import Any, Sequence
 from uuid import uuid4
 
-from fastapi import Query, UploadFile
+from fastapi import Query, UploadFile, Response
 
 from app.core.config import settings
 
@@ -40,3 +41,21 @@ def get_pagination_params(
     limit: int = Query(settings.limit, gt=0)
 ):
     return Pagination(offset, limit)
+
+
+def paginated(
+        data: Sequence[Any], paginator: Pagination
+) -> Sequence[Any]:
+    """Возвращает срез переданной последовательности."""
+    return data[paginator.offset:paginator.end]
+
+
+def add_response_headers(
+        response: Response,
+        sequence: Sequence[Any],
+        paginator: Pagination
+) -> Response:
+    response.headers['X-Total-Count'] = str(len(sequence))
+    response.headers['X-Offset'] = str(paginator.offset)
+    response.headers['X-Limit'] = str(paginator.limit)
+    return response
