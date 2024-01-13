@@ -12,7 +12,7 @@ from app.models import Profile, User
 from app.schemas.profile import ProfileRead, ProfileUpdate
 from app.services.filters import ProfileFilter
 from app.services.utils import (create_filename, get_pagination_params,
-                                remove_content, save_content)
+                                remove_content, save_content, Pagination)
 
 router = APIRouter()
 
@@ -24,17 +24,15 @@ async def get_all_profiles(
     response: Response,
     profile_filter: ProfileFilter = FilterDepends(ProfileFilter),
     session: AsyncSession = Depends(get_async_session),
-    pagination: dict = Depends(get_pagination_params)
+    pagination: Pagination = Depends(get_pagination_params)
 ):
-    offset, limit = pagination.values()
-    end = offset + limit
     profiles = await profile_crud.get_profile_filter(
         profile_filter, session
     )
     response.headers['X-Total-Count'] = str(len(profiles))
-    response.headers['X-Offset'] = str(offset)
-    response.headers['X-Limit'] = str(limit)
-    return profiles[offset:end]
+    response.headers['X-Offset'] = str(pagination.offset)
+    response.headers['X-Limit'] = str(pagination.limit)
+    return profiles[pagination.offset:pagination.end]
 
 
 @router.get('/me', response_model=ProfileRead,

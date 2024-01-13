@@ -1,9 +1,18 @@
+from collections import namedtuple
 import os
 from uuid import uuid4
 
 from fastapi import Query, UploadFile
 
 from app.core.config import settings
+
+
+class Pagination(namedtuple('Pagination', 'offset limit')):
+    __slots__ = ()
+
+    @property
+    def end(self):
+        return self.offset + self.limit
 
 
 def create_filename(file: UploadFile) -> str:
@@ -30,4 +39,4 @@ def get_pagination_params(
     # limit must be greater than 0
     limit: int = Query(settings.limit, gt=0)
 ):
-    return {"offset": offset, "limit": limit}
+    return Pagination(offset, limit)
