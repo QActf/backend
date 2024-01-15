@@ -32,8 +32,6 @@ AsyncSessionLocalTest = sessionmaker(
     autoflush=False,
 )
 
-Base.metadata.bind = engine_test
-
 
 @pytest_asyncio.fixture
 async def prepare_database() -> AsyncGenerator:
@@ -47,7 +45,7 @@ async def prepare_database() -> AsyncGenerator:
 
 @pytest_asyncio.fixture
 async def db_session(prepare_database: FastAPI) -> AsyncGenerator:
-    """Фикстура для создания асинхронного сеанса базы данных."""
+    """Фикстура для создания асинхронного сеанса тестовой базы данных."""
     connection = await engine_test.connect()
     transaction = await connection.begin()
     session = AsyncSessionLocalTest(bind=connection)
