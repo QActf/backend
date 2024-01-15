@@ -33,7 +33,7 @@ async def register_client(
     prepare_database: FastAPI,
     db_session: AsyncSessionLocalTest
 ) -> AsyncGenerator:
-    """Фикстура для регистрации клиента."""
+    """Фикстура зарегистрированного клиента."""
     hashed_password = bcrypt.hash(USER_PASSWORD)
     register_user = User(
         email=USER_EMAIL,

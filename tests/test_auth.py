@@ -23,7 +23,7 @@ class TestRegister:
             'должен возвращаться статус-код 201.'
         )
 
-    async def test_register_invalid_pass(self, register_client, new_client):
+    async def test_repeat_register_user_bad_code(self, register_client, new_client):
         """Тест регистрации пользователя с некорректными данными."""
         response = new_client.post('/auth/register', json=REGISTRATION_SCHEMA)
         assert response.status_code == status.HTTP_400_BAD_REQUEST, (
