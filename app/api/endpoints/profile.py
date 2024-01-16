@@ -13,7 +13,11 @@ from app.services.utils import create_filename, remove_content, save_content
 router = APIRouter()
 
 
-@router.get('/', response_model=ProfileRead)
+@router.get(
+    '/',
+    response_model=ProfileRead,
+    dependencies=[Depends(current_user)]
+)
 async def get_current_user_profile(
         session: AsyncSession = Depends(get_async_session),
         user: User = Depends(current_user)
@@ -25,30 +29,41 @@ async def get_current_user_profile(
     )
 
 
-@router.get('/photo')
+@router.get(
+    '/photo',
+    dependencies=[Depends(current_user)]
+)
 async def get_user_photo(
-    user: User = Depends(current_user),
-    session: AsyncSession = Depends(get_async_session)
+        user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
 ):
     """Возвращает фото профиля."""
     return await profile_crud.get_user_photo(user.id, session)
 
 
-@router.patch('/', response_model=ProfileRead)
+@router.patch(
+    '/',
+    response_model=ProfileRead,
+    dependencies=[Depends(current_user)]
+)
 async def update_profile(
-    profile: ProfileUpdate,
-    user: User = Depends(current_user),
-    session: AsyncSession = Depends(get_async_session)
+        profile: ProfileUpdate,
+        user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
 ):
     _profile = await profile_crud.get_users_obj(user.id, session)
     return await profile_crud.update(_profile, profile, session)
 
 
-@router.patch('/update_photo', response_model=ProfileRead)
+@router.patch(
+    '/update_photo',
+    response_model=ProfileRead,
+    dependencies=[Depends(current_user)]
+)
 async def update_photo(
-    file: UploadFile = File(...),
-    user: User = Depends(current_user),
-    session: AsyncSession = Depends(get_async_session)
+        file: UploadFile = File(...),
+        user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
 ):
     """Обновить фото профиля."""
     _profile: Profile = await profile_crud.get_users_obj(user.id, session)
