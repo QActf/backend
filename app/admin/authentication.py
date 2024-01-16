@@ -16,9 +16,9 @@ class AdminAuth(AuthenticationBackend):
             strategy: JWTStrategy = get_jwt_strategy()
     ) -> bool:
         form = await request.form()
-        username, password = form["username"], form["password"]
+        email, password = form["username"], form["password"]
         user = await user_crud.get_user_by_credentials(
-            username, password, session
+            email, password, session
         )
         if not user:
             return False
