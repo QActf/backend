@@ -9,7 +9,6 @@ from app.core.db import get_async_session
 from app.models.user import User
 from tests.conftest import AsyncSessionLocalTest
 
-
 USER_EMAIL = 'testuser@example.com'
 USER_PASSWORD = 'password'
 USER_USERNAME = 'testuser'
