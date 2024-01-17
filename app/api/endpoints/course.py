@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
 from app.core.db import get_async_session
+from app.core.user import current_superuser, current_user
 from app.crud import course_crud
 from app.schemas.course import CourseCreate, CourseRead
 from app.services.endpoints_services import delete_obj
@@ -10,7 +11,11 @@ from app.services.endpoints_services import delete_obj
 router = APIRouter()
 
 
-@router.get("/", response_model=list[CourseRead])
+@router.get(
+    "/",
+    response_model=list[CourseRead],
+    dependencies=[Depends(current_user)]
+)
 async def get_all_courses(
     session: AsyncSession = Depends(get_async_session),
 ) -> list[CourseRead]:
@@ -18,7 +23,11 @@ async def get_all_courses(
     return await course_crud.get_multi(session)
 
 
-@router.post("/", response_model=CourseRead)
+@router.post(
+    "/",
+    response_model=CourseRead,
+    dependencies=[Depends(current_superuser)]
+)
 async def create_course(
     course: CourseCreate, session: AsyncSession = Depends(get_async_session)
 ):
@@ -27,7 +36,7 @@ async def create_course(
     return await course_crud.create(obj_in=course, session=session)
 
 
-@router.delete("/{obj_id}")
+@router.delete("/{obj_id}", dependencies=[Depends(current_superuser)])
 async def delete_course(
     obj_id: int,
     session: AsyncSession = Depends(get_async_session),

@@ -24,17 +24,20 @@ class CRUDUser(CRUDBase):
 
     async def get_user_by_credentials(
             self,
-            username,
+            email,
             password,
             session: AsyncSession,
     ):
         db_obj = await session.execute(
-            select(self.model).where(self.model.username == username)
+            select(self.model).where(self.model.email == email)
         )
         res = db_obj.scalars().first()
+        if not res:
+            return None
         is_password_pass = Hasher.verify_password(
             password, hashed_password=res.hashed_password
         )
+
         if not is_password_pass:
             return None
         return res

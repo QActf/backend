@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
 from app.core.db import get_async_session
+from app.core.user import current_superuser, current_user
 from app.crud import task_crud
 from app.schemas.task import TaskCreate, TaskRead
 from app.services.endpoints_services import delete_obj
@@ -12,7 +13,11 @@ from app.services.endpoints_services import delete_obj
 router = APIRouter()
 
 
-@router.get("/", response_model=List[TaskRead])
+@router.get(
+    "/",
+    response_model=List[TaskRead],
+    dependencies=[Depends(current_user)]
+)
 async def get_all_tasks(
     session: AsyncSession = Depends(get_async_session),
 ) -> List[TaskRead]:
@@ -20,7 +25,11 @@ async def get_all_tasks(
     return await task_crud.get_multi(session)
 
 
-@router.post("/", response_model=TaskRead)
+@router.post(
+    "/",
+    response_model=TaskRead,
+    dependencies=[Depends(current_superuser)]
+)
 async def create_task(
     task: TaskCreate, session: AsyncSession = Depends(get_async_session)
 ):
@@ -29,7 +38,7 @@ async def create_task(
     return await task_crud.create(obj_in=task, session=session)
 
 
-@router.delete("/{obj_id}")
+@router.delete("/{obj_id}", dependencies=[Depends(current_superuser)])
 async def delete_task(
     obj_id: int,
     session: AsyncSession = Depends(get_async_session),
