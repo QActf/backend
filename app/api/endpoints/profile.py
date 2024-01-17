@@ -1,14 +1,14 @@
 import re
 
-from fastapi import APIRouter, Depends, UploadFile, File, status, HTTPException
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import User, Profile
-from app.schemas.profile import ProfileRead, ProfileUpdate
 from app.core.db import get_async_session
-from app.crud import profile_crud
 from app.core.user import current_user
-from app.services.utils import create_filename, save_content, remove_content
+from app.crud import profile_crud
+from app.models import Profile, User
+from app.schemas.profile import ProfileRead, ProfileUpdate
+from app.services.utils import create_filename, remove_content, save_content
 
 router = APIRouter()
 

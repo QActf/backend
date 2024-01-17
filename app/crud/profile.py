@@ -1,6 +1,6 @@
 from fastapi.responses import FileResponse
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.core.config import settings
@@ -46,8 +46,8 @@ class CRUDProfile(CRUDBase):
             session: AsyncSession
     ):
         db_obj = await session.execute(
-                select(self.model)
-                .where(self.model.user_id == user_id)
+            select(self.model)
+            .where(self.model.user_id == user_id)
         )
         return db_obj.scalars().first()
 
