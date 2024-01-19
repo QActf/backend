@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import check_name_duplicate
+from app.api.validators import check_name_duplicate, check_obj_exists
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import course_crud
@@ -43,3 +43,17 @@ async def delete_course(
 ):
     """Удалить объект"""
     return await delete_obj(obj_id=obj_id, crud=course_crud, session=session)
+
+
+@router.get(
+    "/{obj_id}",
+    response_model=CourseRead,
+    dependencies=[Depends(current_user)]
+)
+async def get_id_course(
+    obj_id: int,
+    session: AsyncSession = Depends(get_async_session),
+) -> CourseRead:
+    """Возвращает Course по его id."""
+    await check_obj_exists(obj_id=obj_id, crud=course_crud, session=session)
+    return await course_crud.get(obj_id=obj_id, session=session)
