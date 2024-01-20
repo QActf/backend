@@ -48,4 +48,6 @@ class Profile(Base):
     )
 
     def __repr__(self):
-        return self.first_name
+        if self.first_name:
+            return self.first_name
+        return str(self.user_id)

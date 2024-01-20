@@ -59,3 +59,38 @@ async def auth_client(
     access_token = response.json().get('access_token')
     new_client.headers.update({'Authorization': f'Bearer {access_token}'})
     yield new_client
+
+
+@pytest_asyncio.fixture
+async def superuser(
+    prepare_database: FastAPI,
+    db_session: AsyncSessionLocalTest
+):
+    """Фикстура суперюзера."""
+    hashed_password = bcrypt.hash('admin')
+    superuser = User(
+        email='admin@admin.com',
+        hashed_password=hashed_password,
+        role='admin',
+        username='admin',
+        is_superuser=True
+    )
+    db_session.add(superuser)
+    await db_session.commit()
+    await db_session.refresh(superuser)
+    yield superuser
+
+
+@pytest_asyncio.fixture
+async def auth_superuser(
+    new_client,
+    register_client
+) -> AsyncGenerator | TestClient:
+    """Фикстура для суперюзера, вошедшего в систему."""
+    response = new_client.post(
+        '/auth/jwt/login',
+        data={'username': 'admin@admin.com', 'password': 'admin'})
+    assert response.status_code == status.HTTP_200_OK
+    access_token = response.json().get('access_token')
+    new_client.headers.update({'Authorization': f'Bearer {access_token}'})
+    yield new_client
