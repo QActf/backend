@@ -1,5 +1,6 @@
 import re
 
+<<<<<<< HEAD
 from fastapi import (APIRouter, Depends, File, HTTPException, Response,
                      UploadFile, status)
 from fastapi_filter import FilterDepends
@@ -14,10 +15,22 @@ from app.services.filters import ProfileFilter
 from app.services.utils import (Pagination, add_response_headers,
                                 create_filename, get_pagination_params,
                                 paginated, remove_content, save_content)
+=======
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.db import get_async_session
+from app.core.user import current_user
+from app.crud import profile_crud
+from app.models import Profile, User
+from app.schemas.profile import ProfileRead, ProfileUpdate
+from app.services.utils import create_filename, remove_content, save_content
+>>>>>>> feat/test_auth
 
 router = APIRouter()
 
 
+<<<<<<< HEAD
 @router.get('/', response_model=list[ProfileRead],
             response_model_exclude_none=True,
             dependencies=[Depends(current_superuser)])
@@ -38,6 +51,13 @@ async def get_all_profiles(
 
 @router.get('/me', response_model=ProfileRead,
             response_model_exclude_none=True)
+=======
+@router.get(
+    '/',
+    response_model=ProfileRead,
+    dependencies=[Depends(current_user)]
+)
+>>>>>>> feat/test_auth
 async def get_current_user_profile(
         session: AsyncSession = Depends(get_async_session),
         user: User = Depends(current_user)
@@ -49,30 +69,53 @@ async def get_current_user_profile(
     )
 
 
+<<<<<<< HEAD
 @router.get('/me/photo')
+=======
+@router.get(
+    '/photo',
+    dependencies=[Depends(current_user)]
+)
+>>>>>>> feat/test_auth
 async def get_user_photo(
-    user: User = Depends(current_user),
-    session: AsyncSession = Depends(get_async_session)
+        user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
 ):
     """Возвращает фото профиля."""
     return await profile_crud.get_user_photo(user.id, session)
 
 
+<<<<<<< HEAD
 @router.patch('/me', response_model=ProfileRead)
+=======
+@router.patch(
+    '/',
+    response_model=ProfileRead,
+    dependencies=[Depends(current_user)]
+)
+>>>>>>> feat/test_auth
 async def update_profile(
-    profile: ProfileUpdate,
-    user: User = Depends(current_user),
-    session: AsyncSession = Depends(get_async_session)
+        profile: ProfileUpdate,
+        user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
 ):
     _profile = await profile_crud.get_users_obj(user.id, session)
     return await profile_crud.update(_profile, profile, session)
 
 
+<<<<<<< HEAD
 @router.patch('/me/update_photo', response_model=ProfileRead)
+=======
+@router.patch(
+    '/update_photo',
+    response_model=ProfileRead,
+    dependencies=[Depends(current_user)]
+)
+>>>>>>> feat/test_auth
 async def update_photo(
-    file: UploadFile = File(...),
-    user: User = Depends(current_user),
-    session: AsyncSession = Depends(get_async_session)
+        file: UploadFile = File(...),
+        user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
 ):
     """Обновить фото профиля."""
     _profile: Profile = await profile_crud.get_users_obj(user.id, session)
