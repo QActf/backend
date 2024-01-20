@@ -5,7 +5,7 @@ from app.api.validators import check_name_duplicate, check_obj_exists
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import course_crud
-from app.schemas.course import CourseCreate, CourseRead
+from app.schemas.course import CourseCreate, CourseRead, CourseUpdate
 from app.services.endpoints_services import delete_obj
 
 router = APIRouter()
@@ -57,3 +57,27 @@ async def get_id_course(
     """Возвращает Course по его id."""
     await check_obj_exists(obj_id=obj_id, crud=course_crud, session=session)
     return await course_crud.get(obj_id=obj_id, session=session)
+
+
+@router.patch(
+    "/{obj_id}",
+    response_model=CourseRead,
+    dependencies=[Depends(current_superuser)]
+)
+async def update_course(
+    obj_id: int,
+    obj_in: CourseUpdate,
+    session: AsyncSession = Depends(get_async_session),
+) -> CourseRead:
+    """Обновляет Course по его id."""
+    course = await course_crud.get(obj_id=obj_id, session=session)
+    await check_obj_exists(
+        obj_id=obj_id, crud=course_crud, session=session
+    )
+    if obj_in.name is not None:
+        await check_name_duplicate(
+            name=obj_in.name, crud=course_crud, session=session
+        )
+    return await course_crud.update(
+        db_obj=course, obj_in=obj_in, session=session
+    )
