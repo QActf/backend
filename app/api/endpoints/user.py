@@ -1,10 +1,10 @@
 from fastapi import APIRouter, HTTPException, status
 
+from app.api.endpoints import register
 from app.core.user import auth_backend, fastapi_users
 from app.schemas.user import UserCreate, UserRead, UserUpdate
 
 router = APIRouter()
-
 
 router.include_router(
     fastapi_users.get_auth_router(auth_backend),
@@ -12,7 +12,7 @@ router.include_router(
     tags=["auth"],
 )
 router.include_router(
-    fastapi_users.get_register_router(UserRead, UserCreate),
+    register.get_register_router(UserRead, UserCreate),
     prefix="/auth",
     tags=["auth"],
 )

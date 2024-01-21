@@ -46,8 +46,8 @@ class CRUDProfile(CRUDBase):
             session: AsyncSession
     ):
         db_obj = await session.execute(
-                select(self.model)
-                .where(self.model.user_id == user_id)
+            select(self.model)
+            .where(self.model.user_id == user_id)
         )
         return db_obj.scalars().first()
 
