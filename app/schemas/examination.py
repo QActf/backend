@@ -15,3 +15,8 @@ class ExaminationRead(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ExaminationUpdate(BaseModel):
+    name: str
+    description: str
