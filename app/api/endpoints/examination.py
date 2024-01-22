@@ -64,7 +64,7 @@ async def update_examination(
         session: AsyncSession = Depends(get_async_session)
 ):
     """Обновляет Examination"""
-    await check_obj_exists(examination.id, examination_crud, session)
+    await check_obj_exists(examination_id, examination_crud, session)
     _examination = await examination_crud.get(examination_id, session=session)
     return await examination_crud.update(_examination, examination, session)
 
