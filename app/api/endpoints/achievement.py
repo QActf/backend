@@ -35,7 +35,7 @@ async def get_achievement(
 ) -> AchievementRead:
     """Возвращает achievement."""
     await check_obj_exists(achievement_id, achievement_crud, session)
-    return await achievement_crud.obj(obj_id=achievement_id, session=session)
+    return await achievement_crud.get(obj_id=achievement_id, session=session)
 
 
 @router.post(
@@ -63,7 +63,7 @@ async def update_achievement(
         session: AsyncSession = Depends(get_async_session)
 ):
     await check_obj_exists(achievement_id, achievement_crud, session)
-    _achievement = await achievement_crud.obj(
+    _achievement = await achievement_crud.get(
         obj_id=achievement_id, session=session
     )
     return await achievement_crud.update(_achievement, achievement, session)
