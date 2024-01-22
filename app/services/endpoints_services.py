@@ -17,3 +17,18 @@ async def delete_obj(
             detail=f'Объект {crud.model.__tablename__}'
                    f' с id {obj_id} не найден.'
         )
+
+
+async def get_obj(
+    obj_id: int,
+    crud,
+    session: AsyncSession,
+):
+    obj = await crud.get(obj_id, session)
+    if not obj:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'Объект {crud.model.__tablename__}'
+                   f' с id {obj_id} не найден.'
+        )
+    return obj

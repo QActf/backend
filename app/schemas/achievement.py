@@ -15,3 +15,8 @@ class AchievementRead(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class AchievementUpdate(BaseModel):
+    name: str
+    description: str
