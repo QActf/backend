@@ -58,7 +58,7 @@ async def create_achievement(
     response_model=AchievementRead,
     dependencies=[Depends(current_user)]
 )
-async def update_profile(
+async def update_achievement(
         achievement_id: int,
         achievement: AchievementUpdate,
         session: AsyncSession = Depends(get_async_session)
