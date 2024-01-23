@@ -1,9 +1,10 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy.orm import Mapped, relationship
 from sqlalchemy import Column, ForeignKey, Text
+from sqlalchemy.orm import Mapped, relationship
 
 from app.core.db import Base
+
 from .abstract import SomeTask, SomeTaskUserAssociation
 
 if TYPE_CHECKING:

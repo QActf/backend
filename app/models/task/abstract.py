@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy.ext.declarative import AbstractConcreteBase
 from sqlalchemy import Integer
+from sqlalchemy.ext.declarative import AbstractConcreteBase
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base

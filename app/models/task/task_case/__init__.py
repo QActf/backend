@@ -4,9 +4,5 @@
 """
 # flake8: noqa: F401
 
-from .case import (
-    TaskCase,
-    Field,
-    Instance,
-)
+from .case import Field, Instance, TaskCase
 from .equvalence import *

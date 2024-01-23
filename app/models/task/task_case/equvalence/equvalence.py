@@ -1,13 +1,13 @@
 from enum import Enum
 from typing import TYPE_CHECKING
 
+from sqlalchemy import Column
+from sqlalchemy import Enum as SqlEnum
+from sqlalchemy import ForeignKey, Integer
 from sqlalchemy.orm import Mapped
-from sqlalchemy import (
-    Column, Enum as SqlEnum,
-    ForeignKey, Integer
-)
 
 from app.core.db import Base
+
 from .eq_number import NumbConcreteEquvalence, NumbRangeEquvalence
 from .eq_string import StringConcreteEquvalence, StringRangeEquvalence
 

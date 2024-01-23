@@ -7,8 +7,10 @@
 from enum import Enum
 from typing import TYPE_CHECKING
 
+from sqlalchemy import Column
+from sqlalchemy import Enum as SqlEnum
+from sqlalchemy import ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, relationship
-from sqlalchemy import Column, String, Text, ForeignKey, Enum as SqlEnum
 
 from .abstract import SomeTask, SomeTaskUserAssociation
 

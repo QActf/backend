@@ -1,14 +1,15 @@
 from typing import TYPE_CHECKING
 
+from sqlalchemy import Boolean, Column, ForeignKey, String
 from sqlalchemy.orm import Mapped, relationship
-from sqlalchemy import Column, String, ForeignKey, Boolean
 
 from app.core.db import Base
+
 from .equvalence import EquvalenceField
 
 if TYPE_CHECKING:
-    from .field import Field
     from .case import CaseUserAssociation
+    from .field import Field
 
 
 class InstanceFieldAssociation(Base):

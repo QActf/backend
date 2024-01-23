@@ -4,20 +4,23 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
 from enum import Enum
+from typing import TYPE_CHECKING
 
-from sqlalchemy import (Column, String, Text, Table, ForeignKey, Integer,
-                        UniqueConstraint, Float, Enum as SqlEnum)
+from sqlalchemy import Column
+from sqlalchemy import Enum as SqlEnum
+from sqlalchemy import (Float, ForeignKey, Integer, String, Table, Text,
+                        UniqueConstraint)
 from sqlalchemy.orm import Mapped, relationship
 
-from app.core.db import Base
 from app.core.config import settings
+from app.core.db import Base
+
 from .abstract import SomeTask
-from .task_case import TaskCase # noqa
-from .task_api import TaskAPI   # noqa
-from .task_db import TaskDB     # noqa
-from .task_test import TaskTest # noqa
+from .task_api import TaskAPI  # noqa
+from .task_case import TaskCase  # noqa
+from .task_db import TaskDB  # noqa
+from .task_test import TaskTest  # noqa
 
 if TYPE_CHECKING:
     from ..user import Course

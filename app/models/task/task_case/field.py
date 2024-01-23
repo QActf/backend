@@ -1,11 +1,14 @@
 from enum import Enum
 from typing import TYPE_CHECKING
 
+from sqlalchemy import Column
+from sqlalchemy import Enum as SqlEnum
+from sqlalchemy import String
 from sqlalchemy.orm import Mapped, relationship
-from sqlalchemy import (Column, String, Enum as SqlEnum)
 
-from app.core.db import Base
 from app.core.config import settings
+from app.core.db import Base
+
 from .equvalence import EquvalenceField
 
 if TYPE_CHECKING:

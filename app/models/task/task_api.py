@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
+from sqlalchemy import Column, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, relationship
-from sqlalchemy import Column, String, Text, ForeignKey
 
 from .abstract import SomeTask, SomeTaskUserAssociation
 
