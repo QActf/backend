@@ -45,6 +45,6 @@ class TaskDB(SomeTask):
     data_base: str = Column(SqlEnum(TestDataBase), nullable=False)
     request: str = Column(Text, nullable=False)
     response: str = Column(Text, nullable=False)
-    users: Mapped[list['TaskDBUserAssocation']] = relationship(
+    users: Mapped[list['TaskDBUserAssociation']] = relationship(
         back_populates='task_db',
     )

@@ -10,7 +10,6 @@ if TYPE_CHECKING:
     from app.models.user import User
 
 
-
 class SomeTaskUserAssociation(AbstractConcreteBase, Base):
     """АК для ассоциаций задач-пользователей."""
 

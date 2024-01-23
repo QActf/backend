@@ -29,6 +29,6 @@ class TaskAPI(SomeTask):
     url: str = Column(String, nullable=False)
     body: str = Column(Text, nullable=False)
     response: str = Column(Text, nullable=False)
-    users: Mapped[list['TaskAPIUserAssocation']] = relationship(
+    users: Mapped[list['TaskAPIUserAssociation']] = relationship(
         back_populates='task_api',
     )

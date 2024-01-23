@@ -37,7 +37,7 @@ class Question(Base):
     __tablename__ = 'task_test_question'
 
     test: Mapped['TaskTest'] = Column(ForeignKey('task_test.id'))
-    users: Mapped[list['TaskQuestionUserAssocation']] = relationship(
+    users: Mapped[list['TaskQuestionUserAssociation']] = relationship(
         back_populates='task_question',
     )
     quation: str = Column(Text, nullable=False)

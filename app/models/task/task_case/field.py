@@ -30,7 +30,7 @@ class Field(Base):
         back_populates='fields',
     )
     type_field: TypeField = Column(SqlEnum(TypeField), nullable=False)
-    name: str = Column(String(settings.max_length_string), nullable=False) 
+    name: str = Column(String(settings.max_length_string), nullable=False)
     equvalences: Mapped[list['EquvalenceField']] = relationship(
         back_populates='field',
     )

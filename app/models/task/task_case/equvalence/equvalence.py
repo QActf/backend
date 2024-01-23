@@ -36,6 +36,7 @@ EQUVALENCE_CLASSES = {
     'string_concrete': StringConcreteEquvalence,
 }
 
+
 class EquvalenceField(Base):
     """Модель связи конкретного эквивалетного случая поля."""
 
