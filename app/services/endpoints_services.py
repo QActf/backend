@@ -1,6 +1,4 @@
-from http import HTTPStatus
-
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.exc import UnmappedInstanceError
 
@@ -15,7 +13,7 @@ async def delete_obj(
         return await crud.remove(db_obj, session)
     except UnmappedInstanceError:
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=f'Объект {crud.model.__tablename__}'
                    f' с id {obj_id} не найден.'
         )
