@@ -1,4 +1,3 @@
-import contextlib
 import logging
 from typing import Optional, Union
 
@@ -12,9 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.db import get_async_session
-from app.crud.profile import profile_crud
 from app.models.user import User
-from app.schemas.profile import ProfileCreate
 from app.schemas.user import UserCreate
 
 
