@@ -3,6 +3,7 @@ from typing import AsyncGenerator
 from fastapi import status, Response
 from fastapi.testclient import TestClient
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from tests.fixtures.user import USER_EMAIL, USER_PASSWORD, USER_USERNAME
 from tests.conftest import AsyncSessionLocalTest
@@ -112,9 +113,31 @@ class TestSuperuser:
         assert result[0]['user_id'] == 3
         assert result[1]['user_id'] == 4
 
-    async def test_6(self):
+    async def test_6(
+            self,
+            moc_users,
+            new_client,
+            db_session
+    ):
         """Тест получения своего профиля текущим юзером."""
-        ...
+        user = await db_session.execute(
+            select(User).filter(User.id == 1)
+            .options(selectinload(User.profile))
+        )
+        user: User = user.scalars().first()
+        response: Response = new_client.post(
+           '/auth/jwt/login',
+           data={'username': user.email, 'password': 'qwerty'},
+        )
+        assert response.status_code == 200
+        access_token = response.json().get('access_token')
+        new_client.headers.update({'Authorization': f'Bearer {access_token}'})
+        response: Response = new_client.get(
+            '/profiles/me/'
+        )
+        result = response.json()
+        assert len(result) == 6
+        assert result['first_name'] == user.profile.first_name
 
     async def test_7(self):
         """Тест запрета получения чужого профиля текущим юзером."""
