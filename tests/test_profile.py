@@ -166,9 +166,28 @@ class TestSuperuser:
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
-    async def test_8(self):
+    async def test_get_photo_from_self_profile(
+            self,
+            moc_users,
+            db_session,
+            new_client,
+    ):
         """Тест получения фото своего профиля юзером."""
-        ...
+        user = await db_session.execute(
+            select(User).filter(User.id == 1)
+            .options(selectinload(User.profile))
+        )
+        user: User = user.scalars().first()
+        response: Response = new_client.post(
+           '/auth/jwt/login',
+           data={'username': user.email, 'password': 'qwerty'},
+        )
+        access_token = response.json().get('access_token')
+        new_client.headers.update({'Authorization': f'Bearer {access_token}'})
+        response = new_client.get(
+            '/profiles/me/photo/'
+        )
+        assert response.status_code == status.HTTP_200_OK
 
     async def test_9(self):
         """Тест запрета получения фото чужого профиля."""
