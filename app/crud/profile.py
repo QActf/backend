@@ -35,6 +35,15 @@ class CRUDProfile(CRUDBase):
         )
         return db_objs.scalars().all()
 
+    async def get(self, obj_id: int, session: AsyncSession):
+        profile = await session.execute(
+            select(self.model)
+            .options(
+                selectinload(Profile.achievements)
+            )
+        )
+        return profile.scalars().first()
+
     async def get_user_photo(
             self,
             user_id: int,

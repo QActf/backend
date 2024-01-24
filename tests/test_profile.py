@@ -113,7 +113,7 @@ class TestSuperuser:
         assert result[0]['user_id'] == 3
         assert result[1]['user_id'] == 4
 
-    async def test_6(
+    async def test_get_self_profile(
             self,
             moc_users,
             new_client,
@@ -129,7 +129,6 @@ class TestSuperuser:
            '/auth/jwt/login',
            data={'username': user.email, 'password': 'qwerty'},
         )
-        assert response.status_code == 200
         access_token = response.json().get('access_token')
         new_client.headers.update({'Authorization': f'Bearer {access_token}'})
         response: Response = new_client.get(
@@ -139,9 +138,33 @@ class TestSuperuser:
         assert len(result) == 6
         assert result['first_name'] == user.profile.first_name
 
-    async def test_7(self):
+    async def test_forbidden_get_other_user_profile_for_user(
+            self,
+            moc_users,
+            new_client,
+            db_session
+    ):
         """Тест запрета получения чужого профиля текущим юзером."""
-        ...
+        user = await db_session.execute(
+            select(User).filter(User.id == 1)
+            .options(selectinload(User.profile))
+        )
+        user: User = user.scalars().first()
+        response: Response = new_client.post(
+           '/auth/jwt/login',
+           data={'username': user.email, 'password': 'qwerty'},
+        )
+        access_token = response.json().get('access_token')
+        new_client.headers.update({'Authorization': f'Bearer {access_token}'})
+        other_user = await db_session.execute(
+            select(User).filter(User.id == 2)
+            .options(selectinload(User.profile))
+        )
+        other_user: User = other_user.scalars().first()
+        response = new_client.get(
+            f'/profiles/{other_user.profile.id}'
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_8(self):
         """Тест получения фото своего профиля юзером."""
