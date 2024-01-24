@@ -7,9 +7,33 @@ from app.core.config import settings
 from app.crud.base import CRUDBase
 from app.models import Profile, User
 from app.schemas.profile import ProfileCreate
+from app.services.filters import ProfileFilter
 
 
 class CRUDProfile(CRUDBase):
+
+    async def get_profile_filter(
+            self,
+            profile_filter: ProfileFilter,
+            sesion: AsyncSession
+    ):
+        query_filter = profile_filter.filter(select(self.model))
+        db_objs = await sesion.execute(
+            query_filter
+            .options(
+                selectinload(self.model.achievements)
+            )
+        )
+        return db_objs.scalars().all()
+
+    async def get_multi(self, session: AsyncSession):
+        db_objs = await session.execute(
+            select(self.model)
+            .options(
+                selectinload(Profile.achievements)
+            )
+        )
+        return db_objs.scalars().all()
 
     async def get_user_photo(
             self,
@@ -46,8 +70,11 @@ class CRUDProfile(CRUDBase):
             session: AsyncSession
     ):
         db_obj = await session.execute(
-            select(self.model)
-            .where(self.model.user_id == user_id)
+                select(self.model)
+                .where(self.model.user_id == user_id)
+                .options(
+                    selectinload(self.model.achievements)
+                )
         )
         return db_obj.scalars().first()
 
