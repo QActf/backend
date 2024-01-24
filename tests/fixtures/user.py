@@ -84,7 +84,7 @@ async def superuser(
 @pytest_asyncio.fixture
 async def auth_superuser(
     new_client,
-    register_client
+    superuser
 ) -> AsyncGenerator | TestClient:
     """Фикстура для суперюзера, вошедшего в систему."""
     response = new_client.post(
