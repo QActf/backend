@@ -5,12 +5,11 @@ from fastapi.testclient import TestClient
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from tests.fixtures.user import USER_EMAIL, USER_PASSWORD, USER_USERNAME
-from tests.conftest import AsyncSessionLocalTest
-
 from app.crud.profile import profile_crud
 from app.crud.user import user_crud
 from app.models import Profile, User
+
+from tests.fixtures.user import USER_EMAIL, USER_PASSWORD, USER_USERNAME
 
 REGISTRATION_SCHEMA = {
     'email': USER_EMAIL,
@@ -18,6 +17,18 @@ REGISTRATION_SCHEMA = {
     'role': 'user',
     'username': USER_USERNAME,
 }
+
+
+async def _get_user(
+        user_id: int,
+        db_session,
+):
+    user = await db_session.execute(
+        select(User).filter(User.id == user_id)
+        .options(selectinload(User.profile))
+    )
+    user: User = user.scalars().first()
+    return user
 
 
 class TestCreateProfile:
@@ -73,12 +84,6 @@ class TestSuperuser:
             auth_superuser
     ):
         """Тест фильтрации профилей."""
-        # stmt = select(User).filter(User.username.ilike('%user%'))
-        # users = await db_session.execute(stmt)
-        # users = users.scalars().all()
-        # print(users)
-        # profiles = await profile_crud.get_multi(db_session)
-        # print(profiles)
         response = auth_superuser.get(
             '/profiles/?age__gte=22&age__lte=23'
         )
@@ -120,11 +125,7 @@ class TestSuperuser:
             db_session
     ):
         """Тест получения своего профиля текущим юзером."""
-        user = await db_session.execute(
-            select(User).filter(User.id == 1)
-            .options(selectinload(User.profile))
-        )
-        user: User = user.scalars().first()
+        user = await _get_user(1, db_session)
         response: Response = new_client.post(
            '/auth/jwt/login',
            data={'username': user.email, 'password': 'qwerty'},
@@ -145,22 +146,14 @@ class TestSuperuser:
             db_session
     ):
         """Тест запрета получения чужого профиля текущим юзером."""
-        user = await db_session.execute(
-            select(User).filter(User.id == 1)
-            .options(selectinload(User.profile))
-        )
-        user: User = user.scalars().first()
+        user: User = await _get_user(1, db_session)
+        other_user: User = await _get_user(2, db_session)
         response: Response = new_client.post(
            '/auth/jwt/login',
            data={'username': user.email, 'password': 'qwerty'},
         )
         access_token = response.json().get('access_token')
         new_client.headers.update({'Authorization': f'Bearer {access_token}'})
-        other_user = await db_session.execute(
-            select(User).filter(User.id == 2)
-            .options(selectinload(User.profile))
-        )
-        other_user: User = other_user.scalars().first()
         response = new_client.get(
             f'/profiles/{other_user.profile.id}'
         )
