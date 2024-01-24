@@ -2,8 +2,10 @@ from typing import AsyncGenerator
 
 from fastapi import status, Response
 from fastapi.testclient import TestClient
+from sqlalchemy import select
 
 from tests.fixtures.user import USER_EMAIL, USER_PASSWORD, USER_USERNAME
+from tests.conftest import AsyncSessionLocalTest
 
 from app.crud.profile import profile_crud
 from app.crud.user import user_crud
@@ -40,8 +42,6 @@ class TestSuperuser:
     async def test_get_all_profiles_superuser(
             self,
             moc_users,
-            # user_1,
-            # user_2,
             db_session: AsyncGenerator,
             auth_superuser: AsyncGenerator | TestClient
     ):
@@ -50,15 +50,12 @@ class TestSuperuser:
         response: Response = auth_superuser.get(
             '/profiles/'
         )
-        print(response)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == len(profiles)
 
     async def test_forbidden_get_all_profiles_for_user(
             self,
             moc_users,
-            # user_1,
-            # user_2,
             db_session: AsyncGenerator,
             auth_client: AsyncGenerator | TestClient,
     ):
@@ -66,20 +63,33 @@ class TestSuperuser:
         response = auth_client.get(
             '/profiles/'
         )
-        print(response)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
-    async def test_4(
+    async def test_filter_profiles(
             self,
             moc_users,
             db_session,
             auth_superuser
     ):
         """Тест фильтрации профилей."""
-        users = await user_crud.get_multi(db_session)
-        print(users)
-        profiles = await profile_crud.get_multi(db_session)
-        print(profiles)
+        # stmt = select(User).filter(User.username.ilike('%user%'))
+        # users = await db_session.execute(stmt)
+        # users = users.scalars().all()
+        # print(users)
+        # profiles = await profile_crud.get_multi(db_session)
+        # print(profiles)
+        response = auth_superuser.get(
+            '/profiles/?age__gte=22&age__lte=23'
+        )
+        assert len(response.json()) == 2
+        response = auth_superuser.get(
+            '/profiles/?first_name__ilike=3'
+        )
+        assert len(response.json()) == 1
+        response = auth_superuser.get(
+            '/profiles/?last_name__ilike=4'
+        )
+        assert len(response.json()) == 1
 
     async def test_5(self):
         """Тест пагинации профилей"""
