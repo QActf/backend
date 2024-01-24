@@ -7,7 +7,7 @@ from app.core.config import settings
 from app.crud.base import CRUDBase
 from app.models import Profile, User
 from app.schemas.profile import ProfileCreate
-from app.services.filters import ProfileFilter
+from app.api.filters import ProfileFilter
 
 
 class CRUDProfile(CRUDBase):
