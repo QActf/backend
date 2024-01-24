@@ -166,11 +166,7 @@ class TestSuperuser:
             new_client,
     ):
         """Тест получения фото своего профиля юзером."""
-        user = await db_session.execute(
-            select(User).filter(User.id == 1)
-            .options(selectinload(User.profile))
-        )
-        user: User = user.scalars().first()
+        user: User = await _get_user(1, db_session)
         response: Response = new_client.post(
            '/auth/jwt/login',
            data={'username': user.email, 'password': 'qwerty'},
