@@ -7,6 +7,7 @@ from tests.fixtures.user import USER_EMAIL, USER_PASSWORD, USER_USERNAME
 
 from app.crud.profile import profile_crud
 from app.crud.user import user_crud
+from app.models import Profile, User
 
 REGISTRATION_SCHEMA = {
     'email': USER_EMAIL,
@@ -30,7 +31,6 @@ class TestCreateProfile:
         )
         assert response.status_code == status.HTTP_201_CREATED
         profiles = await profile_crud.get_multi(db_session)
-        print(profiles)
         assert len(profiles) == 1
         users = await user_crud.get_multi(db_session)
         assert len(users) == 1
@@ -39,37 +39,47 @@ class TestCreateProfile:
 class TestSuperuser:
     async def test_get_all_profiles_superuser(
             self,
+            moc_users,
+            # user_1,
+            # user_2,
             db_session: AsyncGenerator,
-            superuser: AsyncGenerator,
-            # new_client: AsyncGenerator | TestClient,
             auth_superuser: AsyncGenerator | TestClient
     ):
         """Тест получения всех профилей суперюзером."""
-        # response = new_client.post(
-        #    '/auth/jwt/login',
-        #    data={'username': 'admin@admin.com', 'password': 'admin'},
-        # )
-        # response: Response = new_client.post(
-        #     '/auth/register', json=REGISTRATION_SCHEMA
-        # )
-        # print(response)
-        users = await user_crud.get_multi(db_session)
-        print(users)
         profiles = await profile_crud.get_multi(db_session)
-        print(profiles)
         response: Response = auth_superuser.get(
             '/profiles/'
         )
         print(response)
         assert response.status_code == status.HTTP_200_OK
+        assert len(response.json()) == len(profiles)
 
-    async def test_3(self):
+    async def test_forbidden_get_all_profiles_for_user(
+            self,
+            moc_users,
+            # user_1,
+            # user_2,
+            db_session: AsyncGenerator,
+            auth_client: AsyncGenerator | TestClient,
+    ):
         """Тест запрета получения профилей простым пользователем."""
-        ...
+        response = auth_client.get(
+            '/profiles/'
+        )
+        print(response)
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
-    async def test_4(self):
+    async def test_4(
+            self,
+            moc_users,
+            db_session,
+            auth_superuser
+    ):
         """Тест фильтрации профилей."""
-        ...
+        users = await user_crud.get_multi(db_session)
+        print(users)
+        profiles = await profile_crud.get_multi(db_session)
+        print(profiles)
 
     async def test_5(self):
         """Тест пагинации профилей"""
@@ -111,6 +121,17 @@ class TestSuperuser:
         """Тест запрета создания профиля без создания юзера."""
         ...
 
-    async def test_15(self):
-        """Тест запрета удаления профиля."""
-        ...
+    # async def test_forbidden_delete_profile(
+    #         self,
+    #         user_1,
+    #         db_session,
+    #         auth_superuser: AsyncGenerator | TestClient
+    # ):
+    #     """Тест запрета удаления профиля."""
+    #     users = await user_crud.get_multi(db_session)
+    #     user: User = users[0]
+    #     profile: Profile = await profile_crud.get_users_obj(user.id, db_session)
+    #     response = auth_superuser.delete(
+    #         f'/profiles/{profile.id}/'
+    #     )
+    #     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

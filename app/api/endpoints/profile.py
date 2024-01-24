@@ -97,7 +97,7 @@ def create_profile():
     )
 
 
-@router.delete('/{obj_id}', deprecated=True)
+@router.delete('/{obj_id}', deprecated=True, status_code=405)
 def delete_profile(obg_id: str):
     """Удалить объект"""
     raise HTTPException(

@@ -63,7 +63,6 @@ async def auth_client(
 
 @pytest_asyncio.fixture
 async def superuser(
-    prepare_database: FastAPI,
     db_session: AsyncSessionLocalTest
 ):
     """Фикстура суперюзера."""
@@ -81,10 +80,30 @@ async def superuser(
     yield superuser
 
 
+# @pytest_asyncio.fixture
+# async def user_1(
+#     prepare_database: FastAPI,
+#     db_session: AsyncSessionLocalTest
+# ) -> AsyncGenerator:
+#     """Фикстура зарегистрированного клиента."""
+#     hashed_password = bcrypt.hash('qwerty')
+#     user_1 = User(
+#         email='user_1@example.com',
+#         hashed_password=hashed_password,
+#         role='user',
+#         username='user_1'
+#     )
+#     db_session.add(user_1)
+#     await db_session.commit()
+#     await db_session.refresh(user_1)
+#     yield user_1
+
+
 @pytest_asyncio.fixture
 async def auth_superuser(
     new_client,
-    superuser
+    superuser,
+    # user_1,
 ) -> AsyncGenerator | TestClient:
     """Фикстура для суперюзера, вошедшего в систему."""
     response = new_client.post(
