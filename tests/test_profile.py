@@ -91,9 +91,26 @@ class TestSuperuser:
         )
         assert len(response.json()) == 1
 
-    async def test_5(self):
+    async def test_pagination(
+            self,
+            moc_users,
+            auth_superuser
+    ):
         """Тест пагинации профилей"""
-        ...
+        response = auth_superuser.get(
+            '/profiles/?limit=2'
+        )
+        result = response.json()
+        assert len(result) == 2
+        assert result[0]['user_id'] == 1
+        assert result[1]['user_id'] == 2
+        response = auth_superuser.get(
+            '/profiles/?offset=2&limit=2'
+        )
+        result = response.json()
+        assert len(result) == 2
+        assert result[0]['user_id'] == 3
+        assert result[1]['user_id'] == 4
 
     async def test_6(self):
         """Тест получения своего профиля текущим юзером."""

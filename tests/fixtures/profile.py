@@ -1,7 +1,6 @@
 from typing import AsyncGenerator
 
 import pytest_asyncio
-from fastapi import FastAPI
 from passlib.hash import bcrypt
 from sqlalchemy import select
 
