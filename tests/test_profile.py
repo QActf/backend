@@ -1,9 +1,10 @@
 from typing import AsyncGenerator
 
-from fastapi import status, Response
+from fastapi import status, Response, HTTPException
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
+import pytest
 
 from app.crud.profile import profile_crud
 from app.crud.user import user_crud
@@ -205,9 +206,20 @@ class TestSuperuser:
         """Тест апдейта фото своего профиля."""
         ...
 
-    async def test_14(self):
+    async def test_create_profile_deprecated(
+            self,
+            new_client: TestClient
+    ):
         """Тест запрета создания профиля без создания юзера."""
-        ...
+        response = new_client.post(
+            '/profiles/',
+            json={
+                'first_name': 'test_first_name',
+                'last_name': 'test_last_name',
+                'age': 47
+            }
+        )
+        assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
     async def test_forbidden_delete_profile(
             self,
