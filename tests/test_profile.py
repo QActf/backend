@@ -178,41 +178,46 @@ class TestSuperuser:
         )
         assert response.status_code == status.HTTP_200_OK
 
-    async def test_9(self):
-        """Тест запрета получения фото чужого профиля."""
-        ...
-
-    async def test_10(self):
+    async def test_update_self_profile(
+            self,
+            moc_users,
+            db_session,
+            new_client: TestClient
+    ):
         """Тест апдейта своего профиля."""
-        ...
-
-    async def test_11(self):
-        """Тест запрета апдейта чужого профиля."""
-        ...
+        user: User = await _get_user(1, db_session)
+        response: Response = new_client.post(
+           '/auth/jwt/login',
+           data={'username': user.email, 'password': 'qwerty'},
+        )
+        access_token = response.json().get('access_token')
+        new_client.headers.update({'Authorization': f'Bearer {access_token}'})
+        data = {'first_name': 'new_first_name'}
+        response = new_client.patch(
+            '/profiles/me',
+            json=data
+        )
+        assert response.status_code == status.HTTP_200_OK
+        user: User = await _get_user(1, db_session)
+        assert user.profile.first_name == 'new_first_name'
 
     async def test_12(self):
         """Тест апдейта фото своего профиля."""
-        ...
-
-    async def test_13(self):
-        """Тест запрета апдейта фото чужого профиля."""
         ...
 
     async def test_14(self):
         """Тест запрета создания профиля без создания юзера."""
         ...
 
-    # async def test_forbidden_delete_profile(
-    #         self,
-    #         user_1,
-    #         db_session,
-    #         auth_superuser: AsyncGenerator | TestClient
-    # ):
-    #     """Тест запрета удаления профиля."""
-    #     users = await user_crud.get_multi(db_session)
-    #     user: User = users[0]
-    #     profile: Profile = await profile_crud.get_users_obj(user.id, db_session)
-    #     response = auth_superuser.delete(
-    #         f'/profiles/{profile.id}/'
-    #     )
-    #     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+    async def test_forbidden_delete_profile(
+            self,
+            moc_users,
+            db_session,
+            auth_superuser: AsyncGenerator | TestClient
+    ):
+        """Тест запрета удаления профиля."""
+        user = await _get_user(1, db_session)
+        response = auth_superuser.delete(
+            f'/profiles/{user.profile.id}'
+        )
+        assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
