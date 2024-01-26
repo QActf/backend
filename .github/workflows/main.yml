@@ -1,4 +1,4 @@
-name: Django-app workflow
+name: fastapi-app workflow
 
 on:
   push:

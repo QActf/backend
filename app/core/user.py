@@ -1,4 +1,3 @@
-import contextlib
 import logging
 from typing import Optional, Union
 
@@ -12,10 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.db import get_async_session
-from app.crud.profile import profile_crud
 from app.models.user import User
-# from .init_db import get_async_session_context
-from app.schemas.profile import ProfileCreate
 from app.schemas.user import UserCreate
 
 
@@ -58,19 +54,6 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
             self, user: User, request: Optional[Request] = None
     ):
         logging.info(f"Пользователь {user.email} зарегистрирован.")
-        get_async_session_context = contextlib.asynccontextmanager(
-            get_async_session
-        )
-        async with get_async_session_context() as session:
-            await profile_crud.create(
-                ProfileCreate(
-                    user_id=user.id,
-                    first_name='',
-                    last_name='',
-                    age=0
-                ),
-                session=session,
-            )
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):

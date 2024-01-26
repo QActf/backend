@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     min_length_string: int = 1
     media_url: str = 'media/'
     base_dir: Path = Path(__file__).parent.parent.parent
+    offset: int = 0
+    limit: int = 10
 
     class Config:
         env_file = "infra/.env"
