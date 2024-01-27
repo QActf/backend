@@ -47,7 +47,9 @@ class CRUDProfile(CRUDBase):
     ):
         db_obj = await session.execute(
             select(self.model)
-            .where(self.model.user_id == user_id)
+            .where(self.model.user_id == user_id).options(
+                selectinload(Profile.achievements)
+            )
         )
         return db_obj.scalars().first()
 
