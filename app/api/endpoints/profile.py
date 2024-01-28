@@ -49,10 +49,16 @@ async def get_current_user_profile(
     )
 
 
-@router.get(
-    '/me//photo',
-    dependencies=[Depends(current_user)]
-)
+@router.get('/{profile_id}', response_model=ProfileRead,
+            dependencies=[Depends(current_superuser)])
+async def get_profile(
+    profile_id: int,
+    session: AsyncSession = Depends(get_async_session)
+):
+    return await profile_crud.get(profile_id, session)
+
+
+@router.get('/me/photo', dependencies=[Depends(current_user)])
 async def get_user_photo(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session)
@@ -76,7 +82,7 @@ async def update_profile(
 
 
 @router.patch(
-    '/me//update_photo',
+    '/me/update_photo',
     response_model=ProfileRead,
     dependencies=[Depends(current_user)]
 )
@@ -109,7 +115,7 @@ def create_profile():
 
 
 @router.delete('/{obj_id}', deprecated=True)
-def delete_profile(obg_id: str):
+def delete_profile():
     """Удалить объект"""
     raise HTTPException(
         status_code=status.HTTP_405_METHOD_NOT_ALLOWED,

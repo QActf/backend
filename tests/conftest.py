@@ -10,12 +10,14 @@ from sqlalchemy.pool import NullPool
 from app.core.db import Base
 from app.main import app
 
+
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 TEST_DB = BASE_DIR / 'test.db'
 DATABASE_URL_TEST = f'sqlite+aiosqlite:///{str(TEST_DB)}'
 
 pytest_plugins = [
     'tests.fixtures.user',
+    'tests.fixtures.profile',
 ]
 
 engine_test = create_async_engine(

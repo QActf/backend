@@ -1,3 +1,6 @@
+test.db
+test.db-journal
+
 .vscode/
 *.jpg
 *.PNG
