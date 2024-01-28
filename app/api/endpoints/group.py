@@ -38,7 +38,8 @@ async def get_group(
 @router.post(
     "/",
     response_model=GroupRead,
-    dependencies=[Depends(current_superuser)]
+    dependencies=[Depends(current_superuser)],
+    status_code=201
 )
 async def create_group(
     group: GroupCreate, session: AsyncSession = Depends(get_async_session)
