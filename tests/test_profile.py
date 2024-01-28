@@ -1,3 +1,7 @@
+import base64
+import io
+from pathlib import Path
+from PIL import Image
 from typing import AsyncGenerator
 
 from fastapi import status, Response, HTTPException
@@ -9,6 +13,7 @@ import pytest
 from app.crud.profile import profile_crud
 from app.crud.user import user_crud
 from app.models import Profile, User
+from app.core.config import settings
 
 from tests.fixtures.user import USER_EMAIL, USER_PASSWORD, USER_USERNAME
 
@@ -18,6 +23,15 @@ REGISTRATION_SCHEMA = {
     'role': 'user',
     'username': USER_USERNAME,
 }
+
+
+def delete_tmpdir(path: Path):
+    for sub in path.iterdir():  # type: Path
+        if sub.is_dir():
+            delete_tmpdir(sub)
+        else:
+            sub.unlink()
+    path.rmdir()
 
 
 async def _get_user(
@@ -202,9 +216,47 @@ class TestSuperuser:
         user: User = await _get_user(1, db_session)
         assert user.profile.first_name == 'new_first_name'
 
-    async def test_12(self):
+    async def test_update_photo(
+            self,
+            moc_users,
+            db_session,
+            new_client: TestClient
+    ):
         """Тест апдейта фото своего профиля."""
-        ...
+        user: User = await _get_user(1, db_session)
+        photo = user.profile.image
+        tmp_image = Image.new('RGB', (640, 480))
+        buffer = io.BytesIO()
+        Path(settings.base_dir / 'tmp_for_load').mkdir(parents=True, exist_ok=True)
+        tmp_image.save(settings.base_dir / 'tmp_for_load' / 'img.jpeg', 'jpeg')
+        tmp_image.save(buffer, format='JPEG')
+        img_str = base64.b64encode(buffer.getvalue())
+        response: Response = new_client.post(
+           '/auth/jwt/login',
+           data={'username': user.email, 'password': 'qwerty'},
+        )
+        access_token = response.json().get('access_token')
+        new_client.headers.update({'Authorization': f'Bearer {access_token}'})
+        with open(settings.base_dir / 'media' / photo, 'rb') as f:
+            current_photo = base64.b64encode(f.read())
+        response = new_client.patch(
+            '/profiles/me/update_photo',
+            files={
+                'file': (
+                    'img.jpeg',
+                    open(f'{settings.base_dir}/tmp_for_load/img.jpeg', 'rb'),
+                    'image/jpeg'
+                )
+            }
+        )
+        user: User = await _get_user(1, db_session)
+        with open(settings.base_dir / 'media' / user.profile.image, 'rb') as f:
+            new_photo = base64.b64encode(f.read())
+        assert new_photo == img_str
+        assert current_photo != new_photo
+        path = Path(f'{settings.base_dir}/media/{user.profile.image}')
+        Path.unlink(path)
+        delete_tmpdir(settings.base_dir / 'tmp_for_load')
 
     async def test_create_profile_deprecated(
             self,
