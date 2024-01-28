@@ -23,6 +23,18 @@ async def get_all_groups(
     return await group_crud.get_multi(session)
 
 
+@router.get(
+        '/{group_id}',
+        response_model=GroupRead,
+        dependencies=[Depends(current_superuser)]
+)
+async def get_group(
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Получение группы по id"""
+    ...
+
+
 @router.post(
     "/",
     response_model=GroupRead,
