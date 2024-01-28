@@ -4,15 +4,14 @@ from pathlib import Path
 from PIL import Image
 from typing import AsyncGenerator
 
-from fastapi import status, Response, HTTPException
+from fastapi import status, Response
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
-import pytest
 
 from app.crud.profile import profile_crud
 from app.crud.user import user_crud
-from app.models import Profile, User
+from app.models import User
 from app.core.config import settings
 
 from tests.fixtures.user import USER_EMAIL, USER_PASSWORD, USER_USERNAME
@@ -46,7 +45,7 @@ async def _get_user(
     return user
 
 
-class TestCreateProfile:
+class TestProfile:
     async def test_create_profile_with_create_user(
             self, new_client, db_session
     ):
@@ -64,8 +63,6 @@ class TestCreateProfile:
         users = await user_crud.get_multi(db_session)
         assert len(users) == 1
 
-
-class TestSuperuser:
     async def test_get_all_profiles_superuser(
             self,
             moc_users,
@@ -227,7 +224,9 @@ class TestSuperuser:
         photo = user.profile.image
         tmp_image = Image.new('RGB', (640, 480))
         buffer = io.BytesIO()
-        Path(settings.base_dir / 'tmp_for_load').mkdir(parents=True, exist_ok=True)
+        Path(
+            settings.base_dir / 'tmp_for_load'
+        ).mkdir(parents=True, exist_ok=True)
         tmp_image.save(settings.base_dir / 'tmp_for_load' / 'img.jpeg', 'jpeg')
         tmp_image.save(buffer, format='JPEG')
         img_str = base64.b64encode(buffer.getvalue())
