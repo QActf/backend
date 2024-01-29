@@ -101,3 +101,22 @@ class TestGetAchievement:
         response = auth_superuser.get('/achievements')
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == achievements
+
+    async def test_forbidden_get_all_achievements_user(
+            self,
+            moc_achievements,
+            db_session: AsyncSession,
+            auth_client: TestClient
+    ):
+        """Тест запрета получения всех ачивмент юзером."""
+        response = auth_client.get('/achievements')
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    async def test_forbidden_get_all_achievements_nonauth(
+            self,
+            moc_achievements,
+            new_client: TestClient
+    ):
+        """Тест запрета получения ачивментс неавторизованным."""
+        response = new_client.get('/achievements')
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
