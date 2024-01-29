@@ -9,6 +9,9 @@ CREATE_SCHEME = {
     'name': 'Achievment name',
     'description': 'Achievment description'
 }
+WRONG_CREATE_SCHEME = {
+    'description': 'Achievment description'
+}
 
 
 class TestCreateAchievement:
@@ -26,3 +29,23 @@ class TestCreateAchievement:
             json=CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_201_CREATED
+        new_achievements = await db_session.execute(stmt)
+        new_achievements = new_achievements.scalar()
+        assert new_achievements == achievements + 1
+
+    async def test_wrong_create_scheme(
+            self,
+            db_session: AsyncSession,
+            auth_superuser: TestClient
+    ):
+        stmt = func.count(Achievement.id)
+        achievements = await db_session.execute(stmt)
+        achievements = achievements.scalar()
+        response = auth_superuser.post(
+            '/achievements',
+            json=WRONG_CREATE_SCHEME
+        )
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        new_achievements = await db_session.execute(stmt)
+        new_achievements = new_achievements.scalar()
+        assert new_achievements == achievements
