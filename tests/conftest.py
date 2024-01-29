@@ -17,7 +17,8 @@ DATABASE_URL_TEST = f'sqlite+aiosqlite:///{str(TEST_DB)}'
 pytest_plugins = [
     'tests.fixtures.user',
     'tests.fixtures.profile',
-    'tests.fixtures.group'
+    'tests.fixtures.group',
+    'tests.fixtures.achievement'
 ]
 
 engine_test = create_async_engine(

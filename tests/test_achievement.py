@@ -50,7 +50,7 @@ class TestCreateAchievement:
         new_achievements = new_achievements.scalar()
         assert new_achievements == achievements
 
-    async def test_forbidden_create_achievemrnt_user(
+    async def test_forbidden_create_achievement_user(
             self,
             db_session: AsyncSession,
             auth_client: TestClient
@@ -68,7 +68,7 @@ class TestCreateAchievement:
         new_achievements = new_achievements.scalar()
         assert new_achievements == achievements
 
-    async def test_forbidden_create_achievemrnt_nonauth(
+    async def test_forbidden_create_achievement_nonauth(
             self,
             db_session: AsyncSession,
             new_client: TestClient
@@ -85,3 +85,19 @@ class TestCreateAchievement:
         new_achievements = await db_session.execute(stmt)
         new_achievements = new_achievements.scalar()
         assert new_achievements == achievements
+
+
+class TestGetAchievement:
+    async def test_get_all_achievements_superuser(
+            self,
+            moc_achievements,
+            db_session: AsyncSession,
+            auth_superuser: TestClient
+    ):
+        """Тест получения всех ачивмент суперюзером."""
+        stmt = func.count(Achievement.id)
+        achievements = await db_session.execute(stmt)
+        achievements = achievements.scalar()
+        response = auth_superuser.get('/achievements')
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.json()) == achievements
