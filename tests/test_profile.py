@@ -1,19 +1,18 @@
 import base64
 import io
 from pathlib import Path
-from PIL import Image
 from typing import AsyncGenerator
 
-from fastapi import status, Response
+from fastapi import Response, status
 from fastapi.testclient import TestClient
+from PIL import Image
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
+from app.core.config import settings
 from app.crud.profile import profile_crud
 from app.crud.user import user_crud
 from app.models import User
-from app.core.config import settings
-
 from tests.fixtures.user import USER_EMAIL, USER_PASSWORD, USER_USERNAME
 
 REGISTRATION_SCHEMA = {
