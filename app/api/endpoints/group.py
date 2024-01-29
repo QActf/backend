@@ -5,8 +5,9 @@ from app.api.validators import check_name_duplicate
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import group_crud
-from app.schemas.group import GroupCreate, GroupRead
+from app.schemas.group import GroupCreate, GroupRead, GroupUpdate
 from app.services.endpoints_services import delete_obj
+from app.models import User
 
 router = APIRouter()
 
@@ -14,7 +15,7 @@ router = APIRouter()
 @router.get(
     "/",
     response_model=list[GroupRead],
-    dependencies=[Depends(current_user)]
+    dependencies=[Depends(current_superuser)]
 )
 async def get_all_groups(
     session: AsyncSession = Depends(get_async_session),
@@ -24,15 +25,29 @@ async def get_all_groups(
 
 
 @router.get(
+        '/me',
+        response_model=list[GroupRead],
+        dependencies=[Depends(current_user)]
+)
+async def get_self_groups(
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Получение групп юзером."""
+    return await group_crud.get_users_obj(user.id, session)
+
+
+@router.get(
         '/{group_id}',
         response_model=GroupRead,
         dependencies=[Depends(current_superuser)]
 )
 async def get_group(
+    group_id: int,
     session: AsyncSession = Depends(get_async_session)
 ):
     """Получение группы по id"""
-    ...
+    return await group_crud.get(group_id, session)
 
 
 @router.post(
@@ -49,9 +64,25 @@ async def create_group(
     return await group_crud.create(obj_in=group, session=session)
 
 
+@router.patch(
+        '/{group_id}',
+        dependencies=[Depends(current_superuser)],
+        response_model=GroupRead
+)
+async def update_group(
+    group_id: int,
+    group: GroupUpdate,
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Апдейт группы."""
+    _group = await group_crud.get(group_id, session)
+    return await group_crud.update(_group, group, session)
+
+
 @router.delete(
     "/{obj_id}",
-    dependencies=[Depends(current_superuser)]
+    dependencies=[Depends(current_superuser)],
+    status_code=204
 )
 async def delete_group(
     obj_id: int,
