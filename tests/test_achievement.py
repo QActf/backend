@@ -67,3 +67,21 @@ class TestCreateAchievement:
         new_achievements = await db_session.execute(stmt)
         new_achievements = new_achievements.scalar()
         assert new_achievements == achievements
+
+    async def test_forbidden_create_achievemrnt_nonauth(
+            self,
+            db_session: AsyncSession,
+            new_client: TestClient
+    ):
+        """Тест запрета создания ачивмент юзером."""
+        stmt = func.count(Achievement.id)
+        achievements = await db_session.execute(stmt)
+        achievements = achievements.scalar()
+        response = new_client.post(
+            '/achievements',
+            json=CREATE_SCHEME
+        )
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        new_achievements = await db_session.execute(stmt)
+        new_achievements = new_achievements.scalar()
+        assert new_achievements == achievements
