@@ -1,3 +1,4 @@
+from fastapi import status
 from fastapi.testclient import TestClient
 from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
@@ -29,7 +30,7 @@ class TestCreateGroup:
             '/groups',
             json=GROUP_SCHEME
         )
-        assert response.status_code == 201
+        assert response.status_code == status.HTTP_201_CREATED
         new_groups = await db_session.execute(stmt)
         new_groups = new_groups.scalar()
         assert new_groups == groups + 1
@@ -43,7 +44,7 @@ class TestCreateGroup:
             '/groups',
             json=GROUP_SCHEME
         )
-        assert response.status_code == 403
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_forbidden_create_group_nonauth(
             self,
@@ -54,7 +55,7 @@ class TestCreateGroup:
             '/groups',
             json=GROUP_SCHEME
         )
-        assert response.status_code == 401
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 class TestGetGroup:
@@ -71,7 +72,7 @@ class TestGetGroup:
         response = auth_superuser.get(
             '/groups'
         )
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == groups
 
     async def test_forbidden_get_all_groups_user(
@@ -82,7 +83,7 @@ class TestGetGroup:
     ):
         """Тест запрета получения всех групп юзером."""
         response = auth_client.get('/groups')
-        assert response.status_code == 403
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_forbidden_get_all_groups_nonauth(
             self,
@@ -91,7 +92,7 @@ class TestGetGroup:
     ):
         """Тест запрета получения групп неавторизованным."""
         response = new_client.get('/groups')
-        assert response.status_code == 401
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_get_group_by_id_superuser(
             self,
@@ -112,7 +113,7 @@ class TestGetGroup:
     ):
         """Тест запрета получения группы по id неавторизованным."""
         response = new_client.get('/groups/1')
-        assert response.status_code == 401
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_forbidden_get_group_by_id_user(
             self,
@@ -120,7 +121,7 @@ class TestGetGroup:
     ):
         """Тест запрета получения группы по id юзером."""
         response = auth_client.get('/groups/1')
-        assert response.status_code == 403
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_get_self_groups_user(
             self,
@@ -143,13 +144,10 @@ class TestGetGroup:
         group_2 = group_2.scalars().first()
         group_2.users.append(user)
         await db_session.commit()
-        # await db_session.refresh(group)
-        # user = await db_session.execute(stmt_1)
-        # user = user.scalars().first()
         response = auth_client.get(
             '/groups/me',
         )
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
         result = response.json()
         assert len(result) == 2
         assert result[0]['id'] in (1, 2)
@@ -180,12 +178,12 @@ class TestGetGroup:
         group_2.users.append(user)
         await db_session.commit()
         response = auth_client.get('groups/me/1')
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
         assert response.json()['id'] == 1
         response = auth_client.get('/groups/me/3')
-        assert response.status_code == 403
+        assert response.status_code == status.HTTP_403_FORBIDDEN
         response = auth_client.get('/groups/me/22')
-        assert response.status_code == 404
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 class TestDeleteGroup:
@@ -202,7 +200,7 @@ class TestDeleteGroup:
         response = auth_superuser.delete(
             '/groups/1'
         )
-        assert response.status_code == 204
+        assert response.status_code == status.HTTP_204_NO_CONTENT
         groups_after_remove = await db_session.execute(stmt)
         groups_after_remove = groups_after_remove.scalar()
         assert groups_after_remove == groups - 1
@@ -220,7 +218,7 @@ class TestDeleteGroup:
         response = auth_client.delete(
             '/groups/1'
         )
-        assert response.status_code == 403
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_formidden_delete_group_nonauth(
             self,
@@ -230,7 +228,7 @@ class TestDeleteGroup:
         response = new_client.delete(
             '/groups/1'
         )
-        assert response.status_code == 401
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 class TestUpdateGroup:
@@ -251,7 +249,7 @@ class TestUpdateGroup:
             '/groups/1',
             json=UPDATE_SCHEME
         )
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
         upated_group = await db_session.execute(stmt)
         upated_group = upated_group.scalars().first()
         assert group.id == upated_group.id
@@ -267,7 +265,7 @@ class TestUpdateGroup:
             '/groups/1',
             json=UPDATE_SCHEME
         )
-        assert response.status_code == 403
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_forbidden_update_group_nonauth(
             self,
@@ -278,4 +276,4 @@ class TestUpdateGroup:
             '/groups/1',
             json=UPDATE_SCHEME
         )
-        assert response.status_code == 401
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED

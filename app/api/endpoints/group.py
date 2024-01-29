@@ -5,9 +5,9 @@ from app.api.validators import check_name_duplicate
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import group_crud
+from app.models import Group, User
 from app.schemas.group import GroupCreate, GroupRead, GroupUpdate
 from app.services.endpoints_services import delete_obj
-from app.models import User, Group
 
 router = APIRouter()
 

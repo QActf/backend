@@ -1,8 +1,9 @@
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
 from app.crud.base import CRUDBase
 from app.models import Group, User
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 
 
 class CRUDGroup(CRUDBase):
