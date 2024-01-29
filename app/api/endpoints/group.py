@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
@@ -7,7 +7,7 @@ from app.core.user import current_superuser, current_user
 from app.crud import group_crud
 from app.schemas.group import GroupCreate, GroupRead, GroupUpdate
 from app.services.endpoints_services import delete_obj
-from app.models import User
+from app.models import User, Group
 
 router = APIRouter()
 
@@ -35,6 +35,31 @@ async def get_self_groups(
 ):
     """Получение групп юзером."""
     return await group_crud.get_users_obj(user.id, session)
+
+
+@router.get(
+        '/me/{group_id}',
+        response_model=GroupRead,
+        dependencies=[Depends(current_user)]
+)
+async def get_self_group_by_id(
+    group_id: int,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Получение группы по id юзером."""
+    group: Group | None = await group_crud.get(group_id, session)
+    if group is None:
+        raise HTTPException(
+            status_code=404,
+            detail='Такой группы не существует.'
+        )
+    if user not in group.users:
+        raise HTTPException(
+            status_code=403,
+            detail='Вы не состоите в этой группе.'
+        )
+    return group
 
 
 @router.get(

@@ -6,6 +6,18 @@ from sqlalchemy.orm import selectinload
 
 
 class CRUDGroup(CRUDBase):
+    async def get(self, group_id: int, session: AsyncSession):
+        stmt = (
+            select(Group)
+            .where(Group.id == group_id)
+            .options(
+                selectinload(Group.users)
+            )
+        )
+        group = await session.execute(stmt)
+        group = group.scalars().first()
+        return group
+
     async def get_users_obj(self, user_id: int, session: AsyncSession):
         stmt = (
             select(Group)

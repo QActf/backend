@@ -114,9 +114,16 @@ class TestGetGroup:
         response = new_client.get('/groups/1')
         assert response.status_code == 401
 
+    async def test_forbidden_get_group_by_id_user(
+            self,
+            auth_client: TestClient
+    ):
+        """Тест запрета получения группы по id юзером."""
+        response = auth_client.get('/groups/1')
+        assert response.status_code == 403
+
     async def test_get_self_groups_user(
             self,
-            # register_client,
             moc_groups,
             db_session: AsyncSession,
             auth_client: TestClient
@@ -130,19 +137,55 @@ class TestGetGroup:
         group = await db_session.execute(stmt)
         group = group.scalars().first()
         group.users.append(user)
+        stmt = (select(Group).filter(Group.id == 2)
+                .options(selectinload(Group.users)))
+        group_2 = await db_session.execute(stmt)
+        group_2 = group_2.scalars().first()
+        group_2.users.append(user)
         await db_session.commit()
-        await db_session.refresh(group)
-        user = await db_session.execute(stmt_1)
-        user = user.scalars().first()
-        print(group)
-        print(user)
-        print(user.groups)
+        # await db_session.refresh(group)
+        # user = await db_session.execute(stmt_1)
+        # user = user.scalars().first()
         response = auth_client.get(
             '/groups/me',
         )
         assert response.status_code == 200
-        print(response.json())
-        print('ok')
+        result = response.json()
+        assert len(result) == 2
+        assert result[0]['id'] in (1, 2)
+        assert result[1]['id'] in (1, 2)
+        assert result[0]['id'] != result[1]['id']
+
+    async def test_get_group_by_id_user(
+            self,
+            register_client,
+            moc_groups,
+            moc_users,
+            db_session: AsyncSession,
+            auth_client: TestClient
+    ):
+        """Тест получения юзером группы по id."""
+        stmt_1 = select(User).options(selectinload(User.groups))
+        user = await db_session.execute(stmt_1)
+        user = user.scalars().first()
+        stmt = (select(Group).filter(Group.id == 1)
+                .options(selectinload(Group.users)))
+        group = await db_session.execute(stmt)
+        group = group.scalars().first()
+        group.users.append(user)
+        stmt = (select(Group).filter(Group.id == 2)
+                .options(selectinload(Group.users)))
+        group_2 = await db_session.execute(stmt)
+        group_2 = group_2.scalars().first()
+        group_2.users.append(user)
+        await db_session.commit()
+        response = auth_client.get('groups/me/1')
+        assert response.status_code == 200
+        assert response.json()['id'] == 1
+        response = auth_client.get('/groups/me/3')
+        assert response.status_code == 403
+        response = auth_client.get('/groups/me/22')
+        assert response.status_code == 404
 
 
 class TestDeleteGroup:
