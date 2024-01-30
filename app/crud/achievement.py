@@ -6,6 +6,18 @@ from sqlalchemy.orm import selectinload
 
 
 class CRUDAchievement(CRUDBase):
+    async def get(self, obj_id: int, session: AsyncSession):
+        stmt = (
+            select(Achievement)
+            .where(Achievement.id == obj_id)
+            .options(
+                selectinload(Achievement.profiles)
+            )
+        )
+        achievement = await session.execute(stmt)
+        achievement = achievement.scalars().first()
+        return achievement
+
     async def get_users_obj(self, user_id: int, session: AsyncSession):
         stmt = (
             select(Achievement)

@@ -124,9 +124,9 @@ class TestGetAchievement:
 
     async def test_get_self_achievements_user(
             self,
+            register_client,
             moc_users,
             moc_achievements,
-            register_client,
             db_session: AsyncSession,
             auth_client: TestClient
     ):
@@ -140,15 +140,11 @@ class TestGetAchievement:
             )
         )
         user = user.scalars().first()
-        profile = Profile(
-            first_name='testuser_first_name',
-            last_name='testuser_last_name',
-            age=47,
-            user_id=user.id
+        profile = await db_session.execute(
+            select(Profile)
+            .where(Profile.user_id == user.id)
         )
-        db_session.add(profile)
-        await db_session.commit()
-        await db_session.refresh(profile)
+        profile = profile.scalars().first()
         achievement = await db_session.execute(
             select(Achievement)
             .where(Achievement.id == 1)
@@ -168,18 +164,6 @@ class TestGetAchievement:
         achiv.profiles.append(profile)
         achievement.profiles.append(profile)
         await db_session.commit()
-        await db_session.refresh(achievement)
-        await db_session.refresh(user)
-        user = await db_session.execute(
-            select(User)
-            .options(
-                selectinload(User.profile)
-                .selectinload(Profile.achievements)
-            )
-            .where(User.id == user.id)
-
-        )
-        user = user.scalars().first()
         response = auth_client.get('achievements/me')
         assert response.status_code == status.HTTP_200_OK
         result = response.json()
@@ -187,3 +171,53 @@ class TestGetAchievement:
         assert result[0]['id'] in (1, 2)
         assert result[1]['id'] in (1, 2)
         assert result[0]['id'] != result[1]['id']
+
+    async def test_get_self_achievement_by_id_user(
+            self,
+            register_client,
+            moc_users,
+            moc_achievements,
+            db_session: AsyncSession,
+            auth_client: TestClient
+    ):
+        """Тест получения юзером своего ачивмент по id."""
+        user = await db_session.execute(
+            select(User)
+            .where(User.username == register_client.username)
+            .options(
+                selectinload(User.profile)
+                .selectinload(Profile.achievements)
+            )
+        )
+        user = user.scalars().first()
+        profile = await db_session.execute(
+            select(Profile)
+            .where(Profile.user_id == user.id)
+        )
+        profile = profile.scalars().first()
+        achievement = await db_session.execute(
+            select(Achievement)
+            .where(Achievement.id == 1)
+            .options(
+                selectinload(Achievement.profiles)
+            )
+        )
+        achievement = achievement.scalars().first()
+        achiv = await db_session.execute(
+            select(Achievement)
+            .where(Achievement.id == 2)
+            .options(
+                selectinload(Achievement.profiles)
+            )
+        )
+        achiv = achiv.scalars().first()
+        achiv.profiles.append(profile)
+        achievement.profiles.append(profile)
+        await db_session.commit()
+        response = auth_client.get('/achievements/me/1')
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json()['id'] == 1
+        response = auth_client.get('/achievements/me/3')
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        response = auth_client.get('/achievements/me/22')
+        assert response.status_code == status.HTTP_404_NOT_FOUND
