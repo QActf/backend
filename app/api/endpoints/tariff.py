@@ -16,7 +16,6 @@ router = APIRouter()
 @router.get(
     "/",
     response_model=list[TariffRead],
-    dependencies=[Depends(current_user)]
 )
 async def get_all_tariffs(
     session: AsyncSession = Depends(get_async_session),

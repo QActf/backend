@@ -48,7 +48,29 @@ class TestCreateTariff:
 
 
 class TestGetTariff:
-    ...
+    async def test_get_tariffs_nonauth(
+            self,
+            moc_tariffs,
+            new_client: TestClient
+    ):
+        response = new_client.get('/tariffs')
+        assert response.status_code == status.HTTP_200_OK
+
+    async def test_get_tariffs_user(
+            self,
+            moc_tariffs,
+            auth_client: TestClient
+    ):
+        response = auth_client.get('/tariffs')
+        assert response.status_code == status.HTTP_200_OK
+
+    async def test_get_tariffs_superuser(
+            self,
+            moc_tariffs,
+            auth_superuser: TestClient
+    ):
+        response = auth_superuser.get('/tariffs')
+        assert response.status_code == status.HTTP_200_OK
 
 
 class TestUpdateTariff:
