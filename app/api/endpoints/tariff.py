@@ -6,7 +6,7 @@ from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import tariff_crud, user_crud
 from app.models import User
-from app.schemas.tariff import TariffCreate, TariffRead
+from app.schemas.tariff import TariffCreate, TariffRead, TariffUpdate
 from app.schemas.user import UserRead
 from app.services.endpoints_services import delete_obj
 
@@ -35,22 +35,40 @@ async def get_tariff(
     return await tariff_crud.get(tariff_id, session)
 
 
-@router.put(
-    "/",
-    response_model=UserRead,
-    dependencies=[Depends(current_user)]
+@router.patch(
+        '/{tariff_id}',
+        response_model=TariffRead,
+        dependencies=[Depends(current_superuser)]
 )
-async def update_users_tariff(
+async def update_tariff(
     tariff_id: int,
-    user: User = Depends(current_user),
-    session: AsyncSession = Depends(get_async_session),
-) -> UserRead:
-    """Привязывает тариф к юзеру"""
-    await check_obj_exists(tariff_id, tariff_crud, session)
-    user = await user_crud.update_id(
-        session=session, db_obj=user, field="tariff_id", field_value=tariff_id
+    data: TariffUpdate,
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Апдейт тарифа."""
+    _tariff = await check_obj_exists(tariff_id, tariff_crud, session)
+    return await tariff_crud.update(
+        _tariff, data, session
     )
-    return user
+
+
+# Перенести в эндпоинты юзера?
+# @router.patch(
+#     "/{tariff_id}",
+#     response_model=UserRead,
+#     dependencies=[Depends(current_user)]
+# )
+# async def update_users_tariff(
+#     tariff_id: int,
+#     user: User = Depends(current_user),
+#     session: AsyncSession = Depends(get_async_session),
+# ) -> UserRead:
+#     """Привязывает тариф к юзеру"""
+#     await check_obj_exists(tariff_id, tariff_crud, session)
+#     user = await user_crud.update_id(
+#         session=session, db_obj=user, field="tariff_id", field_value=tariff_id
+#     )
+#     return user
 
 
 @router.post(

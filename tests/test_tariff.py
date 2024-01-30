@@ -8,6 +8,9 @@ CREATE_SCHEME = {
     'name': 'Test tariff',
     'description': 'Test tariff description'
 }
+UPDATE_SCHEME = {
+    'name': 'New tariff name'
+}
 
 
 class TestCreateTariff:
@@ -79,7 +82,47 @@ class TestGetTariff:
 
 
 class TestUpdateTariff:
-    ...
+    async def test_forbidden_update_tariff_nonauth(
+            self,
+            moc_tariffs,
+            new_client: TestClient
+    ):
+        """Тест запрета апдейта тарифа неавторизованным."""
+        response = new_client.patch(
+            '/tariffs/1'
+        )
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    async def test_forbidden_update_tariff_user(
+            self,
+            moc_tariffs,
+            auth_client: TestClient
+    ):
+        """Тест запрета апдейта тарифа юзером."""
+        response = auth_client.patch(
+            '/tariffs/1'
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    async def test_update_tariff(
+            self,
+            moc_tariffs,
+            db_session: AsyncSession,
+            auth_superuser: TestClient
+    ):
+        """Тест апдейта тарифа."""
+        stmt = select(Tariff).where(Tariff.id == 1)
+        tariff = await db_session.execute(stmt)
+        tariff = tariff.scalar()
+        response = auth_superuser.patch(
+            '/tariffs/1',
+            json=UPDATE_SCHEME
+        )
+        assert response.status_code == status.HTTP_200_OK
+        check_tariff = await db_session.execute(stmt)
+        check_tariff = check_tariff.scalar()
+        assert check_tariff.name == UPDATE_SCHEME['name']
+        assert check_tariff.description == tariff.description
 
 
 class TestDeleteTariff:

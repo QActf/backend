@@ -16,6 +16,7 @@ async def check_obj_exists(
             detail=f"Объект {crud.model.__tablename__} "
                    f"f с id {obj_id} не найден.",
         )
+    return obj
 
 
 async def check_name_duplicate(
