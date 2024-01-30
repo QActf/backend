@@ -6,7 +6,7 @@ from sqlalchemy.orm import selectinload
 
 from app.models import Achievement, Profile, User
 
-from .utils import get_obj_count
+from .utils import get_obj_count, get_obj_by_id
 
 CREATE_SCHEME = {
     'name': 'Achievment name',
@@ -238,14 +238,14 @@ class TestUpdateAchievement:
             auth_superuser: TestClient
     ):
         """Тест апдейта ачивмент суперюзером."""
-        achievement = await _get_achievement_by_id(1, db_session)
+        achievement = await get_obj_by_id(1, Achievement, db_session)
         response = auth_superuser.patch(
             '/achievements/1',
             json=UPDATE_SCHEME
         )
         assert response.status_code == status.HTTP_200_OK
         assert response.json()['name'] == UPDATE_SCHEME['name']
-        check_achievement = await _get_achievement_by_id(1, db_session)
+        check_achievement = await get_obj_by_id(1, Achievement, db_session)
         assert check_achievement.name == UPDATE_SCHEME['name']
         assert check_achievement.description == achievement.description
 
