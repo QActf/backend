@@ -18,7 +18,8 @@ pytest_plugins = [
     'tests.fixtures.user',
     'tests.fixtures.profile',
     'tests.fixtures.group',
-    'tests.fixtures.achievement'
+    'tests.fixtures.achievement',
+    'tests.fixtures.tariff'
 ]
 
 engine_test = create_async_engine(
