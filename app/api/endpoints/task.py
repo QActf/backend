@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
@@ -28,7 +28,8 @@ async def get_all_tasks(
 @router.post(
     "/",
     response_model=TaskRead,
-    dependencies=[Depends(current_superuser)]
+    dependencies=[Depends(current_superuser)],
+    status_code=status.HTTP_201_CREATED
 )
 async def create_task(
     task: TaskCreate, session: AsyncSession = Depends(get_async_session)
