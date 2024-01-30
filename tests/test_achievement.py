@@ -254,7 +254,7 @@ class TestDeleteAchievement:
             db_session: AsyncSession,
             new_client: TestClient
     ):
-        """Тест запрета удаления ачивмент юзером."""
+        """Тест запрета удаления ачивмент неавторизованным."""
         achievements = await db_session.execute(
             func.count(Achievement.id)
         )
@@ -267,3 +267,33 @@ class TestDeleteAchievement:
         )
         check_achiv = check_achiv.scalar()
         assert check_achiv == achievements
+
+    async def test_delete_achievement_superuser(
+            self,
+            moc_achievements,
+            db_session: AsyncSession,
+            auth_superuser: TestClient
+    ):
+        """Тест удаления ачивмент суперюзером."""
+        achievement = await db_session.execute(
+            select(Achievement)
+            .where(Achievement.id == 1)
+        )
+        achievement = achievement.scalar()
+        achiv_count = await db_session.execute(
+            func.count(Achievement.id)
+        )
+        achiv_count = achiv_count.scalar()
+        response = auth_superuser.delete('/achievements/1')
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        removed_achiv = await db_session.execute(
+            select(Achievement)
+            .where(Achievement.id == 1)
+        )
+        removed_achiv = removed_achiv.scalar()
+        assert removed_achiv is None
+        check_achiv_count = await db_session.execute(
+            func.count(Achievement.id)
+        )
+        check_achiv_count = check_achiv_count.scalar()
+        assert check_achiv_count == achiv_count - 1

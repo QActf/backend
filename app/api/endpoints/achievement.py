@@ -79,7 +79,8 @@ async def create_achievement(
     return await achievement_crud.create(obj_in=achievement, session=session)
 
 
-@router.delete("/{obj_id}", dependencies=[Depends(current_superuser)])
+@router.delete("/{obj_id}", dependencies=[Depends(current_superuser)],
+               status_code=status.HTTP_204_NO_CONTENT)
 async def delete_achievement(
     obj_id: int,
     session: AsyncSession = Depends(get_async_session),
