@@ -79,6 +79,19 @@ async def create_achievement(
     return await achievement_crud.create(obj_in=achievement, session=session)
 
 
+@router.patch(
+        '/{achievement_id}',
+        response_model=AchievementRead,
+        dependencies=[Depends(current_superuser)]
+)
+async def update_achievement(
+    achievement_id: int,
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Апдейт ачивмент."""
+    return {'resp': 'ok'}
+
+
 @router.delete("/{obj_id}", dependencies=[Depends(current_superuser)],
                status_code=status.HTTP_204_NO_CONTENT)
 async def delete_achievement(

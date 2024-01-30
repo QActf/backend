@@ -224,7 +224,29 @@ class TestGetAchievement:
 
 
 class TestUpdateAchievement:
-    ...
+    async def test_forbidden_update_achievement_user(
+            self,
+            moc_achievements,
+            db_session: AsyncSession,
+            auth_client: TestClient
+    ):
+        """Тест запрета апдейта ачивмент юзером."""
+        response = auth_client.patch(
+            '/achievements/1'
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    async def test_forbidden_update_achievement_nonauth(
+            self,
+            moc_achievements,
+            db_session: AsyncSession,
+            new_client: TestClient
+    ):
+        """Тест запрета апдейта ачивмент неавторизованным."""
+        response = new_client.patch(
+            '/achievements/1'
+        )
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 class TestDeleteAchievement:
