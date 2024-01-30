@@ -1,10 +1,12 @@
 from fastapi import status
 from fastapi.testclient import TestClient
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.models import Group, User
+
+from .utils import get_obj_count
 
 GROUP_SCHEME = {
     'name': 'Test Group',
@@ -16,6 +18,28 @@ UPDATE_SCHEME = {
 }
 
 
+async def _get_user(
+        db_session: AsyncSession
+):
+    """Возвращает юзера."""
+    stmt = (select(User)
+            .where(User.username == 'testuser')
+            .options(selectinload(User.groups)))
+    user = await db_session.execute(stmt)
+    return user.scalar()
+
+
+async def _get_group_by_id(
+    index: int,
+    db_session: AsyncSession
+):
+    """Возвращает группу по id."""
+    stmt = (select(Group).where(Group.id == index)
+            .options(selectinload(Group.users)))
+    group = await db_session.execute(stmt)
+    return group.scalar()
+
+
 class TestCreateGroup:
     async def test_create_group(
             self,
@@ -23,16 +47,13 @@ class TestCreateGroup:
             auth_superuser: TestClient
     ):
         """Создание группы суперюзером"""
-        stmt = func.count(Group.id)
-        groups = await db_session.execute(stmt)
-        groups = groups.scalar()
+        groups = await get_obj_count(Group, db_session)
         response = auth_superuser.post(
             '/groups',
             json=GROUP_SCHEME
         )
         assert response.status_code == status.HTTP_201_CREATED
-        new_groups = await db_session.execute(stmt)
-        new_groups = new_groups.scalar()
+        new_groups = await get_obj_count(Group, db_session)
         assert new_groups == groups + 1
 
     async def test_forbidden_create_group_by_user(
@@ -66,9 +87,7 @@ class TestGetGroup:
             auth_superuser: TestClient
     ):
         """Получение всех групп суперюзером."""
-        stmt = func.count(Group.id)
-        groups = await db_session.execute(stmt)
-        groups = groups.scalar()
+        groups = await get_obj_count(Group, db_session)
         response = auth_superuser.get(
             '/groups'
         )
@@ -130,18 +149,10 @@ class TestGetGroup:
             auth_client: TestClient
     ):
         """Тест получения юзером своих групп."""
-        stmt_1 = select(User).options(selectinload(User.groups))
-        user = await db_session.execute(stmt_1)
-        user = user.scalars().first()
-        stmt = (select(Group).filter(Group.id == 1)
-                .options(selectinload(Group.users)))
-        group = await db_session.execute(stmt)
-        group = group.scalars().first()
+        user = await _get_user(db_session)
+        group = await _get_group_by_id(1, db_session)
         group.users.append(user)
-        stmt = (select(Group).filter(Group.id == 2)
-                .options(selectinload(Group.users)))
-        group_2 = await db_session.execute(stmt)
-        group_2 = group_2.scalars().first()
+        group_2 = await _get_group_by_id(2, db_session)
         group_2.users.append(user)
         await db_session.commit()
         response = auth_client.get(
@@ -163,18 +174,10 @@ class TestGetGroup:
             auth_client: TestClient
     ):
         """Тест получения юзером группы по id."""
-        stmt_1 = select(User).options(selectinload(User.groups))
-        user = await db_session.execute(stmt_1)
-        user = user.scalars().first()
-        stmt = (select(Group).filter(Group.id == 1)
-                .options(selectinload(Group.users)))
-        group = await db_session.execute(stmt)
-        group = group.scalars().first()
+        user = await _get_user(db_session)
+        group = await _get_group_by_id(1, db_session)
         group.users.append(user)
-        stmt = (select(Group).filter(Group.id == 2)
-                .options(selectinload(Group.users)))
-        group_2 = await db_session.execute(stmt)
-        group_2 = group_2.scalars().first()
+        group_2 = await _get_group_by_id(2, db_session)
         group_2.users.append(user)
         await db_session.commit()
         response = auth_client.get('groups/me/1')
@@ -194,19 +197,14 @@ class TestDeleteGroup:
             auth_superuser: TestClient
     ):
         """Тест удаления группы суперюзером."""
-        stmt = func.count(Group.id)
-        groups = await db_session.execute(stmt)
-        groups = groups.scalar()
+        groups = await get_obj_count(Group, db_session)
         response = auth_superuser.delete(
             '/groups/1'
         )
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        groups_after_remove = await db_session.execute(stmt)
-        groups_after_remove = groups_after_remove.scalar()
+        groups_after_remove = await get_obj_count(Group, db_session)
         assert groups_after_remove == groups - 1
-        stmt = select(Group).filter(Group.id == 1)
-        removed_group = await db_session.execute(stmt)
-        removed_group = removed_group.scalars().first()
+        removed_group = await _get_group_by_id(1, db_session)
         assert removed_group is None
 
     async def test_forbidden_delete_group_user(
@@ -239,9 +237,7 @@ class TestUpdateGroup:
             auth_superuser: TestClient
     ):
         """Тест апдейта группы суперюзером."""
-        stmt = select(Group).filter(Group.id == 1)
-        group = await db_session.execute(stmt)
-        group = group.scalars().first()
+        group = await _get_group_by_id(1, db_session)
         assert group.id == 1
         assert group.name != UPDATE_SCHEME['name']
         assert group.description != UPDATE_SCHEME['description']
@@ -250,8 +246,7 @@ class TestUpdateGroup:
             json=UPDATE_SCHEME
         )
         assert response.status_code == status.HTTP_200_OK
-        upated_group = await db_session.execute(stmt)
-        upated_group = upated_group.scalars().first()
+        upated_group = await _get_group_by_id(1, db_session)
         assert group.id == upated_group.id
         assert upated_group.name == UPDATE_SCHEME['name']
         assert upated_group.description == UPDATE_SCHEME['description']
