@@ -4,6 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import func
 from app.models import Task
 
+from .utils import get_obj_count
+
 CREATE_SCHEME = {
     'name': 'Task name',
     'description': 'Task description'
@@ -36,16 +38,13 @@ class TestCreateTask:
             auth_superuser: TestClient
     ):
         """Тест создания таски."""
-        stmt = func.count(Task.id)
-        tasks = await db_session.execute(stmt)
-        tasks = tasks.scalar()
+        tasks = await get_obj_count(Task, db_session)
         response = auth_superuser.post(
             '/tasks',
             json=CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_201_CREATED
-        check_tasks = await db_session.execute(stmt)
-        check_tasks = check_tasks.scalar()
+        check_tasks = await get_obj_count(Task, db_session)
         assert check_tasks == tasks + 1
 
     async def test_wrong_data_create_task(
@@ -54,16 +53,13 @@ class TestCreateTask:
             auth_superuser: TestClient
     ):
         """Тест неполных данных для создания таски."""
-        stmt = func.count(Task.id)
-        tasks = await db_session.execute(stmt)
-        tasks = tasks.scalar()
+        tasks = await get_obj_count(Task, db_session)
         response = auth_superuser.post(
             '/tasks',
             json=WRONG_CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-        check_tasks = await db_session.execute(stmt)
-        check_tasks = check_tasks.scalar()
+        check_tasks = await get_obj_count(Task, db_session)
         assert check_tasks == tasks
 
     async def test_create_duplicate_task(
@@ -76,16 +72,13 @@ class TestCreateTask:
             '/tasks',
             json=CREATE_SCHEME
         )
-        stmt = func.count(Task.id)
-        tasks = await db_session.execute(stmt)
-        tasks = tasks.scalar()
+        tasks = await get_obj_count(Task, db_session)
         response = auth_superuser.post(
             '/tasks',
             json=CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        check_tasks = await db_session.execute(stmt)
-        check_tasks = check_tasks.scalar()
+        check_tasks = await get_obj_count(Task, db_session)
         assert check_tasks == tasks
 
 
