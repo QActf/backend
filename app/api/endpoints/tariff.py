@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate, check_obj_exists
@@ -46,7 +46,8 @@ async def update_users_tariff(
 @router.post(
     "/",
     response_model=TariffRead,
-    dependencies=[Depends(current_superuser)]
+    dependencies=[Depends(current_superuser)],
+    status_code=status.HTTP_201_CREATED
 )
 async def create_tariff(
     tariff: TariffCreate, session: AsyncSession = Depends(get_async_session)
