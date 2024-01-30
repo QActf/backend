@@ -5,7 +5,8 @@ from app.api.validators import check_name_duplicate
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import achievement_crud
-from app.schemas.achievement import AchievementCreate, AchievementRead
+from app.schemas.achievement import (AchievementCreate, AchievementRead,
+                                     AchievementUpdate)
 from app.services.endpoints_services import delete_obj
 from app.models import User, Achievement
 
@@ -86,10 +87,14 @@ async def create_achievement(
 )
 async def update_achievement(
     achievement_id: int,
+    data: AchievementUpdate,
     session: AsyncSession = Depends(get_async_session)
 ):
     """Апдейт ачивмент."""
-    return {'resp': 'ok'}
+    _achievement = await achievement_crud.get(achievement_id, session)
+    return await achievement_crud.update(
+        _achievement, data, session
+    )
 
 
 @router.delete("/{obj_id}", dependencies=[Depends(current_superuser)],

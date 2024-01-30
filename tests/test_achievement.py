@@ -13,6 +13,9 @@ CREATE_SCHEME = {
 WRONG_CREATE_SCHEME = {
     'description': 'Achievment description'
 }
+UPDATE_SCHEME = {
+    'name': 'new achievement name'
+}
 
 
 class TestCreateAchievement:
@@ -247,6 +250,32 @@ class TestUpdateAchievement:
             '/achievements/1'
         )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    async def test_update_achievement_superuser(
+            self,
+            moc_achievements,
+            db_session: AsyncSession,
+            auth_superuser: TestClient
+    ):
+        """Тест апдейта ачивмент суперюзером."""
+        achievement = await db_session.execute(
+            select(Achievement)
+            .where(Achievement.id == 1)
+        )
+        achievement = achievement.scalar()
+        response = auth_superuser.patch(
+            '/achievements/1',
+            json=UPDATE_SCHEME
+        )
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json()['name'] == UPDATE_SCHEME['name']
+        check_achievement = await db_session.execute(
+            select(Achievement)
+            .where(Achievement.id == 1)
+        )
+        check_achievement = check_achievement.scalar()
+        assert check_achievement.name == UPDATE_SCHEME['name']
+        assert check_achievement.description == achievement.description
 
 
 class TestDeleteAchievement:
