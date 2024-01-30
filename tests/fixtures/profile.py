@@ -4,7 +4,7 @@ import pytest_asyncio
 from passlib.hash import bcrypt
 from sqlalchemy import select
 
-from app.models import User, Profile
+from app.models import Profile, User
 from tests.conftest import AsyncSessionLocalTest
 
 

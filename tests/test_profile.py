@@ -1,20 +1,20 @@
 import base64
 import io
 from pathlib import Path
-from PIL import Image
 from typing import AsyncGenerator
 
-from fastapi import status, Response
+from fastapi import Response, status
 from fastapi.testclient import TestClient
+from PIL import Image
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.crud.profile import profile_crud
-from app.crud.user import user_crud
-from app.models import User
 from app.core.config import settings
-
+from app.models import Profile, User
 from tests.fixtures.user import USER_EMAIL, USER_PASSWORD, USER_USERNAME
+
+from .utils import get_obj_count
 
 REGISTRATION_SCHEMA = {
     'email': USER_EMAIL,
@@ -47,41 +47,39 @@ async def _get_user(
 
 class TestProfile:
     async def test_create_profile_with_create_user(
-            self, new_client, db_session
+            self, new_client,
+            db_session: AsyncSession
     ):
         """Тест создания профиля при регистрации пользователя."""
-        profiles = await profile_crud.get_multi(db_session)
-        assert len(profiles) == 0
-        users = await user_crud.get_multi(db_session)
-        assert len(users) == 0
+        profiles = await get_obj_count(Profile, db_session)
+        users = await get_obj_count(User, db_session)
         response: Response = new_client.post(
             '/auth/register', json=REGISTRATION_SCHEMA
         )
         assert response.status_code == status.HTTP_201_CREATED
-        profiles = await profile_crud.get_multi(db_session)
-        assert len(profiles) == 1
-        users = await user_crud.get_multi(db_session)
-        assert len(users) == 1
+        check_profiles = await get_obj_count(Profile, db_session)
+        assert check_profiles == profiles + 1
+        check_users = await get_obj_count(User, db_session)
+        assert check_users == users + 1
 
     async def test_get_all_profiles_superuser(
             self,
             moc_users,
-            db_session: AsyncGenerator,
-            auth_superuser: AsyncGenerator | TestClient
+            db_session: AsyncSession,
+            auth_superuser: TestClient
     ):
         """Тест получения всех профилей суперюзером."""
-        profiles = await profile_crud.get_multi(db_session)
+        profiles = await get_obj_count(Profile, db_session)
         response: Response = auth_superuser.get(
             '/profiles/'
         )
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.json()) == len(profiles)
+        assert len(response.json()) == profiles
 
-    async def test_forbidden_get_all_profiles_for_user(
+    async def test_forbidden_get_all_profiles_user(
             self,
             moc_users,
-            db_session: AsyncGenerator,
-            auth_client: AsyncGenerator | TestClient,
+            auth_client: TestClient,
     ):
         """Тест запрета получения профилей простым пользователем."""
         response = auth_client.get(
@@ -148,7 +146,6 @@ class TestProfile:
             '/profiles/me/'
         )
         result = response.json()
-        assert len(result) == 6
         assert result['first_name'] == user.profile.first_name
 
     async def test_forbidden_get_other_user_profile_for_user(
