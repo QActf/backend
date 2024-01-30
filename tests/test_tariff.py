@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Tariff
 
-from .utils import get_obj_count, get_obj_by_id
+from .utils import get_obj_by_id, get_obj_count
 
 CREATE_SCHEME = {
     'name': 'Test tariff',

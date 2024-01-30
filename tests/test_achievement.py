@@ -6,7 +6,7 @@ from sqlalchemy.orm import selectinload
 
 from app.models import Achievement, Profile, User
 
-from .utils import get_obj_count, get_obj_by_id
+from .utils import get_obj_by_id, get_obj_count
 
 CREATE_SCHEME = {
     'name': 'Achievment name',
