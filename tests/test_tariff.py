@@ -1,7 +1,8 @@
-from fastapi.testclient import TestClient
 from fastapi import status
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi.testclient import TestClient
 from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.models import Tariff
 
 CREATE_SCHEME = {

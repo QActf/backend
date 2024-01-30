@@ -3,11 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate, check_obj_exists
 from app.core.db import get_async_session
-from app.core.user import current_superuser, current_user
-from app.crud import tariff_crud, user_crud
-from app.models import User
+from app.core.user import current_superuser
+from app.crud import tariff_crud
 from app.schemas.tariff import TariffCreate, TariffRead, TariffUpdate
-from app.schemas.user import UserRead
 from app.services.endpoints_services import delete_obj
 
 router = APIRouter()
@@ -66,7 +64,8 @@ async def update_tariff(
 #     """Привязывает тариф к юзеру"""
 #     await check_obj_exists(tariff_id, tariff_crud, session)
 #     user = await user_crud.update_id(
-#         session=session, db_obj=user, field="tariff_id", field_value=tariff_id
+#         session=session, db_obj=user, field="tariff_id",
+#         field_value=tariff_id
 #     )
 #     return user
 
