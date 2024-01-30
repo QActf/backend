@@ -1,9 +1,21 @@
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.crud.base import CRUDBase
-from app.models import Achievement
+from app.models import Achievement, Profile
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 
 class CRUDAchievement(CRUDBase):
-    pass
+    async def get_users_obj(self, user_id: int, session: AsyncSession):
+        stmt = (
+            select(Achievement)
+            .options(
+                selectinload(Achievement.profiles)
+                .selectinload(Profile.user)
+            ).where(Achievement.profiles.any(Profile.user_id == user_id))
+        )
+        db_obj = await session.execute(stmt)
+        return db_obj.scalars().all()
 
 
 achievement_crud = CRUDAchievement(Achievement)

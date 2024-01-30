@@ -7,6 +7,7 @@ from app.core.user import current_superuser, current_user
 from app.crud import achievement_crud
 from app.schemas.achievement import AchievementCreate, AchievementRead
 from app.services.endpoints_services import delete_obj
+from app.models import User
 
 router = APIRouter()
 
@@ -21,6 +22,19 @@ async def get_all_achievements(
 ) -> list[AchievementRead]:
     """Возвращает все achievement."""
     return await achievement_crud.get_multi(session)
+
+
+@router.get(
+        '/me',
+        response_model=list[AchievementRead],
+        dependencies=[Depends(current_user)]
+)
+async def get_self_achievements(
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Возвращает ачивментс юзера."""
+    return await achievement_crud.get_users_obj(user.id, session)
 
 
 @router.post(

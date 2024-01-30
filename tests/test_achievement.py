@@ -1,9 +1,10 @@
 from fastapi import status
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import func
+from sqlalchemy import func, select
+from sqlalchemy.orm import selectinload
 
-from app.models import Achievement
+from app.models import Achievement, User, Profile
 
 CREATE_SCHEME = {
     'name': 'Achievment name',
@@ -120,3 +121,72 @@ class TestGetAchievement:
         """Тест запрета получения ачивментс неавторизованным."""
         response = new_client.get('/achievements')
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    async def test_get_self_achievements_user(
+            self,
+            moc_users,
+            moc_achievements,
+            register_client,
+            db_session: AsyncSession,
+            auth_client: TestClient
+    ):
+        """Тест получения юзером своих ачивментс."""
+        user = await db_session.execute(
+            select(User)
+            .where(User.username == register_client.username)
+            .options(
+                selectinload(User.profile)
+                .selectinload(Profile.achievements)
+            )
+        )
+        user = user.scalars().first()
+        profile = Profile(
+            first_name='testuser_first_name',
+            last_name='testuser_last_name',
+            age=47,
+            user_id=user.id
+        )
+        db_session.add(profile)
+        await db_session.commit()
+        await db_session.refresh(profile)
+        # await db_session.refresh(user)
+        achievement = await db_session.execute(
+            select(Achievement)
+            .where(Achievement.id == 1)
+            .options(
+                selectinload(Achievement.profiles)
+            )
+        )
+        achievement = achievement.scalars().first()
+        achiv = await db_session.execute(
+            select(Achievement)
+            .where(Achievement.id == 2)
+            .options(
+                selectinload(Achievement.profiles)
+            )
+        )
+        achiv = achiv.scalars().first()
+        achiv.profiles.append(profile)
+        achievement.profiles.append(profile)
+        await db_session.commit()
+        await db_session.refresh(achievement)
+        await db_session.refresh(user)
+        print(achievement)
+        print(user.id)
+        user = await db_session.execute(
+            select(User)
+            .options(
+                selectinload(User.profile)
+                .selectinload(Profile.achievements)
+            )
+            .where(User.id == user.id)
+
+        )
+        user = user.scalars().first()
+        response = auth_client.get('achievements/me')
+        assert response.status_code == status.HTTP_200_OK
+        print(response.json())
+        print(achievement)
+        print(profile)
+        print(user.profile)
+        print(user.profile.achievements)
