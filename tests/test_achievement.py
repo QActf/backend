@@ -149,7 +149,6 @@ class TestGetAchievement:
         db_session.add(profile)
         await db_session.commit()
         await db_session.refresh(profile)
-        # await db_session.refresh(user)
         achievement = await db_session.execute(
             select(Achievement)
             .where(Achievement.id == 1)
@@ -171,8 +170,6 @@ class TestGetAchievement:
         await db_session.commit()
         await db_session.refresh(achievement)
         await db_session.refresh(user)
-        print(achievement)
-        print(user.id)
         user = await db_session.execute(
             select(User)
             .options(
@@ -185,8 +182,8 @@ class TestGetAchievement:
         user = user.scalars().first()
         response = auth_client.get('achievements/me')
         assert response.status_code == status.HTTP_200_OK
-        print(response.json())
-        print(achievement)
-        print(profile)
-        print(user.profile)
-        print(user.profile.achievements)
+        result = response.json()
+        assert len(result) == 2
+        assert result[0]['id'] in (1, 2)
+        assert result[1]['id'] in (1, 2)
+        assert result[0]['id'] != result[1]['id']

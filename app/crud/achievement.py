@@ -11,7 +11,6 @@ class CRUDAchievement(CRUDBase):
             select(Achievement)
             .options(
                 selectinload(Achievement.profiles)
-                .selectinload(Profile.user)
             ).where(Achievement.profiles.any(Profile.user_id == user_id))
         )
         db_obj = await session.execute(stmt)
