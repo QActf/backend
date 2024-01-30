@@ -1,14 +1,14 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import achievement_crud
+from app.models import Achievement, User
 from app.schemas.achievement import (AchievementCreate, AchievementRead,
                                      AchievementUpdate)
 from app.services.endpoints_services import delete_obj
-from app.models import User, Achievement
 
 router = APIRouter()
 
