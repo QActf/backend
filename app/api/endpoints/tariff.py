@@ -24,6 +24,17 @@ async def get_all_tariffs(
     return await tariff_crud.get_multi(session)
 
 
+@router.get(
+        '/{tariff_id}',
+        response_model=TariffRead
+)
+async def get_tariff(
+    tariff_id: int,
+    session: AsyncSession = Depends(get_async_session)
+):
+    return await tariff_crud.get(tariff_id, session)
+
+
 @router.put(
     "/",
     response_model=UserRead,
