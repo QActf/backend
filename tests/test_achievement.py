@@ -221,3 +221,49 @@ class TestGetAchievement:
         assert response.status_code == status.HTTP_403_FORBIDDEN
         response = auth_client.get('/achievements/me/22')
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+class TestUpdateAchievement:
+    ...
+
+
+class TestDeleteAchievement:
+    async def test_forbidden_delete_acievement_user(
+            self,
+            moc_achievements,
+            db_session: AsyncSession,
+            auth_client: TestClient
+    ):
+        """Тест запрета удаления ачивмент юзером."""
+        achievements = await db_session.execute(
+            func.count(Achievement.id)
+        )
+        achievements = achievements.scalar()
+        assert achievements > 0
+        response = auth_client.delete('/achievements/1')
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        check_achiv = await db_session.execute(
+            func.count(Achievement.id)
+        )
+        check_achiv = check_achiv.scalar()
+        assert check_achiv == achievements
+
+    async def test_forbidden_delete_acievement_nonauth(
+            self,
+            moc_achievements,
+            db_session: AsyncSession,
+            new_client: TestClient
+    ):
+        """Тест запрета удаления ачивмент юзером."""
+        achievements = await db_session.execute(
+            func.count(Achievement.id)
+        )
+        achievements = achievements.scalar()
+        assert achievements > 0
+        response = new_client.delete('/achievements/1')
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        check_achiv = await db_session.execute(
+            func.count(Achievement.id)
+        )
+        check_achiv = check_achiv.scalar()
+        assert check_achiv == achievements
