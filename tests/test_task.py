@@ -66,6 +66,28 @@ class TestCreateTask:
         check_tasks = check_tasks.scalar()
         assert check_tasks == tasks
 
+    async def test_create_duplicate_task(
+            self,
+            db_session: AsyncSession,
+            auth_superuser: TestClient
+    ):
+        """Тест запрета создания дубля таски."""
+        auth_superuser.post(
+            '/tasks',
+            json=CREATE_SCHEME
+        )
+        stmt = func.count(Task.id)
+        tasks = await db_session.execute(stmt)
+        tasks = tasks.scalar()
+        response = auth_superuser.post(
+            '/tasks',
+            json=CREATE_SCHEME
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        check_tasks = await db_session.execute(stmt)
+        check_tasks = check_tasks.scalar()
+        assert check_tasks == tasks
+
 
 class TestGetTask:
     ...
