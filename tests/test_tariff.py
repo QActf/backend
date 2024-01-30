@@ -126,4 +126,42 @@ class TestUpdateTariff:
 
 
 class TestDeleteTariff:
-    ...
+    async def test_forbidden_delete_tariff_nonauth(
+            self,
+            moc_tariffs,
+            new_client: TestClient
+    ):
+        """Тест запрета удаления тарифа неавторизованным."""
+        response = new_client.delete('/tariffs/1')
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    async def test_forbidden_delete_tariff_user(
+            self,
+            moc_tariffs,
+            auth_client: TestClient
+    ):
+        """Тест запрета удаления тарифа юзером."""
+        response = auth_client.delete('/tariffs/1')
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    async def test_delete_tariff_superuser(
+            self,
+            moc_tariffs,
+            db_session: AsyncSession,
+            auth_superuser: TestClient
+    ):
+        """Тест удаления тарифа."""
+        stmt_count = func.count(Tariff.id)
+        tariff_count = await db_session.execute(stmt_count)
+        tariff_count = tariff_count.scalar()
+        stmt_tariff = select(Tariff).where(Tariff.id == 1)
+        tariff = await db_session.execute(stmt_tariff)
+        tariff = tariff.scalar()
+        response = auth_superuser.delete('/tariffs/1')
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        check_tariff_count = await db_session.execute(stmt_count)
+        check_tariff_count = check_tariff_count.scalar()
+        assert check_tariff_count == tariff_count - 1
+        check_tariff = await db_session.execute(stmt_tariff)
+        check_tariff = check_tariff.scalar()
+        assert check_tariff is None

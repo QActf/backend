@@ -87,7 +87,8 @@ async def create_tariff(
 
 @router.delete(
     "/{obj_id}",
-    dependencies=[Depends(current_superuser)]
+    dependencies=[Depends(current_superuser)],
+    status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_tariff(
     obj_id: int,
