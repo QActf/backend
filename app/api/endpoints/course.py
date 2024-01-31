@@ -24,7 +24,7 @@ async def get_all_courses(
     pagination: Pagination = Depends(get_pagination_params),
     session: AsyncSession = Depends(get_async_session),
 ) -> list[CourseRead]:
-    """Возвращает все courses."""
+    """Возвращает все курсы."""
     courses = await course_crud.get_multi(session)
     response = add_response_headers(response, courses, pagination)
     return paginated(courses, pagination)
@@ -84,9 +84,10 @@ async def get_id_course(
     course_id: int,
     session: AsyncSession = Depends(get_async_session),
 ) -> CourseRead:
-    """Возвращает Course по его id."""
+    """Возвращает курс по его id."""
     await check_obj_exists(obj_id=course_id, crud=course_crud, session=session)
     return await course_crud.get(obj_id=course_id, session=session)
+
 
 @router.put(
     "/",
@@ -130,7 +131,7 @@ async def update_users_course(
 async def create_course(
     course: CourseCreate, session: AsyncSession = Depends(get_async_session)
 ):
-    """Создать Course."""
+    """Создать курс."""
     await check_name_duplicate(course.name, course_crud, session)
     return await course_crud.create(obj_in=course, session=session)
 
@@ -145,7 +146,7 @@ async def update_course(
     obj_in: CourseUpdate,
     session: AsyncSession = Depends(get_async_session),
 ) -> CourseRead:
-    """Обновляет Course по его id."""
+    """Обновляет курс по его id."""
     course = await course_crud.get(obj_id=course_id, session=session)
     await check_obj_exists(
         obj_id=course_id, crud=course_crud, session=session
