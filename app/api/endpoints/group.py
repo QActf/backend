@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
@@ -8,9 +8,8 @@ from app.crud import group_crud
 from app.models import Group, User
 from app.schemas.group import GroupCreate, GroupRead, GroupUpdate
 from app.services.endpoints_services import delete_obj
-
-from app.services.utils import (Pagination, get_pagination_params, paginated,
-                                add_response_headers)
+from app.services.utils import (Pagination, add_response_headers,
+                                get_pagination_params, paginated)
 
 router = APIRouter()
 
