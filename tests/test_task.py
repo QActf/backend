@@ -1,7 +1,6 @@
 from fastapi.testclient import TestClient
 from fastapi import status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import func
 from app.models import Task
 
 from .utils import get_obj_count
@@ -83,7 +82,21 @@ class TestCreateTask:
 
 
 class TestGetTask:
-    ...
+    async def test_forbidden_get_tasks_nonauth(
+            self,
+            new_client: TestClient
+    ):
+        """Тест запрета получения таск неавторизованным."""
+        response = new_client.get('/tasks')
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    async def test_forbidden_get_tasks_user(
+            self,
+            auth_client: TestClient
+    ):
+        """Тест запрета получения таск юзером."""
+        response = auth_client.get('/tasks')
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 class TestUpdateTask:

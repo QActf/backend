@@ -16,7 +16,7 @@ router = APIRouter()
 @router.get(
     "/",
     response_model=List[TaskRead],
-    dependencies=[Depends(current_user)]
+    dependencies=[Depends(current_superuser)]
 )
 async def get_all_tasks(
     session: AsyncSession = Depends(get_async_session),
