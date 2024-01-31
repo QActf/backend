@@ -11,6 +11,9 @@ CREATE_SCHEME = {
     'name': 'Course name',
     'description': 'Course description'
 }
+WRONG_CREATE_SCHEME = {
+    'description': 'Course description'
+}
 
 
 class TestCreateCourse:
@@ -41,6 +44,18 @@ class TestCreateCourse:
         assert response.status_code == status.HTTP_201_CREATED
         check_courses_count = await get_obj_count(Course, db_session)
         assert check_courses_count == courses_count + 1
+
+    async def test_create_course_wrong_data(
+            self,
+            db_session: AsyncSession,
+            auth_superuser: TestClient
+    ):
+        """Тест неправильных данных создания курса."""
+        courses_count = await get_obj_count(Course, db_session)
+        response = auth_superuser.post('/courses', json=WRONG_CREATE_SCHEME)
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        check_courses_count = await get_obj_count(Course, db_session)
+        assert check_courses_count == courses_count
 
 
 class TestGetCourse:
