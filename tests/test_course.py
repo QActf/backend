@@ -57,6 +57,19 @@ class TestCreateCourse:
         check_courses_count = await get_obj_count(Course, db_session)
         assert check_courses_count == courses_count
 
+    async def test_create_course_duplicate_forbidden(
+            self,
+            db_session: AsyncSession,
+            auth_superuser: TestClient
+    ):
+        """Тест запрета создания дубля курса."""
+        auth_superuser.post('/courses', json=CREATE_SCHEME)
+        courses_count = await get_obj_count(Course, db_session)
+        response = auth_superuser.post('/courses', json=CREATE_SCHEME)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        check_courses_count = await get_obj_count(Course, db_session)
+        assert check_courses_count == courses_count
+
 
 class TestGetCourse:
     ...
