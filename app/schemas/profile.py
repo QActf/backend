@@ -12,7 +12,7 @@ class ProfileRead(BaseModel):
     age: Optional[int]
     user_id: int
     image: Optional[str]
-    achievements: Optional[list[AchievementRead]]
+    # achievements: Optional[list[AchievementRead]]
 
     class Config:
         from_attributes = True

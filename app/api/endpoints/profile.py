@@ -5,12 +5,12 @@ from fastapi import (APIRouter, Depends, File, HTTPException, Response,
 from fastapi_filter import FilterDepends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.filters import ProfileFilter
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import profile_crud
 from app.models import Profile, User
 from app.schemas.profile import ProfileRead, ProfileUpdate
-from app.services.filters import ProfileFilter
 from app.services.utils import (Pagination, add_response_headers,
                                 create_filename, get_pagination_params,
                                 paginated, remove_content, save_content)
@@ -49,10 +49,16 @@ async def get_current_user_profile(
     )
 
 
-@router.get(
-    '/me//photo',
-    dependencies=[Depends(current_user)]
-)
+@router.get('/{profile_id}', response_model=ProfileRead,
+            dependencies=[Depends(current_superuser)])
+async def get_profile(
+    profile_id: int,
+    session: AsyncSession = Depends(get_async_session)
+):
+    return await profile_crud.get(profile_id, session)
+
+
+@router.get('/me/photo')
 async def get_user_photo(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session)
@@ -76,7 +82,7 @@ async def update_profile(
 
 
 @router.patch(
-    '/me//update_photo',
+    '/me/update_photo',
     response_model=ProfileRead,
     dependencies=[Depends(current_user)]
 )
@@ -109,7 +115,7 @@ def create_profile():
 
 
 @router.delete('/{obj_id}', deprecated=True)
-def delete_profile(obg_id: str):
+def delete_profile():
     """Удалить объект"""
     raise HTTPException(
         status_code=status.HTTP_405_METHOD_NOT_ALLOWED,

@@ -3,11 +3,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.api.filters import ProfileFilter
 from app.core.config import settings
 from app.crud.base import CRUDBase
 from app.models import Profile, User
 from app.schemas.profile import ProfileCreate
-from app.services.filters import ProfileFilter
 
 
 class CRUDProfile(CRUDBase):
@@ -34,6 +34,15 @@ class CRUDProfile(CRUDBase):
             )
         )
         return db_objs.scalars().all()
+
+    async def get(self, obj_id: int, session: AsyncSession):
+        profile = await session.execute(
+            select(self.model)
+            .options(
+                selectinload(Profile.achievements)
+            )
+        )
+        return profile.scalars().first()
 
     async def get_user_photo(
             self,
