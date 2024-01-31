@@ -14,6 +14,9 @@ CREATE_SCHEME = {
 WRONG_CREATE_SCHEME = {
     'description': 'Course description'
 }
+UPDATE_SCHEME = {
+    'name': 'New Course name',
+}
 
 
 class TestCreateCourse:
@@ -99,7 +102,37 @@ class TestGetCourse:
 
 
 class TestUpdateCourse:
-    ...
+    async def test_update_course_forbidden_nonauth(
+        self,
+        new_client: TestClient
+    ):
+        """Тест запрета апдейта курса неавторизованным."""
+        response = new_client.patch('/courses/1', json=UPDATE_SCHEME)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    async def test_update_course_forbidden_user(
+        self,
+        auth_client: TestClient
+    ):
+        """Тест запрета апдейта курса юзером."""
+        response = auth_client.patch('/courses/1', json=UPDATE_SCHEME)
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    async def test_update_course_superuser(
+            self,
+            moc_courses,
+            db_session: AsyncSession,
+            auth_superuser: TestClient
+    ):
+        """Тест апдейта курса."""
+        course: Course = await get_obj_by_id(1, Course, db_session)
+        response = auth_superuser.patch(
+            '/courses/1', json=UPDATE_SCHEME
+        )
+        assert response.status_code == status.HTTP_200_OK
+        check_course: Course = await get_obj_by_id(1, Course, db_session)
+        assert check_course.name == UPDATE_SCHEME['name']
+        assert check_course.description == course.description
 
 
 class TestDeleteCourse:
