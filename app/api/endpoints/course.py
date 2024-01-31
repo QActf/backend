@@ -50,7 +50,8 @@ async def create_course(
     return await course_crud.create(obj_in=course, session=session)
 
 
-@router.delete("/{obj_id}", dependencies=[Depends(current_superuser)])
+@router.delete("/{obj_id}", dependencies=[Depends(current_superuser)],
+               status_code=status.HTTP_204_NO_CONTENT)
 async def delete_course(
     obj_id: int,
     session: AsyncSession = Depends(get_async_session),

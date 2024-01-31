@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Course
 
-from .utils import get_obj_count
+from .utils import get_obj_count, get_obj_by_id
 
 
 CREATE_SCHEME = {
@@ -103,4 +103,45 @@ class TestUpdateCourse:
 
 
 class TestDeleteCourse:
-    ...
+    async def test_delete_course_forbidden_nonauth(
+        self,
+        moc_courses,
+        db_session: AsyncSession,
+        new_client: TestClient
+    ):
+        """Тест запрета удаления курса неавторизованным."""
+        courses_count = await get_obj_count(Course, db_session)
+        response = new_client.delete('/courses/1')
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        check_courses_count = await get_obj_count(Course, db_session)
+        assert check_courses_count == courses_count
+
+    async def test_delete_course_forbidden_user(
+        self,
+        moc_courses,
+        db_session: AsyncSession,
+        auth_client: TestClient
+    ):
+        """Тест запрета удаления курса юзером."""
+        courses_count = await get_obj_count(Course, db_session)
+        response = auth_client.delete('/courses/1')
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        check_courses_count = await get_obj_count(Course, db_session)
+        assert check_courses_count == courses_count
+
+    async def test_delete_course(
+        self,
+        moc_courses,
+        db_session: AsyncSession,
+        auth_superuser: TestClient
+    ):
+        """Тест удаления курса."""
+        courses_count = await get_obj_count(Course, db_session)
+        course = await get_obj_by_id(1, Course, db_session)
+        assert course.id == 1
+        response = auth_superuser.delete('/courses/1')
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        check_courses_count = await get_obj_count(Course, db_session)
+        assert check_courses_count == courses_count - 1
+        course = await get_obj_by_id(1, Course, db_session)
+        assert course is None
