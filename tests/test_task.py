@@ -3,7 +3,7 @@ from fastapi import status
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import Task
 
-from .utils import get_obj_count
+from .utils import get_obj_count, get_obj_by_id
 
 CREATE_SCHEME = {
     'name': 'Task name',
@@ -11,6 +11,9 @@ CREATE_SCHEME = {
 }
 WRONG_CREATE_SCHEME = {
     'description': 'Task description'
+}
+UPDATE_SCHEME = {
+    'name': 'New name of task'
 }
 
 
@@ -123,7 +126,39 @@ class TestGetTask:
 
 
 class TestUpdateTask:
-    ...
+    async def test_forbidden_update_task_nonauth(
+            self,
+            new_client: TestClient
+    ):
+        """Тест запрета апдейта таск неавторизованным."""
+        response = new_client.patch('/tasks/1', json=UPDATE_SCHEME)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    async def test_forbidden_update_task_user(
+            self,
+            auth_client: TestClient
+    ):
+        """Тест запрета апдейта таск юзером."""
+        response = auth_client.patch('/tasks/1', json=UPDATE_SCHEME)
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    async def test_update_task_superuser(
+            self,
+            moc_tasks,
+            db_session: AsyncSession,
+            auth_superuser: TestClient
+    ):
+        """Тест апдейта таск."""
+        task: Task = await get_obj_by_id(1, Task, db_session)
+        response = auth_superuser.patch(
+            '/tasks/1',
+            json=UPDATE_SCHEME
+        )
+        assert response.status_code == status.HTTP_200_OK
+        check_task: Task = await get_obj_by_id(1, Task, db_session)
+        assert check_task.name == UPDATE_SCHEME['name']
+        assert check_task.description == task.description
+
 
 
 class TestDeleteTask:
