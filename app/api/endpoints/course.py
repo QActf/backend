@@ -7,6 +7,7 @@ from app.core.user import current_superuser, current_user
 from app.crud import course_crud
 from app.schemas.course import CourseCreate, CourseRead, CourseUpdate
 from app.services.endpoints_services import delete_obj
+from app.models import User
 
 router = APIRouter()
 
@@ -20,6 +21,19 @@ async def get_all_courses(
 ) -> list[CourseRead]:
     """Возвращает все courses."""
     return await course_crud.get_multi(session)
+
+
+@router.get(
+        '/me',
+        response_model=list[CourseRead],
+        dependencies=[Depends(current_user)]
+)
+async def get_self_courses_user(
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Возвращает список курсов юзера."""
+    return await course_crud.get_users_obj(user.id, session)
 
 
 @router.get(

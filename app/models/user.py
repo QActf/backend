@@ -48,7 +48,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     examinations: Mapped[Examination] = relationship(
         secondary=examination_user_association, back_populates="users"
     )
-    courses: Mapped[Course] = relationship(
+    courses: Mapped[list[Course]] = relationship(
         secondary=course_user_association, back_populates="users"
     )
 

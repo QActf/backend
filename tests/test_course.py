@@ -1,8 +1,10 @@
 from fastapi.testclient import TestClient
 from fastapi import status
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
-from app.models import Course
+from app.models import Course, User
 
 from .utils import get_obj_count, get_obj_by_id
 
@@ -17,6 +19,21 @@ WRONG_CREATE_SCHEME = {
 UPDATE_SCHEME = {
     'name': 'New Course name',
 }
+
+
+async def _get_course_by_id_with_relation_user(
+        index: int,
+        session: AsyncSession
+):
+    stmt = (
+        select(Course)
+        .where(Course.id == index)
+        .options(
+            selectinload(Course.users)
+        )
+    )
+    course = await session.execute(stmt)
+    return course.scalar()
 
 
 class TestCreateCourse:
@@ -99,6 +116,28 @@ class TestGetCourse:
         assert response.json()['id'] == 1
         response = new_client.get('/courses/100')
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    async def test_get_self_courses_user(
+            self,
+            moc_courses,
+            register_client,
+            db_session: AsyncSession,
+            auth_client: TestClient
+    ):
+        """Тест получения списка своих курсов юзером."""
+        course_1 = await _get_course_by_id_with_relation_user(1, db_session)
+        course_2 = await _get_course_by_id_with_relation_user(2, db_session)
+        user = await get_obj_by_id(register_client.id, User, db_session)
+        course_1.users.append(user)
+        course_2.users.append(user)
+        await db_session.commit()
+        response = auth_client.get('/courses/me')
+        assert response.status_code == status.HTTP_200_OK
+        result = response.json()
+        assert len(result) == 2
+        assert result[0]['id'] in (1, 2)
+        assert result[1]['id'] in (1, 2)
+        assert result[0]['id'] != result[1]['id']
 
 
 class TestUpdateCourse:
