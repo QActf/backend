@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
@@ -51,12 +51,12 @@ async def get_self_group_by_id(
     group: Group | None = await group_crud.get(group_id, session)
     if group is None:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail='Такой группы не существует.'
         )
     if user not in group.users:
         raise HTTPException(
-            status_code=403,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail='Вы не состоите в этой группе.'
         )
     return group
@@ -79,7 +79,7 @@ async def get_group(
     "/",
     response_model=GroupRead,
     dependencies=[Depends(current_superuser)],
-    status_code=201
+    status_code=status.HTTP_201_CREATED
 )
 async def create_group(
     group: GroupCreate, session: AsyncSession = Depends(get_async_session)
@@ -107,7 +107,7 @@ async def update_group(
 @router.delete(
     "/{obj_id}",
     dependencies=[Depends(current_superuser)],
-    status_code=204
+    status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_group(
     obj_id: int,
