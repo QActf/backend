@@ -45,7 +45,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     notifications: Mapped[Notification] = relationship(
         secondary=notification_user_association, back_populates="users"
     )
-    examinations: Mapped[Examination] = relationship(
+    examinations: Mapped[list[Examination]] = relationship(
         secondary=examination_user_association, back_populates="users"
     )
     courses: Mapped[list[Course]] = relationship(

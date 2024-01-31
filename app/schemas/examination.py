@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ExaminationCreate(BaseModel):
@@ -15,3 +15,8 @@ class ExaminationRead(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ExaminationUpdate(BaseModel):
+    name: Optional[str] = Field(None,)
+    description: Optional[str] = Field(None,)
