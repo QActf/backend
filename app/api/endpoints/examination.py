@@ -5,10 +5,10 @@ from app.api.validators import check_name_duplicate, check_obj_exists
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import examination_crud
+from app.models import User
 from app.schemas.examination import (ExaminationCreate, ExaminationRead,
                                      ExaminationUpdate)
 from app.services.endpoints_services import delete_obj
-from app.models import User
 
 router = APIRouter()
 

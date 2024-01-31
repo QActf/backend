@@ -1,9 +1,9 @@
-from app.crud.base import CRUDBase
-from app.models import Examination
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from app.models import User
+
+from app.crud.base import CRUDBase
+from app.models import Examination, User
 
 
 class CRUDExamination(CRUDBase):
