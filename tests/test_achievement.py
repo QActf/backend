@@ -295,3 +295,26 @@ class TestDeleteAchievement:
         assert removed_achiv is None
         check_achiv_count = await get_obj_count(Achievement, db_session)
         assert check_achiv_count == achiv_count - 1
+
+
+class TestPaginationGroup:
+    async def test_pagination(
+            self,
+            moc_achievements,
+            auth_superuser: TestClient
+    ):
+        """Тест пагинации профилей"""
+        response = auth_superuser.get(
+            '/achievements/?limit=2'
+        )
+        result = response.json()
+        assert len(result) == 2
+        assert result[0]['id'] == 1
+        assert result[1]['id'] == 2
+        response = auth_superuser.get(
+            '/achievements/?offset=2&limit=2'
+        )
+        result = response.json()
+        assert len(result) == 2
+        assert result[0]['id'] == 3
+        assert result[1]['id'] == 4

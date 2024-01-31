@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
@@ -9,6 +9,8 @@ from app.models import Achievement, User
 from app.schemas.achievement import (AchievementCreate, AchievementRead,
                                      AchievementUpdate)
 from app.services.endpoints_services import delete_obj
+from app.services.utils import (Pagination, add_response_headers,
+                                get_pagination_params, paginated)
 
 router = APIRouter()
 
@@ -19,10 +21,16 @@ router = APIRouter()
     dependencies=[Depends(current_superuser)]
 )
 async def get_all_achievements(
+    response: Response,
+    pagination: Pagination = Depends(get_pagination_params),
     session: AsyncSession = Depends(get_async_session),
 ) -> list[AchievementRead]:
     """Возвращает все achievement."""
-    return await achievement_crud.get_multi(session)
+    achievements = await achievement_crud.get_multi(session)
+    response = add_response_headers(
+        response, achievements, pagination
+    )
+    return paginated(achievements, pagination)
 
 
 @router.get(
