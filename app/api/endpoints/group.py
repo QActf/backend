@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
@@ -9,6 +9,9 @@ from app.models import Group, User
 from app.schemas.group import GroupCreate, GroupRead, GroupUpdate
 from app.services.endpoints_services import delete_obj
 
+from app.services.utils import (Pagination, get_pagination_params, paginated,
+                                add_response_headers)
+
 router = APIRouter()
 
 
@@ -18,10 +21,16 @@ router = APIRouter()
     dependencies=[Depends(current_superuser)]
 )
 async def get_all_groups(
+    response: Response,
     session: AsyncSession = Depends(get_async_session),
+    pagination: Pagination = Depends(get_pagination_params)
 ) -> list[GroupRead]:
     """Возвращает все группы."""
-    return await group_crud.get_multi(session)
+    groups = await group_crud.get_multi(session)
+    response = add_response_headers(
+        response, groups, pagination
+    )
+    return paginated(groups, pagination)
 
 
 @router.get(
