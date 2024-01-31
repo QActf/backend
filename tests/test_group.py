@@ -272,3 +272,26 @@ class TestUpdateGroup:
             json=UPDATE_SCHEME
         )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+class TestPaginationGroup:
+    async def test_pagination(
+            self,
+            moc_groups,
+            auth_superuser: TestClient
+    ):
+        """Тест пагинации профилей"""
+        response = auth_superuser.get(
+            '/groups/?limit=2'
+        )
+        result = response.json()
+        assert len(result) == 2
+        assert result[0]['id'] == 1
+        assert result[1]['id'] == 2
+        response = auth_superuser.get(
+            '/groups/?offset=2&limit=2'
+        )
+        result = response.json()
+        assert len(result) == 2
+        assert result[0]['id'] == 3
+        assert result[1]['id'] == 4
