@@ -98,6 +98,18 @@ class TestGetTask:
         response = auth_client.get('/tasks')
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
+    async def test_get_tasks_superuser(
+            self,
+            moc_tasks,
+            db_session: AsyncSession,
+            auth_superuser: TestClient
+    ):
+        """Тест получения всех таск."""
+        tasks_count = await get_obj_count(Task, db_session)
+        response = auth_superuser.get('/tasks')
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.json()) == tasks_count
+
 
 class TestUpdateTask:
     ...
