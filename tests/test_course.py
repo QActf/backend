@@ -1,13 +1,12 @@
-from fastapi.testclient import TestClient
 from fastapi import status
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi.testclient import TestClient
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.models import Course, User
 
-from .utils import get_obj_count, get_obj_by_id
-
+from .utils import get_obj_by_id, get_obj_count
 
 CREATE_SCHEME = {
     'name': 'Course name',
