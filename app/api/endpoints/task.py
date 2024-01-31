@@ -67,7 +67,8 @@ async def update_task(
     return await task_crud.update(_task, data, session)
 
 
-@router.delete("/{obj_id}", dependencies=[Depends(current_superuser)])
+@router.delete("/{obj_id}", dependencies=[Depends(current_superuser)],
+               status_code=status.HTTP_204_NO_CONTENT)
 async def delete_task(
     obj_id: int,
     session: AsyncSession = Depends(get_async_session),

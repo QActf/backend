@@ -160,6 +160,36 @@ class TestUpdateTask:
         assert check_task.description == task.description
 
 
-
 class TestDeleteTask:
-    ...
+    async def test_forbidden_delete_task_nonauth(
+            self,
+            new_client: TestClient
+    ):
+        """Тест запрета удаления таск неавторизованным."""
+        response = new_client.delete('/tasks/1')
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    async def test_forbidden_delete_task_user(
+            self,
+            auth_client: TestClient
+    ):
+        """Тест запрета удаления таск юзером."""
+        response = auth_client.delete('/tasks/1')
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    async def test_delete_task(
+            self,
+            moc_tasks,
+            db_session: AsyncSession,
+            auth_superuser: TestClient
+    ):
+        """Тест удаления таск."""
+        tasks_count: int = await get_obj_count(Task, db_session)
+        task: Task = await get_obj_by_id(1, Task, db_session)
+        assert task.id == 1
+        response = auth_superuser.delete('/tasks/1')
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        check_tasks_count = await get_obj_count(Task, db_session)
+        assert check_tasks_count == tasks_count - 1
+        check_task = await get_obj_by_id(1, Task, db_session)
+        assert check_task is None
