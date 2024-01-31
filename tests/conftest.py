@@ -22,7 +22,8 @@ pytest_plugins = [
     f'{fixtures}.group',
     f'{fixtures}.achievement',
     f'{fixtures}.tariff',
-    f'{fixtures}.task'
+    f'{fixtures}.task',
+    f'{fixtures}.course',
 ]
 
 engine_test = create_async_engine(

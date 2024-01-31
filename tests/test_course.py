@@ -72,7 +72,30 @@ class TestCreateCourse:
 
 
 class TestGetCourse:
-    ...
+    async def test_get_all_courses(
+            self,
+            moc_courses,
+            db_session: AsyncSession,
+            new_client: TestClient
+    ):
+        """Тест получения всех курсов."""
+        courses_count = await get_obj_count(Course, db_session)
+        response = new_client.get('/courses')
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.json()) == courses_count
+
+    async def test_get_course_by_id(
+            self,
+            moc_courses,
+            db_session: AsyncSession,
+            new_client: TestClient
+    ):
+        """Тест получения курса по id."""
+        response = new_client.get('/courses/1')
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json()['id'] == 1
+        response = new_client.get('/courses/100')
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 class TestUpdateCourse:

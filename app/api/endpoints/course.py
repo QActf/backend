@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import check_name_duplicate
+from app.api.validators import check_name_duplicate, check_obj_exists
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import course_crud
@@ -14,13 +14,26 @@ router = APIRouter()
 @router.get(
     "/",
     response_model=list[CourseRead],
-    dependencies=[Depends(current_user)]
+    # dependencies=[Depends(current_user)]
 )
 async def get_all_courses(
     session: AsyncSession = Depends(get_async_session),
 ) -> list[CourseRead]:
     """Возвращает все courses."""
     return await course_crud.get_multi(session)
+
+
+@router.get(
+        '/{course_id}',
+        response_model=CourseRead,
+)
+async def get_course(
+    course_id: int,
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Возвращает курс."""
+    await check_obj_exists(course_id, course_crud, session)
+    return await course_crud.get(course_id, session)
 
 
 @router.post(
