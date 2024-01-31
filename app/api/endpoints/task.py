@@ -25,6 +25,19 @@ async def get_all_tasks(
     return await task_crud.get_multi(session)
 
 
+@router.get(
+        '/{task_id}',
+        response_model=TaskRead,
+        dependencies=[Depends(current_superuser)]
+)
+async def get_task_by_id(
+    task_id: int,
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Получение таски по id."""
+    return await task_crud.get(task_id, session)
+
+
 @router.post(
     "/",
     response_model=TaskRead,

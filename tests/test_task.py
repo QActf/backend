@@ -110,6 +110,17 @@ class TestGetTask:
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == tasks_count
 
+    async def test_get_task_by_id_superuser(
+            self,
+            moc_tasks,
+            db_session: AsyncSession,
+            auth_superuser: TestClient
+    ):
+        """Получение таски по id."""
+        response = auth_superuser.get('/tasks/1')
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json()['id'] == 1
+
 
 class TestUpdateTask:
     ...
