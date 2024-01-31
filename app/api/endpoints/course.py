@@ -1,6 +1,4 @@
-from http import HTTPStatus
-
-from fastapi import APIRouter, Depends, Response, HTTPException
+from fastapi import APIRouter, Depends, Response, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate, check_obj_exists
@@ -71,7 +69,7 @@ async def get_user_course_id(
     )
     if user not in course.users:
         raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail='Вы не записаны на данный курс.'
         )
     return course
@@ -111,12 +109,12 @@ async def update_users_course(
     )
     if user in course.users:
         raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail='На данный курс уже записан указанный пользователь.'
         )
     if course.is_closed:
         raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail='Данный курс закрыт, нельзя добавлять к нему пользователей.'
         )
     return await course_crud.add_user(
@@ -187,7 +185,7 @@ async def close_course(
         }
     if course.is_closed:
         raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail='Данный курс уже закрыт.'
         )
     course_closed = await course_crud.close_course(
