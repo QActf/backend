@@ -151,7 +151,7 @@ async def update_course(
     course = await check_obj_exists(
         obj_id=course_id, crud=course_crud, session=session
     )
-    if obj_in.name is not None:
+    if obj_in.name:
         await check_name_duplicate(
             name=obj_in.name, crud=course_crud, session=session
         )
