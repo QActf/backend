@@ -17,7 +17,7 @@ router = APIRouter()
 @router.get(
     "/",
     response_model=list[CourseRead],
-    dependencies=[Depends(current_superuser)]
+    dependencies=[Depends(current_user)]
 )
 async def get_all_courses(
     response: Response,
