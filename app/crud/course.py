@@ -8,7 +8,7 @@ from app.models import Course, User
 
 class CRUDCourse(CRUDBase):
 
-    async def get_user_courses(
+    async def get_users_obj(
             self,
             user_id: int,
             session: AsyncSession
@@ -28,7 +28,7 @@ class CRUDCourse(CRUDBase):
             course_id: int,
             session: AsyncSession
     ):
-        """Получение конкретного курса, который запрашивает пользователь."""
+        """Получение курса по id, который запрашивает пользователь."""
         course_query = (
             select(Course)
             .where(Course.id == course_id)
@@ -38,19 +38,6 @@ class CRUDCourse(CRUDBase):
         )
         course = await session.execute(course_query)
         return course.scalars().first()
-
-    async def add_user(
-            self,
-            course: Course,
-            user: User,
-            session: AsyncSession
-    ):
-        """Добавление к курсу пользователя."""
-        course.users.append(user)
-        session.add(course)
-        await session.commit()
-        await session.refresh(course)
-        return course
 
     async def close_course(
             self,

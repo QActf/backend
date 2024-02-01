@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.validators import check_name_duplicate, check_obj_exists
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
-from app.crud import course_crud, user_crud
+from app.crud import course_crud
 from app.models import Course, User
 from app.schemas.course import CourseCreate, CourseRead, CourseUpdate
 from app.services.endpoints_services import delete_obj
@@ -42,7 +42,7 @@ async def get_all_user_courses(
     session: AsyncSession = Depends(get_async_session),
 ) -> list[CourseRead]:
     """Возвращает все курсы пользователя, выполняющего запрос."""
-    courses = await course_crud.get_user_courses(
+    courses = await course_crud.get_users_obj(
         user_id=user.id, session=session
     )
     response = add_response_headers(response, courses, pagination)
@@ -87,40 +87,6 @@ async def get_id_course(
     """Возвращает курс по его id."""
     return await check_obj_exists(
         obj_id=course_id, crud=course_crud, session=session
-    )
-
-
-@router.put(
-    "/",
-    response_model=CourseRead,
-    dependencies=[Depends(current_superuser)]
-)
-async def update_users_course(
-    course_id: int,
-    user_id: int,
-    session: AsyncSession = Depends(get_async_session),
-) -> CourseRead:
-    """Привязывает курс к пользователю."""
-    await check_obj_exists(course_id, course_crud, session)
-    await check_obj_exists(user_id, user_crud, session)
-    course = await course_crud.get_course(
-        course_id=course_id, session=session
-    )
-    user = await user_crud.get(
-        obj_id=user_id, session=session
-    )
-    if user in course.users:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail='На данный курс уже записан указанный пользователь.'
-        )
-    if course.is_closed:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail='Данный курс закрыт, нельзя добавлять к нему пользователей.'
-        )
-    return await course_crud.add_user(
-        course=course, user=user, session=session
     )
 
 
