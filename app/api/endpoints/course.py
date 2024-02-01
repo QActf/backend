@@ -85,8 +85,9 @@ async def get_id_course(
     session: AsyncSession = Depends(get_async_session),
 ) -> CourseRead:
     """Возвращает курс по его id."""
-    await check_obj_exists(obj_id=course_id, crud=course_crud, session=session)
-    return await course_crud.get(obj_id=course_id, session=session)
+    return await check_obj_exists(
+        obj_id=course_id, crud=course_crud, session=session
+    )
 
 
 @router.put(
@@ -147,8 +148,7 @@ async def update_course(
     session: AsyncSession = Depends(get_async_session),
 ) -> CourseRead:
     """Обновляет курс по его id."""
-    course = await course_crud.get(obj_id=course_id, session=session)
-    await check_obj_exists(
+    course = await check_obj_exists(
         obj_id=course_id, crud=course_crud, session=session
     )
     if obj_in.name is not None:
