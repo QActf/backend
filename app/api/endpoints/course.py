@@ -170,13 +170,10 @@ async def close_course(
         course_id=course_id, session=session
     )
     if not course.users:
-        course_delete = await delete_obj(
+        await delete_obj(
             obj_id=course_id, crud=course_crud, session=session
         )
-        return {
-            'course': course_delete,
-            'message': 'Курс успешно удалён'
-        }
+        return
     if course.is_closed:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
