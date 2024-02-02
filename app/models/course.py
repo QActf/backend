@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import (Column, ForeignKey, Integer, String, Table, Text,
-                        UniqueConstraint)
+from sqlalchemy import (Boolean, Column, ForeignKey, Integer, String, Table,
+                        Text, UniqueConstraint)
 from sqlalchemy.orm import Mapped, relationship
 
 from app.core.config import settings
@@ -43,6 +43,7 @@ class Course(Base):
         String(length=settings.max_length_string), unique=True, nullable=False
     )
     description: str = Column(Text)
+    is_closed: bool = Column(Boolean, default=False)
     users: Mapped[list[User]] = relationship(
         secondary=course_user_association, back_populates="courses"
     )

@@ -5,12 +5,12 @@ from fastapi import (APIRouter, Depends, File, HTTPException, Response,
 from fastapi_filter import FilterDepends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.filters import ProfileFilter
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import profile_crud
 from app.models import Profile, User
 from app.schemas.profile import ProfileRead, ProfileUpdate
-from app.services.filters import ProfileFilter
 from app.services.utils import (Pagination, add_response_headers,
                                 create_filename, get_pagination_params,
                                 paginated, remove_content, save_content)

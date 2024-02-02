@@ -107,13 +107,13 @@ class TestGetCourse:
             self,
             moc_courses,
             db_session: AsyncSession,
-            new_client: TestClient
+            auth_superuser: TestClient
     ):
         """Тест получения курса по id."""
-        response = new_client.get('/courses/1')
+        response = auth_superuser.get('/courses/1')
         assert response.status_code == status.HTTP_200_OK
         assert response.json()['id'] == 1
-        response = new_client.get('/courses/100')
+        response = auth_superuser.get('/courses/100')
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     async def test_get_self_courses_user(
