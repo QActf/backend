@@ -112,7 +112,7 @@ async def delete_examination(
     obj_id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Удалить объект"""
+    """Delete obj"""
     return await delete_obj(
         obj_id=obj_id, crud=examination_crud, session=session
     )
