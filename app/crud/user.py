@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.crud.base import CRUDBase
 from app.crud.hasher import Hasher
@@ -7,6 +8,17 @@ from app.models import User
 
 
 class CRUDUser(CRUDBase):
+    async def get(
+        self,
+        obj_id: int,
+        session: AsyncSession,
+    ):
+        db_obj = await session.execute(
+            select(self.model).where(self.model.id == obj_id).options(
+                selectinload(User.examinations)
+            )
+        )
+        return db_obj.scalars().first()
 
     async def update_id(
             self,
