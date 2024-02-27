@@ -58,7 +58,7 @@ async def get_profile(
     return await profile_crud.get(profile_id, session)
 
 
-@router.get('/me/photo')
+@router.get('/me/photo', dependencies=[Depends(current_user)])
 async def get_user_photo(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session)

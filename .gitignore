@@ -5,6 +5,7 @@ test.db-journal
 *.jpg
 *.PNG
 infra/.env
+test.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
