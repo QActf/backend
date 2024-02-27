@@ -14,7 +14,7 @@ async def check_obj_exists(
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
             detail=f"Объект {crud.model.__tablename__} "
-                   f"f с id {obj_id} не найден.",
+                   f"с id {obj_id} не найден.",
         )
     return obj
 
