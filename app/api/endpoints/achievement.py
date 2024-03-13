@@ -1,11 +1,13 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import achievement_crud
-from app.schemas.achievement import AchievementCreate, AchievementRead
+from app.models import Achievement, User
+from app.schemas.achievement import (AchievementCreate, AchievementRead,
+                                     AchievementUpdate)
 from app.services.endpoints_services import delete_obj
 
 router = APIRouter()
@@ -14,7 +16,7 @@ router = APIRouter()
 @router.get(
     "/",
     response_model=list[AchievementRead],
-    dependencies=[Depends(current_user)]
+    dependencies=[Depends(current_superuser)]
 )
 async def get_all_achievements(
     session: AsyncSession = Depends(get_async_session),
@@ -23,10 +25,51 @@ async def get_all_achievements(
     return await achievement_crud.get_multi(session)
 
 
+@router.get(
+        '/me',
+        response_model=list[AchievementRead],
+        dependencies=[Depends(current_user)]
+)
+async def get_self_achievements(
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Возвращает ачивментс юзера."""
+    return await achievement_crud.get_users_obj(user.id, session)
+
+
+@router.get(
+        '/me/{achievement_id}',
+        response_model=AchievementRead,
+        dependencies=[Depends(current_user)]
+)
+async def get_self_achievement_by_id(
+    achievement_id: int,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Возвращает ачивмент юзера по id."""
+    achievement: Achievement = await achievement_crud.get(
+        achievement_id, session
+    )
+    if achievement is None:
+        raise HTTPException(
+            status_code=404,
+            detail='Achievement не существует.'
+        )
+    if user.id not in [_.id for _ in achievement.profiles]:
+        raise HTTPException(
+            status_code=403,
+            detail='У выс нет этого achievement.'
+        )
+    return achievement
+
+
 @router.post(
     "/",
     response_model=AchievementRead,
-    dependencies=[Depends(current_superuser)]
+    dependencies=[Depends(current_superuser)],
+    status_code=status.HTTP_201_CREATED
 )
 async def create_achievement(
     achievement: AchievementCreate,
@@ -37,7 +80,25 @@ async def create_achievement(
     return await achievement_crud.create(obj_in=achievement, session=session)
 
 
-@router.delete("/{obj_id}", dependencies=[Depends(current_superuser)])
+@router.patch(
+        '/{achievement_id}',
+        response_model=AchievementRead,
+        dependencies=[Depends(current_superuser)]
+)
+async def update_achievement(
+    achievement_id: int,
+    data: AchievementUpdate,
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Апдейт ачивмент."""
+    _achievement = await achievement_crud.get(achievement_id, session)
+    return await achievement_crud.update(
+        _achievement, data, session
+    )
+
+
+@router.delete("/{obj_id}", dependencies=[Depends(current_superuser)],
+               status_code=status.HTTP_204_NO_CONTENT)
 async def delete_achievement(
     obj_id: int,
     session: AsyncSession = Depends(get_async_session),
