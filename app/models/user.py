@@ -39,7 +39,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     )
     tariff: Mapped[Tariff] = relationship(back_populates="users")
     profile: Mapped[Profile] = relationship(back_populates="user")
-    groups: Mapped[Group] = relationship(
+    groups: Mapped[list[Group]] = relationship(
         secondary=group_user_association, back_populates="users"
     )
     notifications: Mapped[Notification] = relationship(
