@@ -22,7 +22,6 @@ class CRUDGroup(CRUDBase):
     async def get_users_obj(self, user_id: int, session: AsyncSession):
         stmt = (
             select(Group)
-            # .where(Group.users == user_id)
             .options(
                 selectinload(Group.users)
             ).where(Group.users.any(User.id == user_id))
