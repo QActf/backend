@@ -85,6 +85,7 @@ class TestCreateAchievement:
             db_session: AsyncSession,
             auth_superuser: TestClient
     ):
+        """Тест с неправильными данными для ачивмент."""
         achievements = await get_obj_count(Achievement, db_session)
         response = auth_superuser.post(
             '/achievements',

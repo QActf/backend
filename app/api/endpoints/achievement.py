@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import check_name_duplicate
+from app.api.validators import check_name_duplicate, check_obj_exists
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import achievement_crud
@@ -105,7 +105,11 @@ async def update_achievement(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Апдейт ачивмент."""
-    _achievement = await achievement_crud.get(achievement_id, session)
+    _achievement = await check_obj_exists(
+        achievement_id,
+        achievement_crud,
+        session
+    )
     return await achievement_crud.update(
         _achievement, data, session
     )
