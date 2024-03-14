@@ -27,7 +27,7 @@ async def get_all_achievements(
 ) -> list[AchievementRead]:
     """Возвращает все achievement."""
     achievements = await achievement_crud.get_multi(session)
-    response = add_response_headers(
+    add_response_headers(
         response, achievements, pagination
     )
     return paginated(achievements, pagination)
@@ -39,11 +39,17 @@ async def get_all_achievements(
         dependencies=[Depends(current_user)]
 )
 async def get_self_achievements(
+    response: Response,
+    pagination: Pagination = Depends(get_pagination_params),
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session)
 ):
     """Возвращает ачивментс юзера."""
-    return await achievement_crud.get_users_obj(user.id, session)
+    achievements = await achievement_crud.get_users_obj(user.id, session)
+    add_response_headers(
+        response, achievements, pagination
+    )
+    return paginated(achievements, pagination)
 
 
 @router.get(
@@ -62,13 +68,13 @@ async def get_self_achievement_by_id(
     )
     if achievement is None:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail='Achievement не существует.'
         )
     if user.id not in [_.id for _ in achievement.profiles]:
         raise HTTPException(
-            status_code=403,
-            detail='У выс нет этого achievement.'
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='У вас нет этого achievement.'
         )
     return achievement
 
