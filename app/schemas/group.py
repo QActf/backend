@@ -4,9 +4,8 @@ from pydantic import BaseModel, Field
 
 
 class GroupCreate(BaseModel):
-    name: str
-    description: Optional[str]
-
+    name: str = Field(..., example="Название группы")
+    description: Optional[str] = Field(..., example="Описание группы")
 
 class GroupRead(BaseModel):
     id: int
@@ -16,7 +15,6 @@ class GroupRead(BaseModel):
     class Config:
         from_attributes = True
 
-
 class GroupUpdate(BaseModel):
-    name: Optional[str] = Field(None,)
-    description: Optional[str] = Field(None,)
+    name: Optional[str] = Field(None, example="Название группы")
+    description: Optional[str] = Field(None, example="Описание группы")
