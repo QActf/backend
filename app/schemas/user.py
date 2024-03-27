@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Optional
 
 from fastapi_users import schemas
+from pydantic import Field
 
 
 class Role(str, Enum):
@@ -12,7 +13,7 @@ class Role(str, Enum):
 
 class UserRead(schemas.BaseUser[int]):
     role: Role
-    username: str
+    username: str = Field(..., example="Имя")
     tariff_id: Optional[int]
 
     class Config:
@@ -21,9 +22,9 @@ class UserRead(schemas.BaseUser[int]):
 
 class UserCreate(schemas.BaseUserCreate):
     role: Role
-    username: str
+    username: str = Field(..., example="Имя")
 
 
 class UserUpdate(schemas.BaseUserUpdate):
     role: Optional[Role]
-    username: Optional[str]
+    username: Optional[str] = Field(..., example="Имя")

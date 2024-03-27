@@ -4,8 +4,8 @@ from pydantic import BaseModel, Field
 
 
 class TaskCreate(BaseModel):
-    name: str
-    description: Optional[str]
+    name: str = Field(..., example="Название задачи")
+    description: Optional[str] = Field(..., example="Описание задачи")
 
 
 class TaskRead(BaseModel):
@@ -18,5 +18,5 @@ class TaskRead(BaseModel):
 
 
 class TaskUpdate(BaseModel):
-    name: Optional[str] = Field(None,)
-    description: Optional[str] = Field(None,)
+    name: Optional[str] = Field(None, example="Название задачи")
+    description: Optional[str] = Field(None, example="Описание задачи")

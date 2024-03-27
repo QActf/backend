@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 
 from app.api.endpoints import register
+from app.api_docs_responses.user import DELETE_USER
 from app.core.user import auth_backend, fastapi_users
 from app.schemas.user import UserCreate, UserRead, UserUpdate
 
@@ -23,7 +24,13 @@ router.include_router(
 )
 
 
-@router.delete("/users/{id}", tags=["users"], deprecated=True)
+@router.delete(
+    "/users/{id}",
+    tags=["users"],
+    deprecated=True,
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses=DELETE_USER
+    )
 def delete_user(id: str):
     """Не используйте удаление, деактивируйте пользователей."""
     raise HTTPException(

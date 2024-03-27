@@ -6,6 +6,9 @@ from fastapi_filter import FilterDepends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.filters import ProfileFilter
+from app.api_docs_responses.profile import (
+    CREATE_PROFILE, DELETE_PROFILE, GET_PROFILE, GET_PROFILE_PHOTO, GET_PROFILES
+)
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import profile_crud
@@ -18,15 +21,20 @@ from app.services.utils import (Pagination, add_response_headers,
 router = APIRouter()
 
 
-@router.get('/', response_model=list[ProfileRead],
-            response_model_exclude_none=True,
-            dependencies=[Depends(current_superuser)])
+@router.get(
+    '/',
+    response_model=list[ProfileRead],
+    response_model_exclude_none=True,
+    dependencies=[Depends(current_superuser)],
+    responses=GET_PROFILES
+)
 async def get_all_profiles(
     response: Response,
     profile_filter: ProfileFilter = FilterDepends(ProfileFilter),
     session: AsyncSession = Depends(get_async_session),
     pagination: Pagination = Depends(get_pagination_params)
 ):
+    """Возвращает все профили."""
     profiles = await profile_crud.get_profile_filter(
         profile_filter, session
     )
@@ -36,29 +44,42 @@ async def get_all_profiles(
     return paginated(profiles, pagination)
 
 
-@router.get('/me', response_model=ProfileRead,
-            response_model_exclude_none=True)
+@router.get(
+    '/me',
+    response_model=ProfileRead,
+    response_model_exclude_none=True,
+    responses=GET_PROFILE
+)
 async def get_current_user_profile(
         session: AsyncSession = Depends(get_async_session),
         user: User = Depends(current_user)
 ) -> ProfileRead:
-    """Возвращает profile юзера."""
+    """Возвращает профиль текущего пользователя."""
     return await profile_crud.get_users_obj(
         user_id=user.id,
         session=session
     )
 
 
-@router.get('/{profile_id}', response_model=ProfileRead,
-            dependencies=[Depends(current_superuser)])
+@router.get(
+    '/{profile_id}',
+    response_model=ProfileRead,
+    dependencies=[Depends(current_superuser)],
+    responses=GET_PROFILE
+)
 async def get_profile(
     profile_id: int,
     session: AsyncSession = Depends(get_async_session)
 ):
+    """Возвращает профиль пользователя по id."""
     return await profile_crud.get(profile_id, session)
 
 
-@router.get('/me/photo', dependencies=[Depends(current_user)])
+@router.get(
+    '/me/photo',
+    dependencies=[Depends(current_user)],
+    responses=GET_PROFILE_PHOTO
+)
 async def get_user_photo(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session)
@@ -70,13 +91,15 @@ async def get_user_photo(
 @router.patch(
     '/me',
     response_model=ProfileRead,
-    dependencies=[Depends(current_user)]
+    dependencies=[Depends(current_user)],
+    responses=GET_PROFILE
 )
 async def update_profile(
     profile: ProfileUpdate,
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session)
 ):
+    """Обновить профиль текущего пользователя."""
     _profile = await profile_crud.get_users_obj(user.id, session)
     return await profile_crud.update(_profile, profile, session)
 
@@ -84,7 +107,8 @@ async def update_profile(
 @router.patch(
     '/me/update_photo',
     response_model=ProfileRead,
-    dependencies=[Depends(current_user)]
+    dependencies=[Depends(current_user)],
+    responses=GET_PROFILE
 )
 async def update_photo(
     file: UploadFile = File(...),
@@ -104,7 +128,12 @@ async def update_photo(
     )
 
 
-@router.post('/me', response_model=ProfileRead, deprecated=True)
+@router.post(
+    '/me',
+    response_model=ProfileRead,
+    deprecated=True,
+    responses=CREATE_PROFILE
+)
 def create_profile():
     """Профиль создаётся при создании юзера."""
     raise HTTPException(
@@ -114,9 +143,14 @@ def create_profile():
     )
 
 
-@router.delete('/{obj_id}', deprecated=True)
+@router.delete(
+    '/{obj_id}',
+    deprecated=True,
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses=DELETE_PROFILE
+)
 def delete_profile():
-    """Удалить объект"""
+    """Профиль удаляется при удалении пользователя."""
     raise HTTPException(
         status_code=status.HTTP_405_METHOD_NOT_ALLOWED,
         detail='Профиль удаляется при удалении пользователя.'

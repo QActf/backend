@@ -2,6 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate, check_obj_exists
+from app.api_docs_responses.course import (
+    CREATE_COURSE, DELETE_COURSE, GET_COURSE, GET_COURSES, GET_USER_COURSE, GET_USER_COURSES
+)
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import course_crud
@@ -17,6 +20,7 @@ router = APIRouter()
 @router.get(
     "/",
     response_model=list[CourseRead],
+    responses=GET_COURSES
 )
 async def get_all_courses(
     response: Response,
@@ -32,7 +36,8 @@ async def get_all_courses(
 @router.get(
     "/me",
     response_model=list[CourseRead],
-    dependencies=[Depends(current_user)]
+    dependencies=[Depends(current_user)],
+    responses=GET_USER_COURSES
 )
 async def get_all_user_courses(
     response: Response,
@@ -40,7 +45,7 @@ async def get_all_user_courses(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session),
 ) -> list[CourseRead]:
-    """Возвращает все курсы пользователя, выполняющего запрос."""
+    """Возвращает все курсы текущего пользователя."""
     courses = await course_crud.get_users_obj(
         user_id=user.id, session=session
     )
@@ -51,14 +56,15 @@ async def get_all_user_courses(
 @router.get(
     "/me/{course_id}",
     response_model=CourseRead,
-    dependencies=[Depends(current_user)]
+    dependencies=[Depends(current_user)],
+    responses=GET_USER_COURSE
 )
 async def get_user_course_id(
     course_id: int,
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session),
 ) -> CourseRead:
-    """Возвращает конкретный курс пользователя, выполняющего запрос."""
+    """Возвращает конкретный курс текущего пользователя по id."""
     await check_obj_exists(
         obj_id=course_id, crud=course_crud, session=session
     )
@@ -77,7 +83,8 @@ async def get_user_course_id(
 @router.get(
     "/{course_id}",
     response_model=CourseRead,
-    dependencies=[Depends(current_user)]
+    dependencies=[Depends(current_user)],
+    responses=GET_COURSE
 )
 async def get_id_course(
     course_id: int,
@@ -90,27 +97,29 @@ async def get_id_course(
 
 
 @router.get(
-        '/me',
-        response_model=list[CourseRead],
-        dependencies=[Depends(current_user)]
+    '/me',
+    response_model=list[CourseRead],
+    dependencies=[Depends(current_user)],
+    responses=GET_USER_COURSES
 )
 async def get_self_courses_user(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session)
 ):
-    """Возвращает список курсов юзера."""
+    """Возвращает список курсов текущего пользователя."""
     return await course_crud.get_users_obj(user.id, session)
 
 
 @router.get(
-        '/{course_id}',
-        response_model=CourseRead,
+    '/{course_id}',
+    response_model=CourseRead,
+    responses=GET_COURSE
 )
 async def get_course(
     course_id: int,
     session: AsyncSession = Depends(get_async_session)
 ):
-    """Возвращает курс."""
+    """Возвращает курс по id."""
     await check_obj_exists(course_id, course_crud, session)
     return await course_crud.get(course_id, session)
 
@@ -119,7 +128,8 @@ async def get_course(
     "/",
     response_model=CourseRead,
     dependencies=[Depends(current_superuser)],
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
+    responses=CREATE_COURSE
 )
 async def create_course(
     course: CourseCreate, session: AsyncSession = Depends(get_async_session)
@@ -132,7 +142,8 @@ async def create_course(
 @router.patch(
     "/{course_id}",
     response_model=CourseRead,
-    dependencies=[Depends(current_superuser)]
+    dependencies=[Depends(current_superuser)],
+    responses=GET_COURSE
 )
 async def update_course(
     course_id: int,
@@ -152,8 +163,12 @@ async def update_course(
     )
 
 
-@router.delete("/{course_id}", dependencies=[Depends(current_superuser)],
-               status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{course_id}",
+    dependencies=[Depends(current_superuser)],
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses=DELETE_COURSE
+)
 async def close_course(
     course_id: int,
     session: AsyncSession = Depends(get_async_session),

@@ -4,8 +4,8 @@ from pydantic import BaseModel, Field, validator
 
 
 class CourseCreate(BaseModel):
-    name: str
-    description: Optional[str]
+    name: str = Field(..., example="Название курса")
+    description: Optional[str] = Field(..., example="Описание курса")
 
 
 class CourseRead(BaseModel):
@@ -18,8 +18,8 @@ class CourseRead(BaseModel):
 
 
 class CourseUpdate(BaseModel):
-    name: Optional[str] = Field(None,)
-    description: Optional[str] = Field(None,)
+    name: Optional[str] = Field(None, example="Название курса")
+    description: Optional[str] = Field(None, example="Описание курса")
 
     @validator('name')
     def name_cannot_be_null(cls, value):

@@ -23,6 +23,6 @@ class ProfileCreate(BaseModel):
 
 
 class ProfileUpdate(BaseModel):
-    first_name: Optional[str] = Field(None,)
-    last_name: Optional[str] = Field(None,)
+    first_name: Optional[str] = Field(None, example="Имя")
+    last_name: Optional[str] = Field(None, example="Фамилия")
     age: Optional[int] = Field(None,)

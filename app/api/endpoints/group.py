@@ -2,6 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
+from app.api_docs_responses.group import (
+    DELETE_GROUP, GET_GROUPS, CREATE_GROUP, GET_GROUP, GET_USER_GROUP
+)
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import group_crud
@@ -10,9 +13,6 @@ from app.schemas.group import GroupCreate, GroupRead, GroupUpdate
 from app.services.endpoints_services import delete_obj
 from app.services.utils import (Pagination, add_response_headers,
                                 get_pagination_params, paginated)
-
-from app.api_docs_responses.group import GET_GROUPS, CREATE_GROUP, GET_GROUP, UPDATE_GROUP
-# from app.api_docs_responses.group import GET_GROUPS, CREATE_GROUP, GET_GROUP
 
 router = APIRouter()
 
@@ -38,10 +38,10 @@ async def get_all_groups(
 
 
 @router.get(
-        '/me',
-        response_model=list[GroupRead],
-        dependencies=[Depends(current_user)],
-        responses=GET_GROUPS
+    '/me',
+    response_model=list[GroupRead],
+    dependencies=[Depends(current_user)],
+    responses=GET_GROUPS
 )
 async def get_self_groups(
     user: User = Depends(current_user),
@@ -52,10 +52,10 @@ async def get_self_groups(
 
 
 @router.get(
-        '/me/{group_id}',
-        response_model=GroupRead,
-        dependencies=[Depends(current_user)],
-        responses=GET_GROUP
+    '/me/{group_id}',
+    response_model=GroupRead,
+    dependencies=[Depends(current_user)],
+    responses=GET_USER_GROUP
 )
 async def get_self_group_by_id(
     group_id: int,
@@ -78,10 +78,10 @@ async def get_self_group_by_id(
 
 
 @router.get(
-        '/{group_id}',
-        response_model=GroupRead,
-        dependencies=[Depends(current_superuser)],
-        responses=GET_GROUP
+    '/{group_id}',
+    response_model=GroupRead,
+    dependencies=[Depends(current_superuser)],
+    responses=GET_GROUP
 )
 async def get_group(
     group_id: int,
@@ -107,10 +107,10 @@ async def create_group(
 
 
 @router.patch(
-        '/{group_id}',
-        dependencies=[Depends(current_superuser)],
-        response_model=GroupRead,
-        responses=UPDATE_GROUP
+    '/{group_id}',
+    dependencies=[Depends(current_superuser)],
+    response_model=GroupRead,
+    responses=GET_GROUP
 )
 async def update_group(
     group_id: int,
@@ -125,7 +125,8 @@ async def update_group(
 @router.delete(
     "/{obj_id}",
     dependencies=[Depends(current_superuser)],
-    status_code=status.HTTP_204_NO_CONTENT
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses=DELETE_GROUP
 )
 async def delete_group(
     obj_id: int,

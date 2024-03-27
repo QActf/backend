@@ -1,43 +1,36 @@
-GET_TARIFFS = {
+GET_TASKS = {
     200: {
         'descripton': 'Success',
         'content': {
             'application/json': {
                 'example': [
-                                {
-                            'id': 0,
-                            'name': 'Название тарифа',
-                            'description': 'Описание тарифа'
+                    {
+                        'id': 0,
+                        'name': 'Название задачи',
+                                'description': 'Описание задачи'
                     }
                 ]
+            }
+        }
+    },
+    401: {
+        'content': {
+            'application/json': {
+                "example": {"detail": "Unauthorized"}
             }
         }
     }
 }
 
-GET_TARIFF = {
+GET_TASK = {
     200: {
         'descripton': 'Success',
         'content': {
             'application/json': {
                 'example': {
                     'id': 0,
-                    'name': 'Название тарифа',
-                    'description': 'Описание тарифа'
-                }
-            }
-        }
-    }
-}
-UPDATE_TARIFF = {
-    200: {
-        'descripton': 'Success',
-        'content': {
-            'application/json': {
-                'example': {
-                    'id': 0,
-                    'name': 'Название тарифа',
-                    'description': 'Описание тарифа'
+                    'name': 'Название задачи',
+                    'description': 'Описание задачи'
                 }
             }
         }
@@ -51,15 +44,15 @@ UPDATE_TARIFF = {
     }
 }
 
-CREATE_TARIFF = {
+CREATE_TASK = {
     201: {
         'descripton': 'Success',
         'content': {
             'application/json': {
                 'example': {
                     'id': 0,
-                    'name': 'Название тарифа',
-                    'description': 'Описание тарифа'
+                    'name': 'Название задачи',
+                    'description': 'Описание задачи'
                 }
             }
         }
@@ -72,8 +65,7 @@ CREATE_TARIFF = {
         }
     }
 }
-
-DELETE_TARIFF = {
+DELETE_TASK = {
     204: {
         'content': {
             'application/json': {

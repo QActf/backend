@@ -1,43 +1,51 @@
-GET_TARIFFS = {
+GET_EXAMINATIONS = {
     200: {
         'descripton': 'Success',
         'content': {
             'application/json': {
                 'example': [
                                 {
-                            'id': 0,
-                            'name': 'Название тарифа',
-                            'description': 'Описание тарифа'
-                    }
+                                    'id': 0,
+                                    'name': 'Название экзамена',
+                                    'description': 'Описание экзамена'
+                                }
                 ]
             }
         }
     }
 }
 
-GET_TARIFF = {
+GET_EXAMINATION = {
     200: {
         'descripton': 'Success',
         'content': {
             'application/json': {
                 'example': {
                     'id': 0,
-                    'name': 'Название тарифа',
-                    'description': 'Описание тарифа'
+                    'name': 'Название экзамена',
+                    'description': 'Описание экзамена'
                 }
+            }
+        }
+    },
+    404: {
+        'content': {
+            'application/json': {
+                "example": {"detail": "Объект examination с id 1 не найден."}
             }
         }
     }
 }
-UPDATE_TARIFF = {
+
+GET_USER_EXAMINATION = {
     200: {
         'descripton': 'Success',
         'content': {
             'application/json': {
                 'example': {
                     'id': 0,
-                    'name': 'Название тарифа',
-                    'description': 'Описание тарифа'
+                    'name': 'Название экзамена',
+                    'description': 'Описание экзамена'
                 }
             }
         }
@@ -51,15 +59,15 @@ UPDATE_TARIFF = {
     }
 }
 
-CREATE_TARIFF = {
+CREATE_EXAMINATION = {
     201: {
         'descripton': 'Success',
         'content': {
             'application/json': {
                 'example': {
                     'id': 0,
-                    'name': 'Название тарифа',
-                    'description': 'Описание тарифа'
+                    'name': 'Название экзамена',
+                    'description': 'Описание экзамена'
                 }
             }
         }
@@ -73,7 +81,7 @@ CREATE_TARIFF = {
     }
 }
 
-DELETE_TARIFF = {
+DELETE_EXAMINATION = {
     204: {
         'content': {
             'application/json': {
