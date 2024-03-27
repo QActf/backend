@@ -2,9 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate, check_obj_exists
-from app.api_docs_responses.achievement import (
-    CREATE_ACHIEVEMENT, DELETE_ACHIEVEMENT, GET_ACHIEVEMENT, GET_ACHIEVEMENTS, GET_ME_ACHIEVEMENT
-)
+from app.api_docs_responses.achievement import (CREATE_ACHIEVEMENT,
+                                                DELETE_ACHIEVEMENT,
+                                                GET_ACHIEVEMENT,
+                                                GET_ACHIEVEMENTS,
+                                                GET_ME_ACHIEVEMENT)
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import achievement_crud

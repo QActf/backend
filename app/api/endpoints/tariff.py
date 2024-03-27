@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate, check_obj_exists
-from app.api_docs_responses.tariff import (
-    CREATE_TARIFF, DELETE_TARIFF, GET_TARIFF, GET_TARIFFS, UPDATE_TARIFF
-    )
+from app.api_docs_responses.tariff import (CREATE_TARIFF, DELETE_TARIFF,
+                                           GET_TARIFF, GET_TARIFFS,
+                                           UPDATE_TARIFF)
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud import tariff_crud

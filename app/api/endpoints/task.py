@@ -4,7 +4,8 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
-from app.api_docs_responses.task import CREATE_TASK, DELETE_TASK, GET_TASK, GET_TASKS
+from app.api_docs_responses.task import (CREATE_TASK, DELETE_TASK, GET_TASK,
+                                         GET_TASKS)
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud import task_crud
