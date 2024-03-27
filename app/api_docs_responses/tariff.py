@@ -4,10 +4,10 @@ GET_TARIFFS = {
         'content': {
             'application/json': {
                 'example': [
-                                {
-                            'id': 0,
-                            'name': 'Название тарифа',
-                            'description': 'Описание тарифа'
+                    {
+                        'id': 0,
+                        'name': 'Название тарифа',
+                        'description': 'Описание тарифа'
                     }
                 ]
             }

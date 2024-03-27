@@ -4,8 +4,8 @@ from pydantic import BaseModel, Field
 
 
 class ExaminationCreate(BaseModel):
-    name: str = Field(... , example="Название экзамена")
-    description: Optional[str] = Field(... , example="Описание экзамена")
+    name: str = Field(..., example="Название экзамена")
+    description: Optional[str] = Field(..., example="Описание экзамена")
 
 
 class ExaminationRead(BaseModel):
@@ -19,4 +19,4 @@ class ExaminationRead(BaseModel):
 
 class ExaminationUpdate(BaseModel):
     name: Optional[str] = Field(None, example="Название экзамена")
-    description: Optional[str] = Field(None , example="Название экзамена")
+    description: Optional[str] = Field(None, example="Название экзамена")

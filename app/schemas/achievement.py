@@ -7,6 +7,7 @@ class AchievementCreate(BaseModel):
     name: str = Field(..., example="Название достижения")
     description: Optional[str] = Field(..., example="Описание достижения")
 
+
 class AchievementRead(BaseModel):
     id: int
     name: Optional[str]
