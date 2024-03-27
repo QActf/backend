@@ -7,8 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.filters import ProfileFilter
 from app.api_docs_responses.profile import (
-    CREATE_PROFILE, DELETE_PROFILE, GET_PROFILE, GET_PROFILE_PHOTO, GET_PROFILES
-)
+    CREATE_PROFILE, DELETE_PROFILE,
+    GET_PROFILE, GET_PROFILE_PHOTO, GET_PROFILES)
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import profile_crud
