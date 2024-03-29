@@ -1,4 +1,5 @@
 from typing import Annotated
+
 from fastapi import APIRouter, Body, HTTPException, status
 
 from app.api.endpoints import register
