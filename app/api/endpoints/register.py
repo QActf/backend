@@ -1,36 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi_users import exceptions, models, schemas
 from fastapi_users.manager import BaseUserManager
-from fastapi_users.router.common import ErrorCode, ErrorModel
+from fastapi_users.router.common import ErrorCode
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api_docs_responses.register import CREATE_REGISTER
 from app.core.db import get_async_session
 from app.core.user import get_user_manager
 from app.crud import profile_crud
 from app.schemas.profile import ProfileCreate
-
-content = {
-    "application/json": {
-        "examples": {
-            ErrorCode.REGISTER_USER_ALREADY_EXISTS: {
-                "summary": "A user with this email already exists.",
-                "value": {
-                    "detail": ErrorCode.REGISTER_USER_ALREADY_EXISTS
-                },
-            },
-            ErrorCode.REGISTER_INVALID_PASSWORD: {
-                "summary": "Password validation failed.",
-                "value": {
-                    "detail": {
-                        "code": ErrorCode.REGISTER_INVALID_PASSWORD,
-                        "reason": "Password should be"
-                                  "at least 3 characters",
-                    }
-                },
-            },
-        }
-    }
-}
 
 
 def get_register_router(
@@ -46,12 +24,7 @@ def get_register_router(
         response_model=user_schema,
         status_code=status.HTTP_201_CREATED,
         name="register:register",
-        responses={
-            status.HTTP_400_BAD_REQUEST: {
-                "model": ErrorModel,
-                "content": content,
-            },
-        },
+        responses=CREATE_REGISTER
     )
     async def register(
             request: Request,
