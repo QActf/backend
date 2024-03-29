@@ -1,11 +1,12 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Body, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
 from app.api_docs_responses.task import (CREATE_TASK, DELETE_TASK, GET_TASK,
                                          GET_TASKS)
+from app.api_docs_responses.utils_docs import NAME_AND_DESCRIPTION_VALUE
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud import task_crud
@@ -50,7 +51,8 @@ async def get_task_by_id(
     responses=CREATE_TASK
 )
 async def create_task(
-    task: TaskCreate, session: AsyncSession = Depends(get_async_session)
+    task: TaskCreate = Body(example=NAME_AND_DESCRIPTION_VALUE),
+    session: AsyncSession = Depends(get_async_session)
 ):
     """Создать задачу"""
     await check_name_duplicate(task.name, task_crud, session)
@@ -65,7 +67,7 @@ async def create_task(
 )
 async def update_task(
     task_id: int,
-    data: TaskUpdate,
+    data: TaskUpdate = Body(example=NAME_AND_DESCRIPTION_VALUE),
     session: AsyncSession = Depends(get_async_session)
 ):
     """Обновление задачи."""

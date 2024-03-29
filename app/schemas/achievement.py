@@ -4,8 +4,8 @@ from pydantic import BaseModel, Field
 
 
 class AchievementCreate(BaseModel):
-    name: str = Field(..., example="Название достижения")
-    description: Optional[str] = Field(..., example="Описание достижения")
+    name: str
+    description: Optional[str]
 
 
 class AchievementRead(BaseModel):
@@ -18,5 +18,5 @@ class AchievementRead(BaseModel):
 
 
 class AchievementUpdate(BaseModel):
-    name: Optional[str] = Field(None, example="Название достижения")
-    description: Optional[str] = Field(None, example="Описание достижения")
+    name: Optional[str] = Field(None)
+    description: Optional[str] = Field(None)

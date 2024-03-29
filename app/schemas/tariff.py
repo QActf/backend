@@ -13,8 +13,8 @@ class TariffRead(BaseModel):
 
 
 class TariffCreate(BaseModel):
-    name: str = Field(..., example="Название тарифа")
-    description: Optional[str] = Field(..., example="Описание тарифа")
+    name: str
+    description: Optional[str]
 
 
 class TariffCreated(TariffCreate):
@@ -25,5 +25,5 @@ class TariffCreated(TariffCreate):
 
 
 class TariffUpdate(BaseModel):
-    name: Optional[str] = Field(None, example="Название тарифа")
-    description: Optional[str] = Field(None, example="Описание тарифа")
+    name: Optional[str] = Field(None)
+    description: Optional[str] = Field(None)

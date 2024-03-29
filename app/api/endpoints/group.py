@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
 from app.api_docs_responses.group import (CREATE_GROUP, DELETE_GROUP,
                                           GET_GROUP, GET_GROUPS,
                                           GET_USER_GROUP)
+from app.api_docs_responses.utils_docs import NAME_AND_DESCRIPTION_VALUE
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import group_crud
@@ -99,7 +100,8 @@ async def get_group(
     responses=CREATE_GROUP
 )
 async def create_group(
-    group: GroupCreate, session: AsyncSession = Depends(get_async_session)
+    group: GroupCreate = Body(example=NAME_AND_DESCRIPTION_VALUE),
+    session: AsyncSession = Depends(get_async_session)
 ):
     """Создать группу"""
     await check_name_duplicate(group.name, group_crud, session)
@@ -114,7 +116,7 @@ async def create_group(
 )
 async def update_group(
     group_id: int,
-    group: GroupUpdate,
+    group: GroupUpdate = Body(example=NAME_AND_DESCRIPTION_VALUE),
     session: AsyncSession = Depends(get_async_session)
 ):
     """Обновить группу"""

@@ -1,6 +1,6 @@
 import re
 
-from fastapi import (APIRouter, Depends, File, HTTPException, Response,
+from fastapi import (APIRouter, Body, Depends, File, HTTPException, Response,
                      UploadFile, status)
 from fastapi_filter import FilterDepends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,6 +9,7 @@ from app.api.filters import ProfileFilter
 from app.api_docs_responses.profile import (CREATE_PROFILE, DELETE_PROFILE,
                                             GET_PROFILE, GET_PROFILE_PHOTO,
                                             GET_PROFILES)
+from app.api_docs_responses.utils_docs import PROFILE_UPDATE_VALUE
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import profile_crud
@@ -95,7 +96,7 @@ async def get_user_photo(
     responses=GET_PROFILE
 )
 async def update_profile(
-    profile: ProfileUpdate,
+    profile: ProfileUpdate = Body(example=PROFILE_UPDATE_VALUE),
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session)
 ):
