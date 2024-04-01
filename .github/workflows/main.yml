@@ -2,14 +2,14 @@ name: fastapi-app workflow
 
 on:
   push:
-    branches: [ "develop"]
+    branches: [ "develop", "feat/cicd_pytest"]
   pull_request:
     branches: [ "develop" ]
   workflow_dispatch:
 
 
 jobs:
-  flake8-lint:
+  tests:
     runs-on: ubuntu-latest
     name: Lint
     steps:
@@ -24,3 +24,7 @@ jobs:
         with:
           path: "app"
       - uses: isort/isort-action@master
+      - name: Test with pytest
+        run: |
+          pytest
+  
