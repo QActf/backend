@@ -27,7 +27,8 @@ jobs:
       - name: Install dependencies
         
         run: |
-          pip install -r requirements.txt
+          pip install --upgrade pip
+          pip install -r app/requirements.txt
       - name: Test with pytest
         run: |
           pytest
