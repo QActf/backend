@@ -14,13 +14,11 @@ content_achievements = {
 }
 content_achievement = {
     'application/json': {
-        'example': [
-            {
-                'id': 0,
-                'name': 'Название достижения',
-                        'description': 'Описание достижения'
-            }
-        ]
+        'example': {
+            'id': 0,
+            'name': 'Название достижения',
+            'description': 'Описание достижения'
+        }
     }
 }
 

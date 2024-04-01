@@ -1,83 +1,51 @@
+from app.api_docs_responses.utils_docs import get_204_dosc,  get_401_dosc
+
+content_tasks = {
+    'application/json': {
+        'example': [
+            {
+                'id': 0,
+                'name': 'Название задачи',
+                'description': 'Описание задачи'
+            }
+        ]
+    }
+}
+
+content_task = {
+    'application/json': {
+        'example': {
+            'id': 0,
+            'name': 'Название задачи',
+            'description': 'Описание задачи'
+        }
+    }
+}
+
 GET_TASKS = {
     200: {
         'descripton': 'Success',
-        'content': {
-            'application/json': {
-                'example': [
-                    {
-                        'id': 0,
-                        'name': 'Название задачи',
-                        'description': 'Описание задачи'
-                    }
-                ]
-            }
-        }
+        'content': content_tasks
     },
-    401: {
-        'content': {
-            'application/json': {
-                "example": {"detail": "Unauthorized"}
-            }
-        }
-    }
+    **get_401_dosc()
 }
 
 GET_TASK = {
     200: {
         'descripton': 'Success',
-        'content': {
-            'application/json': {
-                'example': {
-                    'id': 0,
-                    'name': 'Название задачи',
-                    'description': 'Описание задачи'
-                }
-            }
-        }
+        'content': content_task
     },
-    401: {
-        'content': {
-            'application/json': {
-                "example": {"detail": "Unauthorized"}
-            }
-        }
-    }
+    **get_401_dosc()
 }
 
 CREATE_TASK = {
     201: {
         'descripton': 'Success',
-        'content': {
-            'application/json': {
-                'example': {
-                    'id': 0,
-                    'name': 'Название задачи',
-                    'description': 'Описание задачи'
-                }
-            }
-        }
+        'content': content_task
     },
-    401: {
-        'content': {
-            'application/json': {
-                "example": {"detail": "Unauthorized"}
-            }
-        }
-    }
+    **get_401_dosc()
 }
 DELETE_TASK = {
-    204: {
-        'content': {
-            'application/json': {
-                'example': ""
-            }
-        }
-    },
-    401: {
-        'content': {
-            'application/json': {
-                "example": {"detail": "Unauthorized"}
-            }
-        }
-    }
+    **get_204_dosc(),
+    **get_401_dosc()
 }

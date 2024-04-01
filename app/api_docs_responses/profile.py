@@ -1,53 +1,49 @@
+from app.api_docs_responses.utils_docs import (
+    get_204_dosc, get_405_dosc, get_401_dosc
+)
+
+content_profiles = {
+    'application/json': {
+        'example': [
+            {
+                "id": 0,
+                "first_name": 'Имя',
+                "last_name": 'Фамилия',
+                "age": 0,
+                "user_id": 0,
+                "image": 'Ссылка на изображение'
+            }
+        ]
+    }
+}
+content_profile = {
+    'application/json': {
+        'example': {
+            "id": 0,
+            "first_name": 'Имя',
+            "last_name": 'Фамилия',
+            "age": 0,
+            "user_id": 0,
+            "image": 'Ссылка на изображение'
+        }
+
+    }
+}
+
 GET_PROFILES = {
     200: {
         'descripton': 'Success',
-        'content': {
-            'application/json': {
-                'example': [
-                    {
-                        "id": 0,
-                        "first_name": 'Имя',
-                        "last_name": 'Фамилия',
-                        "age": 0,
-                        "user_id": 0,
-                        "image": 'Ссылка на изображение'
-                    }
-                ]
-            }
-        }
+        'content': content_profiles
     },
-    401: {
-        'content': {
-            'application/json': {
-                "example": {"detail": "Unauthorized"}
-            }
-        }
-    }
+    **get_401_dosc()
 }
 
 GET_PROFILE = {
     200: {
         'descripton': 'Success',
-        'content': {
-            'application/json': {
-                'example': {
-                    "id": 0,
-                    "first_name": 'Имя',
-                    "last_name": 'Фамилия',
-                    "age": 0,
-                    "user_id": 0,
-                    "image": 'Ссылка на изображение'
-                }
-            }
-        }
+        'content': content_profile
     },
-    401: {
-        'content': {
-            'application/json': {
-                "example": {"detail": "Unauthorized"}
-            }
-        }
-    }
+    **get_401_dosc()
 }
 GET_PROFILE_PHOTO = {
     200: {
@@ -58,58 +54,17 @@ GET_PROFILE_PHOTO = {
             }
         }
     },
-    401: {
-        'content': {
-            'application/json': {
-                "example": {"detail": "Unauthorized"}
-            }
-        }
-    }
+    **get_401_dosc()
 }
 CREATE_PROFILE = {
     200: {
         'descripton': 'Success',
-        'content': {
-            'application/json': {
-                'example': {
-                    "id": 0,
-                    "first_name": 'Имя',
-                    "last_name": 'Фамилия',
-                    "age": 0,
-                    "user_id": 0,
-                    "image": 'Ссылка на изображение'
-                }
-            }
-        }
+        'content': content_profile
     },
-    405: {
-        'descripton': 'Success',
-        'content': {
-            'application/json': {
-                "example": {
-                    "detail": "Профиль создаётся автоматически при "
-                    "создании пользователя. Используйте метод PATCH."
-                }
-            }
-        }
-    }
+    **get_405_dosc("Профиль создаётся автоматически при "
+                   "создании пользователя. Используйте метод PATCH.")
 }
 DELETE_PROFILE = {
-    204: {
-        'content': {
-            'application/json': {
-                'example': ""
-            }
-        }
-    },
-    405: {
-        'descripton': 'Success',
-        'content': {
-            'application/json': {
-                "example": {
-                    "detail": "Профиль удаляется при удалении пользователя."
-                }
-            }
-        }
-    }
+    **get_204_dosc(),
+    **get_405_dosc("Профиль удаляется при удалении пользователя.")
 }

@@ -1,19 +1,6 @@
+from app.api_docs_responses.utils_docs import get_204_dosc, get_405_dosc
+
 DELETE_USER = {
-    204: {
-        'content': {
-            'application/json': {
-                'example': ""
-            }
-        }
-    },
-    405: {
-        'descripton': 'Success',
-        'content': {
-            'application/json': {
-                "example": {
-                    "detail": "Удаление пользователей запрещено!"
-                }
-            }
-        }
-    }
+    **get_204_dosc(),
+    **get_405_dosc("Удаление пользователей запрещено!")
 }
