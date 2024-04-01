@@ -1,5 +1,5 @@
-from app.api_docs_responses.utils_docs import (get_204_dosc, get_401_dosc,
-                                               get_405_dosc)
+from app.api_docs_responses.utils_docs import (get_200_dosc, get_204_dosc,
+                                               get_401_dosc, get_405_dosc)
 
 content_profiles = {
     'application/json': {
@@ -30,18 +30,12 @@ content_profile = {
 }
 
 GET_PROFILES = {
-    200: {
-        'descripton': 'Success',
-        'content': content_profiles
-    },
+    **get_200_dosc(content_profiles),
     **get_401_dosc()
 }
 
 GET_PROFILE = {
-    200: {
-        'descripton': 'Success',
-        'content': content_profile
-    },
+    **get_200_dosc(content_profile),
     **get_401_dosc()
 }
 GET_PROFILE_PHOTO = {
@@ -56,10 +50,7 @@ GET_PROFILE_PHOTO = {
     **get_401_dosc()
 }
 CREATE_PROFILE = {
-    200: {
-        'descripton': 'Success',
-        'content': content_profile
-    },
+    **get_200_dosc(content_profile),
     **get_405_dosc("Профиль создаётся автоматически при "
                    "создании пользователя. Используйте метод PATCH.")
 }

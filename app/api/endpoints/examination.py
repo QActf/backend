@@ -6,7 +6,8 @@ from app.api_docs_responses.examination import (CREATE_EXAMINATION,
                                                 DELETE_EXAMINATION,
                                                 GET_EXAMINATION,
                                                 GET_EXAMINATIONS,
-                                                GET_USER_EXAMINATION)
+                                                GET_USER_EXAMINATION,
+                                                GET_USER_EXAMINATIONS)
 from app.api_docs_responses.utils_docs import NAME_AND_DESCRIPTION_VALUE
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
@@ -35,7 +36,7 @@ async def get_all_examinations(
     '/me',
     response_model=list[ExaminationRead],
     dependencies=[Depends(current_user)],
-    responses=GET_USER_EXAMINATION
+    responses=GET_USER_EXAMINATIONS
 )
 async def get_self_examinations(
     user: User = Depends(current_user),

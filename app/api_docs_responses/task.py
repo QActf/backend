@@ -1,4 +1,5 @@
-from app.api_docs_responses.utils_docs import get_204_dosc, get_401_dosc
+from app.api_docs_responses.utils_docs import (get_200_dosc, get_201_dosc,
+                                               get_204_dosc, get_401_dosc)
 
 content_tasks = {
     'application/json': {
@@ -23,26 +24,17 @@ content_task = {
 }
 
 GET_TASKS = {
-    200: {
-        'descripton': 'Success',
-        'content': content_tasks
-    },
+    **get_200_dosc(content_tasks),
     **get_401_dosc()
 }
 
 GET_TASK = {
-    200: {
-        'descripton': 'Success',
-        'content': content_task
-    },
+    **get_200_dosc(content_task),
     **get_401_dosc()
 }
 
 CREATE_TASK = {
-    201: {
-        'descripton': 'Success',
-        'content': content_task
-    },
+    **get_201_dosc(content_task),
     **get_401_dosc()
 }
 DELETE_TASK = {

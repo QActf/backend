@@ -1,4 +1,5 @@
-from app.api_docs_responses.utils_docs import (get_204_dosc, get_401_dosc,
+from app.api_docs_responses.utils_docs import (get_200_dosc, get_201_dosc,
+                                               get_204_dosc, get_401_dosc,
                                                get_404_dosc)
 
 content_examenations = {
@@ -22,34 +23,24 @@ content_examenation = {
     }
 }
 
-GET_EXAMINATIONS = {
-    200: {
-        'descripton': 'Success',
-        'content': content_examenations
-    }
-}
+GET_EXAMINATIONS = get_200_dosc(content_examenations)
 
 GET_EXAMINATION = {
-    200: {
-        'descripton': 'Success',
-        'content': content_examenation
-    },
+    **get_200_dosc(content_examenation),
     **get_404_dosc("Объект examination с id 1 не найден.")
 }
 
 GET_USER_EXAMINATION = {
-    200: {
-        'descripton': 'Success',
-        'content': content_examenations
-    },
+    **get_200_dosc(content_examenation),
+    **get_401_dosc()
+}
+GET_USER_EXAMINATIONS = {
+    **get_200_dosc(content_examenations),
     **get_401_dosc()
 }
 
 CREATE_EXAMINATION = {
-    201: {
-        'descripton': 'Success',
-        'content': content_examenation
-    },
+    **get_201_dosc(content_examenation),
     **get_401_dosc()
 }
 

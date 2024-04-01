@@ -1,4 +1,5 @@
-from app.api_docs_responses.utils_docs import (get_204_dosc, get_400_dosc,
+from app.api_docs_responses.utils_docs import (get_200_dosc, get_201_dosc,
+                                               get_204_dosc, get_400_dosc,
                                                get_401_dosc, get_403_dosc)
 
 content_courses = {
@@ -23,41 +24,24 @@ content_course = {
     }
 }
 
-GET_COURSES = {
-    200: {
-        'descripton': 'Success',
-        'content': content_courses
-    }
-}
+GET_COURSES = get_200_dosc(content_courses)
 GET_USER_COURSES = {
-    200: {
-        'descripton': 'Success',
-        'content': content_courses
-    },
+    **get_200_dosc(content_courses),
     **get_401_dosc()
 }
 GET_USER_COURSE = {
-    200: {
-        'descripton': 'Success',
-        'content': content_course
-    },
+    **get_200_dosc(content_course),
     **get_401_dosc(),
     **get_403_dosc("Вы не записаны на данный курс.")
 }
 
 GET_COURSE = {
-    200: {
-        'descripton': 'Success',
-        'content': content_course
-    },
+    **get_200_dosc(content_course),
     **get_401_dosc()
 }
 
 CREATE_COURSE = {
-    201: {
-        'descripton': 'Success',
-        'content': content_course
-    },
+    **get_201_dosc(content_course),
     **get_401_dosc()
 }
 

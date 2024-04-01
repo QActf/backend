@@ -16,6 +16,24 @@ USER_VALUE = {
 }
 
 
+def get_200_dosc(content):
+    return {
+        200: {
+            'descripton': 'Successful Response',
+            'content': content
+        }
+    }
+
+
+def get_201_dosc(content):
+    return {
+        201: {
+            'descripton': 'Successful Response',
+            'content': content
+        }
+    }
+
+
 def get_204_dosc():
     return {
         204: {
