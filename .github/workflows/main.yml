@@ -2,7 +2,7 @@ name: fastapi-app workflow
 
 on:
   push:
-    branches: [ "develop", "feat/cicd_pytest"]
+    branches: [ "develop"]
   pull_request:
     branches: [ "develop" ]
   workflow_dispatch:
@@ -11,7 +11,7 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
-    name: Lint
+    name: Lint and Pytest
     steps:
       - name: Check out source repository
         uses: actions/checkout@v3
