@@ -4,21 +4,43 @@ from app.api_docs_responses.utils_docs import (get_200_dosc, get_201_dosc,
 
 content_examenations = {
     'application/json': {
-        'example': [
-            {
-                'id': 0,
-                'name': 'Название экзамена.',
-                'description': 'Описание экзамена.'
+        'examples': {
+            'examenations_with_all_fields': {
+                'summary': 'Экзамен со всеми заполнеными полями',
+                'value': [{
+                    'id': 0,
+                    'name': 'Название экзамена.',
+                    'description': 'Описание экзамена.'
+                }]
+            },
+            'examenations_without_description': {
+                'summary': 'Экзамен без описания',
+                'value': [{
+                    'id': 0,
+                    'name': 'Название экзамена.'
+                }]
             }
-        ]
+        }
     }
 }
 content_examenation = {
     'application/json': {
-        'example': {
-            'id': 0,
-            'name': 'Название экзамена',
-                    'description': 'Описание экзамена'
+        'examples': {
+            'examenations_with_all_fields': {
+                'summary': 'Экзамен со всеми заполнеными полями',
+                'value': {
+                    'id': 0,
+                    'name': 'Название экзамена.',
+                    'description': 'Описание экзамена.'
+                }
+            },
+            'examenations_without_description': {
+                'summary': 'Экзамен без описания',
+                'value': {
+                    'id': 0,
+                    'name': 'Название экзамена.'
+                }
+            }
         }
     }
 }

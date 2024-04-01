@@ -3,22 +3,44 @@ from app.api_docs_responses.utils_docs import (get_200_dosc, get_201_dosc,
 
 content_tariffs = {
     'application/json': {
-        'example': [
-            {
-                'id': 0,
-                'name': 'Название тарифа',
-                'description': 'Описание тарифа'
+        'examples': {
+            'tariffs_with_all_fields': {
+                'summary': 'Тариф со всеми заполнеными полями',
+                'value': [{
+                    'id': 0,
+                    'name': 'Название тарифа',
+                    'description': 'Описание тарифа'
+                }]
+            },
+            'tariffs_without_description': {
+                'summary': 'Тариф без описания',
+                'value': [{
+                    'id': 0,
+                    'name': 'Название тарифа'
+                }]
             }
-        ]
+        }
     }
 }
 
 content_tariff = {
     'application/json': {
-        'example': {
-            'id': 0,
-            'name': 'Название тарифа',
-            'description': 'Описание тарифа'
+        'examples': {
+            'tariff_with_all_fields': {
+                'summary': 'Тариф со всеми заполнеными полями',
+                'value': {
+                    'id': 0,
+                    'name': 'Название тарифа',
+                    'description': 'Описание тарифа'
+                }
+            },
+            'tariff_without_description': {
+                'summary': 'Тариф без описания',
+                'value': {
+                    'id': 0,
+                    'name': 'Название тарифа'
+                }
+            }
         }
     }
 }

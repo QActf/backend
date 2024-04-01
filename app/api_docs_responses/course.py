@@ -4,22 +4,44 @@ from app.api_docs_responses.utils_docs import (get_200_dosc, get_201_dosc,
 
 content_courses = {
     'application/json': {
-        'example': [
-            {
-                'id': 0,
-                'name': 'Название курса',
-                'description': 'Описание курса'
+        'examples': {
+            'courses_with_all_fields': {
+                'summary': 'Курс со всеми заполнеными полями',
+                'value': [{
+                    'id': 0,
+                    'name': 'Название курса',
+                    'description': 'Описание курса'
+                }]
+            },
+            'courses_without_description': {
+                'summary': 'Курс без описания',
+                'value': [{
+                    'id': 0,
+                    'name': 'Название курса',
+                }]
             }
-        ]
+        }
     }
 }
 
 content_course = {
     'application/json': {
-        'example': {
-            'id': 0,
-            'name': 'Название курса',
-            'description': 'Описание курса'
+        'examples': {
+            'course_with_all_fields': {
+                'summary': 'Курс со всеми заполнеными полями',
+                'value': {
+                    'id': 0,
+                    'name': 'Название курса',
+                    'description': 'Описание курса'
+                }
+            },
+            'course_without_description': {
+                'summary': 'Достижение без описания',
+                'value': {
+                    'id': 0,
+                    'name': 'Название курса',
+                }
+            }
         }
     }
 }

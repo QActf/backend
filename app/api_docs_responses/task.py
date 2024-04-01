@@ -3,22 +3,44 @@ from app.api_docs_responses.utils_docs import (get_200_dosc, get_201_dosc,
 
 content_tasks = {
     'application/json': {
-        'example': [
-            {
-                'id': 0,
-                'name': 'Название задачи',
-                'description': 'Описание задачи'
+        'examples': {
+            'tasks_with_all_fields': {
+                'summary': 'Задача со всеми заполнеными полями',
+                'value': [{
+                    'id': 0,
+                    'name': 'Название задачи',
+                    'description': 'Описание задачи'
+                }]
+            },
+            'tasks_without_description': {
+                'summary': 'Задача без описания',
+                'value': [{
+                    'id': 0,
+                    'name': 'Название задачи'
+                }]
             }
-        ]
+        }
     }
 }
 
 content_task = {
     'application/json': {
-        'example': {
-            'id': 0,
-            'name': 'Название задачи',
-            'description': 'Описание задачи'
+        'examples': {
+            'task_with_all_fields': {
+                'summary': 'Задача со всеми заполнеными полями',
+                'value': {
+                    'id': 0,
+                    'name': 'Название задачи',
+                    'description': 'Описание задачи'
+                }
+            },
+            'task_without_description': {
+                'summary': 'Задача без описания',
+                'value': {
+                    'id': 0,
+                    'name': 'Название задачи'
+                }
+            }
         }
     }
 }

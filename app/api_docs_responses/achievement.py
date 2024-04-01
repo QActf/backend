@@ -4,21 +4,43 @@ from app.api_docs_responses.utils_docs import (get_200_dosc, get_201_dosc,
 
 content_achievements = {
     'application/json': {
-        'example': [
-            {
-                'id': 0,
-                'name': 'Название достижения',
-                        'description': 'Описание достижения'
+        'examples': {
+            'achievement_with_all_fields': {
+                'summary': 'Достижение со всеми заполнеными полями',
+                'value': [{
+                    'id': 0,
+                    'name': 'Название достижения',
+                    'description': 'Описание достижения'
+                }]
+            },
+            'achievement_without_description': {
+                'summary': 'Достижение без описания',
+                'value': [{
+                    'id': 0,
+                    'name': 'Название достижения',
+                }]
             }
-        ]
+        }
     }
 }
 content_achievement = {
     'application/json': {
-        'example': {
-            'id': 0,
-            'name': 'Название достижения',
-            'description': 'Описание достижения'
+        'examples': {
+            'achievement_with_all_fields': {
+                'summary': 'Достижение со всеми заполнеными полями',
+                'value': {
+                    'id': 0,
+                    'name': 'Название достижения',
+                    'description': 'Описание достижения'
+                }
+            },
+            'achievement_without_description': {
+                'summary': 'Достижение без описания',
+                'value': {
+                    'id': 0,
+                    'name': 'Название достижения',
+                }
+            }
         }
     }
 }

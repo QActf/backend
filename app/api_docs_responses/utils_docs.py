@@ -98,7 +98,7 @@ def get_404_dosc(detail):
 def get_405_dosc(detail):
     return {
         405: {
-            'descripton': 'Success',
+            'descripton': 'Method not allowed',
             'content': {
                 'application/json': {
                     "example": {
