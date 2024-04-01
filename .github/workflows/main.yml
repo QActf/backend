@@ -24,6 +24,10 @@ jobs:
         with:
           path: "app"
       - uses: isort/isort-action@master
+      - name: Install dependencies
+        run: |
+          python pip install --upgrade pip
+          pip install -r requirements.txt
       - name: Test with pytest
         run: |
           pytest
