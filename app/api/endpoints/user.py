@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Body, HTTPException, status
 
 from app.api.endpoints import register
-from app.api_docs_responses.user import DELETE_USER
+from app.api_docs_responses.user import CREATE_AUTH, DELETE_USER, LOGOUT_USER
 from app.api_docs_responses.utils_docs import USER_VALUE
 from app.core.user import auth_backend, fastapi_users
 from app.schemas.user import UserCreate, UserRead, UserUpdate
@@ -15,6 +15,7 @@ router.include_router(
     prefix="/auth/jwt",
     tags=["auth"],
 )
+
 router.include_router(
     register.get_register_router(
         UserRead,
@@ -31,6 +32,15 @@ router.include_router(
     prefix="/users",
     tags=["users"],
 )
+
+login_auth_route_responses = router.routes[0].responses = CREATE_AUTH
+logout_auth_route = router.routes[1].responses = LOGOUT_USER
+
+# Эндпоинты пользователя
+# me_get_route = router.routes[3]
+# me_patch_route = router.routes[4]
+# users_id_get_route = router.routes[5]
+# users_id_patch_route = router.routes[6]
 
 
 @router.delete(

@@ -16,7 +16,6 @@ CREATE_REGISTER = {
                 }
             }
         }
-
     },
     400: {
         'content': {
