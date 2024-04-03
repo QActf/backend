@@ -2,7 +2,8 @@
  и не влияют на работу программы.
 '''
 
-
+LOGIN_WARNING = ('При отправки запроса необходимо в поле **username** '
+                 'вводить **email** пользоватля.')
 NAME_AND_DESCRIPTION_VALUE = {"name": "Название", "description": "Описание"}
 PROFILE_UPDATE_VALUE = {"first_name": "Имя", "last_name": "Фамилия", "age": 20}
 USER_VALUE = {
@@ -19,7 +20,7 @@ USER_VALUE = {
 def get_200_dosc(content):
     return {
         200: {
-            'descripton': 'Successful Response',
+            'description': 'Successful Response',
             'content': content
         }
     }
@@ -28,7 +29,7 @@ def get_200_dosc(content):
 def get_201_dosc(content):
     return {
         201: {
-            'descripton': 'Successful Response',
+            'description': 'Created',
             'content': content
         }
     }
@@ -37,22 +38,10 @@ def get_201_dosc(content):
 def get_204_dosc():
     return {
         204: {
-            'descripton': 'Success',
+            'description': 'Запись удалена.',
             'content': {
                 'application/json': {
                     'example': ""
-                }
-            }
-        }
-    }
-
-
-def get_401_dosc():
-    return {
-        401: {
-            'content': {
-                'application/json': {
-                    "example": {"detail": "Unauthorized"}
                 }
             }
         }
@@ -71,9 +60,23 @@ def get_400_dosc(detail):
     }
 
 
-def get_403_dosc(detail):
+def get_401_dosc(description=None):
+    return {
+        401: {
+            'description': description,
+            'content': {
+                'application/json': {
+                    "example": {"detail": "Unauthorized"}
+                }
+            }
+        }
+    }
+
+
+def get_403_dosc(detail, description=None):
     return {
         403: {
+            'description': description,
             'content': {
                 'application/json': {
                     "example": {"detail": detail}
@@ -83,9 +86,10 @@ def get_403_dosc(detail):
     }
 
 
-def get_404_dosc(detail):
+def get_404_dosc(detail, description=None):
     return {
         404: {
+            'description': description,
             'content': {
                 'application/json': {
                     "example": {"detail": detail}
@@ -98,7 +102,7 @@ def get_404_dosc(detail):
 def get_405_dosc(detail):
     return {
         405: {
-            'descripton': 'Method not allowed',
+            'description': 'Использование этого метода запрещено.',
             'content': {
                 'application/json': {
                     "example": {
