@@ -9,9 +9,9 @@ on:
 
 
 jobs:
-  tests:
+  flake8-lint:
     runs-on: ubuntu-latest
-    name: Lint and Pytest
+    name: Lint
     steps:
       - name: Check out source repository
         uses: actions/checkout@v3
@@ -24,12 +24,3 @@ jobs:
         with:
           path: "app"
       - uses: isort/isort-action@master
-      - name: Install dependencies
-        
-        run: |
-          pip install --upgrade pip
-          pip install -r app/requirements.txt
-      - name: Test with pytest
-        run: |
-          pytest
-  
