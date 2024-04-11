@@ -6,7 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.validators import check_name_duplicate
 from app.api_docs_responses.task import (CREATE_TASK, DELETE_TASK, GET_TASK,
                                          GET_TASKS)
-from app.api_docs_responses.utils_docs import NAME_AND_DESCRIPTION_VALUE
+from app.api_docs_responses.utils_docs import (
+    REQUEST_NAME_AND_DESCRIPTION_VALUE)
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud import task_crud
@@ -51,7 +52,8 @@ async def get_task_by_id(
     responses=CREATE_TASK
 )
 async def create_task(
-    task: TaskCreate = Body(example=NAME_AND_DESCRIPTION_VALUE),
+    task: TaskCreate = Body(
+        openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
     session: AsyncSession = Depends(get_async_session)
 ):
     """Создать задачу"""
@@ -67,7 +69,8 @@ async def create_task(
 )
 async def update_task(
     task_id: int,
-    data: TaskUpdate = Body(example=NAME_AND_DESCRIPTION_VALUE),
+    data: TaskUpdate = Body(
+        openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
     session: AsyncSession = Depends(get_async_session)
 ):
     """Обновление задачи."""

@@ -1,8 +1,8 @@
 from fastapi_users.router.common import ErrorCode
 
-from app.api_docs_responses.utils_docs import (get_200_dosc, get_204_dosc,
-                                               get_401_dosc, get_403_dosc,
-                                               get_404_dosc, get_405_dosc)
+from app.api_docs_responses.utils_docs import (get_200_docs, get_204_docs,
+                                               get_401_docs, get_403_docs,
+                                               get_404_docs, get_405_docs)
 
 auth_context = {
     'application/json': {
@@ -60,7 +60,7 @@ status_400_for_update_user = {
 }
 
 LOGIN_USER = {
-    **get_200_dosc(auth_context),
+    **get_200_docs(auth_context),
     400: {
         'content': {
             "application/json": {
@@ -85,36 +85,36 @@ LOGIN_USER = {
 }
 
 LOGOUT_USER = {
-    **get_204_dosc(),
-    **get_401_dosc()
+    **get_204_docs(),
+    **get_401_docs()
 }
 
 GET_CURRENT_USER = {
-    **get_200_dosc(user_context),
-    **get_401_dosc()
+    **get_200_docs(user_context),
+    **get_401_docs()
 }
 
 GET_USER_BY_ID = {
-    **get_200_dosc(user_context),
-    **get_401_dosc('Отсутствует токен или неактивный пользователь.'),
-    **get_403_dosc('Forbidden', 'Нужны права superuser.'),
-    **get_404_dosc('Not found', 'Пользователь не найден.')
+    **get_200_docs(user_context),
+    **get_401_docs('Отсутствует токен или неактивный пользователь.'),
+    **get_403_docs('Forbidden', 'Нужны права superuser.'),
+    **get_404_docs('Not found', 'Пользователь не найден.')
 }
 UPDATE_USER_BY_ID = {
-    **get_200_dosc(user_context),
+    **get_200_docs(user_context),
     **status_400_for_update_user,
-    **get_401_dosc('Отсутствует токен или неактивный пользователь.'),
-    **get_403_dosc('Forbidden', 'Нужны права superuser.'),
-    **get_404_dosc('Not found', 'Пользователь не найден.')
+    **get_401_docs('Отсутствует токен или неактивный пользователь.'),
+    **get_403_docs('Forbidden', 'Нужны права superuser.'),
+    **get_404_docs('Not found', 'Пользователь не найден.')
 }
 
 UPDATE_CURRENT_USER = {
-    **get_200_dosc(user_context),
+    **get_200_docs(user_context),
     **status_400_for_update_user,
-    **get_401_dosc()
+    **get_401_docs()
 }
 
 DELETE_USER = {
-    **get_204_dosc(),
-    **get_405_dosc("Удаление пользователей запрещено!")
+    **get_204_docs(),
+    **get_405_docs("Удаление пользователей запрещено!")
 }

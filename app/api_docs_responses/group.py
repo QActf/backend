@@ -1,6 +1,6 @@
-from app.api_docs_responses.utils_docs import (get_200_dosc, get_201_dosc,
-                                               get_204_dosc, get_401_dosc,
-                                               get_403_dosc, get_404_dosc)
+from app.api_docs_responses.utils_docs import (get_200_docs, get_201_docs,
+                                               get_204_docs, get_401_docs,
+                                               get_403_docs, get_404_docs)
 
 content_groups = {
     'application/json': {
@@ -47,28 +47,28 @@ content_group = {
 }
 
 GET_GROUPS = {
-    **get_200_dosc(content_groups),
-    **get_401_dosc()
+    **get_200_docs(content_groups),
+    **get_401_docs()
 }
 
 GET_GROUP = {
-    **get_200_dosc(content_group),
-    **get_401_dosc()
+    **get_200_docs(content_group),
+    **get_401_docs()
 }
 
 GET_USER_GROUP = {
-    **get_200_dosc(content_group),
-    **get_401_dosc(),
-    **get_403_dosc("Вы не состоите в этой группе."),
-    **get_404_dosc("Такой группы не существует.")
+    **get_200_docs(content_group),
+    **get_401_docs(),
+    **get_403_docs("Вы не состоите в этой группе."),
+    **get_404_docs("Такой группы не существует.")
 }
 
 CREATE_GROUP = {
-    **get_201_dosc(content_group),
-    **get_401_dosc()
+    **get_201_docs(content_group),
+    **get_401_docs()
 }
 
 DELETE_GROUP = {
-    **get_204_dosc(),
-    **get_401_dosc()
+    **get_204_docs(),
+    **get_401_docs()
 }

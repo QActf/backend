@@ -1,5 +1,5 @@
-from app.api_docs_responses.utils_docs import (get_200_dosc, get_204_dosc,
-                                               get_401_dosc, get_405_dosc)
+from app.api_docs_responses.utils_docs import (get_200_docs, get_204_docs,
+                                               get_401_docs, get_405_docs)
 
 content_profiles = {
     'application/json': {
@@ -30,13 +30,13 @@ content_profile = {
 }
 
 GET_PROFILES = {
-    **get_200_dosc(content_profiles),
-    **get_401_dosc()
+    **get_200_docs(content_profiles),
+    **get_401_docs()
 }
 
 GET_PROFILE = {
-    **get_200_dosc(content_profile),
-    **get_401_dosc()
+    **get_200_docs(content_profile),
+    **get_401_docs()
 }
 GET_PROFILE_PHOTO = {
     200: {
@@ -47,14 +47,14 @@ GET_PROFILE_PHOTO = {
             }
         }
     },
-    **get_401_dosc()
+    **get_401_docs()
 }
 CREATE_PROFILE = {
-    **get_200_dosc(content_profile),
-    **get_405_dosc("Профиль создаётся автоматически при "
+    **get_200_docs(content_profile),
+    **get_405_docs("Профиль создаётся автоматически при "
                    "создании пользователя. Используйте метод PATCH.")
 }
 DELETE_PROFILE = {
-    **get_204_dosc(),
-    **get_405_dosc("Профиль удаляется при удалении пользователя.")
+    **get_204_docs(),
+    **get_405_docs("Профиль удаляется при удалении пользователя.")
 }

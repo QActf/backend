@@ -1,9 +1,9 @@
 from fastapi_users.router.common import ErrorCode
 
-from app.api_docs_responses.utils_docs import get_201_dosc
+from app.api_docs_responses.utils_docs import get_201_docs
 
 CREATE_REGISTER = {
-    **get_201_dosc({
+    **get_201_docs({
         'application/json': {
             'example': {
                 "id": 0,

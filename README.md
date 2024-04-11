@@ -64,6 +64,8 @@ sudo docker compose --file=docker-compose.yaml up --build -d
 
  - [Илона Петина](https://github.com/ilonka05)
 
+ - [Сафонов Сергей](https://github.com/SerVik888)
+
  - [Вячеслав Мельник](https://github.com/dmsvalik)
 
  - Андрей Легкий

@@ -1,6 +1,6 @@
-from app.api_docs_responses.utils_docs import (get_200_dosc, get_201_dosc,
-                                               get_204_dosc, get_401_dosc,
-                                               get_404_dosc)
+from app.api_docs_responses.utils_docs import (get_200_docs, get_201_docs,
+                                               get_204_docs, get_401_docs,
+                                               get_404_docs)
 
 content_examenations = {
     'application/json': {
@@ -45,28 +45,28 @@ content_examenation = {
     }
 }
 
-GET_EXAMINATIONS = get_200_dosc(content_examenations)
+GET_EXAMINATIONS = get_200_docs(content_examenations)
 
 GET_EXAMINATION = {
-    **get_200_dosc(content_examenation),
-    **get_404_dosc("Объект examination с id 1 не найден.")
+    **get_200_docs(content_examenation),
+    **get_404_docs("Объект examination с id 1 не найден.")
 }
 
 GET_USER_EXAMINATION = {
-    **get_200_dosc(content_examenation),
-    **get_401_dosc()
+    **get_200_docs(content_examenation),
+    **get_401_docs()
 }
 GET_USER_EXAMINATIONS = {
-    **get_200_dosc(content_examenations),
-    **get_401_dosc()
+    **get_200_docs(content_examenations),
+    **get_401_docs()
 }
 
 CREATE_EXAMINATION = {
-    **get_201_dosc(content_examenation),
-    **get_401_dosc()
+    **get_201_docs(content_examenation),
+    **get_401_docs()
 }
 
 DELETE_EXAMINATION = {
-    **get_204_dosc(),
-    **get_401_dosc()
+    **get_204_docs(),
+    **get_401_docs()
 }

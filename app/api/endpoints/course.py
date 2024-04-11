@@ -5,7 +5,8 @@ from app.api.validators import check_name_duplicate, check_obj_exists
 from app.api_docs_responses.course import (CREATE_COURSE, DELETE_COURSE,
                                            GET_COURSE, GET_COURSES,
                                            GET_USER_COURSE, GET_USER_COURSES)
-from app.api_docs_responses.utils_docs import NAME_AND_DESCRIPTION_VALUE
+from app.api_docs_responses.utils_docs import (
+    REQUEST_NAME_AND_DESCRIPTION_VALUE)
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import course_crud
@@ -133,7 +134,8 @@ async def get_course(
     responses=CREATE_COURSE
 )
 async def create_course(
-    course: CourseCreate = Body(example=NAME_AND_DESCRIPTION_VALUE),
+    course: CourseCreate = Body(
+        openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
     session: AsyncSession = Depends(get_async_session)
 ):
     """Создать курс."""
@@ -149,7 +151,8 @@ async def create_course(
 )
 async def update_course(
     course_id: int,
-    obj_in: CourseUpdate = Body(example=NAME_AND_DESCRIPTION_VALUE),
+    obj_in: CourseUpdate = Body(
+        openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
     session: AsyncSession = Depends(get_async_session),
 ) -> CourseRead:
     """Обновляет курс по его id."""

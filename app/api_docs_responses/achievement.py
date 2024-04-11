@@ -1,6 +1,6 @@
-from app.api_docs_responses.utils_docs import (get_200_dosc, get_201_dosc,
-                                               get_204_dosc, get_401_dosc,
-                                               get_403_dosc, get_404_dosc)
+from app.api_docs_responses.utils_docs import (get_200_docs, get_201_docs,
+                                               get_204_docs, get_401_docs,
+                                               get_403_docs, get_404_docs)
 
 content_achievements = {
     'application/json': {
@@ -46,27 +46,27 @@ content_achievement = {
 }
 
 GET_ACHIEVEMENTS = {
-    **get_200_dosc(content_achievements),
-    **get_401_dosc()
+    **get_200_docs(content_achievements),
+    **get_401_docs()
 }
 
 GET_ACHIEVEMENT = {
-    **get_200_dosc(content_achievement),
-    **get_401_dosc()
+    **get_200_docs(content_achievement),
+    **get_401_docs()
 }
 
 GET_ME_ACHIEVEMENT = {
-    **get_200_dosc(content_achievements),
-    **get_401_dosc(),
-    **get_403_dosc("У вас нет этого достижения."),
-    **get_404_dosc("Достижение не существует")
+    **get_200_docs(content_achievements),
+    **get_401_docs(),
+    **get_403_docs("У вас нет этого достижения."),
+    **get_404_docs("Достижение не существует")
 }
 
 CREATE_ACHIEVEMENT = {
-    **get_201_dosc(content_achievement),
-    **get_401_dosc()
+    **get_201_docs(content_achievement),
+    **get_401_docs()
 }
 DELETE_ACHIEVEMENT = {
-    **get_204_dosc(),
-    **get_401_dosc()
+    **get_204_docs(),
+    **get_401_docs()
 }

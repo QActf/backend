@@ -1,5 +1,5 @@
-from app.api_docs_responses.utils_docs import (get_200_dosc, get_201_dosc,
-                                               get_204_dosc, get_401_dosc)
+from app.api_docs_responses.utils_docs import (get_200_docs, get_201_docs,
+                                               get_204_docs, get_401_docs)
 
 content_tariffs = {
     'application/json': {
@@ -45,19 +45,19 @@ content_tariff = {
     }
 }
 
-GET_TARIFFS = get_200_dosc(content_tariffs)
-GET_TARIFF = get_200_dosc(content_tariff)
+GET_TARIFFS = get_200_docs(content_tariffs)
+GET_TARIFF = get_200_docs(content_tariff)
 UPDATE_TARIFF = {
-    **get_200_dosc(content_tariffs),
-    **get_401_dosc()
+    **get_200_docs(content_tariffs),
+    **get_401_docs()
 }
 
 CREATE_TARIFF = {
-    **get_201_dosc(content_tariff),
-    **get_401_dosc()
+    **get_201_docs(content_tariff),
+    **get_401_docs()
 }
 
 DELETE_TARIFF = {
-    **get_204_dosc(),
-    **get_401_dosc()
+    **get_204_docs(),
+    **get_401_docs()
 }

@@ -5,7 +5,8 @@ from app.api.validators import check_name_duplicate, check_obj_exists
 from app.api_docs_responses.tariff import (CREATE_TARIFF, DELETE_TARIFF,
                                            GET_TARIFF, GET_TARIFFS,
                                            UPDATE_TARIFF)
-from app.api_docs_responses.utils_docs import NAME_AND_DESCRIPTION_VALUE
+from app.api_docs_responses.utils_docs import (
+    REQUEST_NAME_AND_DESCRIPTION_VALUE)
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud import tariff_crud
@@ -48,7 +49,8 @@ async def get_tariff(
 )
 async def update_tariff(
     tariff_id: int,
-    data: TariffUpdate = Body(example=NAME_AND_DESCRIPTION_VALUE),
+    data: TariffUpdate = Body(
+        openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
     session: AsyncSession = Depends(get_async_session)
 ):
     """Обновление тарифa."""
@@ -86,7 +88,8 @@ async def update_tariff(
     responses=CREATE_TARIFF
 )
 async def create_tariff(
-    tariff: TariffCreate = Body(example=NAME_AND_DESCRIPTION_VALUE),
+    tariff: TariffCreate = Body(
+        openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
     session: AsyncSession = Depends(get_async_session)
 ):
     """Создать тариф."""
