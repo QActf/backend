@@ -8,8 +8,8 @@ from app.api_docs_responses.examination import (CREATE_EXAMINATION,
                                                 GET_EXAMINATIONS,
                                                 GET_USER_EXAMINATION,
                                                 GET_USER_EXAMINATIONS)
-from app.api_docs_responses.utils_docs import (
-    REQUEST_NAME_AND_DESCRIPTION_VALUE)
+from app.api_docs_responses.utils_docs import \
+    REQUEST_NAME_AND_DESCRIPTION_VALUE
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import examination_crud

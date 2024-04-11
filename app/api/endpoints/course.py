@@ -5,8 +5,8 @@ from app.api.validators import check_name_duplicate, check_obj_exists
 from app.api_docs_responses.course import (CREATE_COURSE, DELETE_COURSE,
                                            GET_COURSE, GET_COURSES,
                                            GET_USER_COURSE, GET_USER_COURSES)
-from app.api_docs_responses.utils_docs import (
-    REQUEST_NAME_AND_DESCRIPTION_VALUE)
+from app.api_docs_responses.utils_docs import \
+    REQUEST_NAME_AND_DESCRIPTION_VALUE
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import course_crud

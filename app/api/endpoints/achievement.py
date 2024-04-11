@@ -7,8 +7,8 @@ from app.api_docs_responses.achievement import (CREATE_ACHIEVEMENT,
                                                 GET_ACHIEVEMENT,
                                                 GET_ACHIEVEMENTS,
                                                 GET_ME_ACHIEVEMENT)
-from app.api_docs_responses.utils_docs import (
-    REQUEST_NAME_AND_DESCRIPTION_VALUE)
+from app.api_docs_responses.utils_docs import \
+    REQUEST_NAME_AND_DESCRIPTION_VALUE
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import achievement_crud

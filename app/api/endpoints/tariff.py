@@ -5,8 +5,8 @@ from app.api.validators import check_name_duplicate, check_obj_exists
 from app.api_docs_responses.tariff import (CREATE_TARIFF, DELETE_TARIFF,
                                            GET_TARIFF, GET_TARIFFS,
                                            UPDATE_TARIFF)
-from app.api_docs_responses.utils_docs import (
-    REQUEST_NAME_AND_DESCRIPTION_VALUE)
+from app.api_docs_responses.utils_docs import \
+    REQUEST_NAME_AND_DESCRIPTION_VALUE
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud import tariff_crud
