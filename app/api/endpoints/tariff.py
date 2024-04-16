@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Body, Depends, status
+from fastapi import APIRouter, Body, Depends, Path, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing_extensions import Annotated
 
 from app.api.validators import check_name_duplicate, check_obj_exists
 from app.api_docs_responses.tariff import (CREATE_TARIFF, DELETE_TARIFF,
@@ -17,7 +18,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/",
+    '/',
     response_model=list[TariffRead],
     responses=GET_TARIFFS
 )
@@ -34,10 +35,10 @@ async def get_all_tariffs(
     responses=GET_TARIFF
 )
 async def get_tariff(
-    tariff_id: int,
+    tariff_id: Annotated[int, Path(ge=0)],
     session: AsyncSession = Depends(get_async_session)
 ):
-    """Возвращает тариф по id."""
+    """Возвращает траиф по его id или 404 в случае отсутствия."""
     return await tariff_crud.get(tariff_id, session)
 
 
@@ -60,28 +61,8 @@ async def update_tariff(
     )
 
 
-# Перенести в эндпоинты юзера?
-# @router.patch(
-#     "/{tariff_id}",
-#     response_model=UserRead,
-#     dependencies=[Depends(current_user)]
-# )
-# async def update_users_tariff(
-#     tariff_id: int,
-#     user: User = Depends(current_user),
-#     session: AsyncSession = Depends(get_async_session),
-# ) -> UserRead:
-#     """Привязывает тариф к юзеру"""
-#     await check_obj_exists(tariff_id, tariff_crud, session)
-#     user = await user_crud.update_id(
-#         session=session, db_obj=user, field="tariff_id",
-#         field_value=tariff_id
-#     )
-#     return user
-
-
 @router.post(
-    "/",
+    '/',
     response_model=TariffRead,
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_201_CREATED,
@@ -98,7 +79,7 @@ async def create_tariff(
 
 
 @router.delete(
-    "/{obj_id}",
+    '/{obj_id}',
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_204_NO_CONTENT,
     responses=DELETE_TARIFF
@@ -107,5 +88,5 @@ async def delete_tariff(
     obj_id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Удалить тариф."""
+    """Удалить объект."""
     return await delete_obj(obj_id=obj_id, crud=tariff_crud, session=session)
