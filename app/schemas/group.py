@@ -18,5 +18,5 @@ class GroupRead(BaseModel):
 
 
 class GroupUpdate(BaseModel):
-    name: Optional[str] = Field(None,)
-    description: Optional[str] = Field(None,)
+    name: Optional[str] = Field(None)
+    description: Optional[str] = Field(None)

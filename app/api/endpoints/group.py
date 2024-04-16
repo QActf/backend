@@ -1,7 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
+from app.api_docs_responses.group import (CREATE_GROUP, DELETE_GROUP,
+                                          GET_GROUP, GET_GROUPS,
+                                          GET_USER_GROUP)
+from app.api_docs_responses.utils_docs import \
+    REQUEST_NAME_AND_DESCRIPTION_VALUE
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import group_crud
@@ -17,7 +22,9 @@ router = APIRouter()
 @router.get(
     "/",
     response_model=list[GroupRead],
-    dependencies=[Depends(current_superuser)]
+    dependencies=[Depends(current_superuser)],
+    responses=GET_GROUPS,
+    response_model_exclude_none=True
 )
 async def get_all_groups(
     response: Response,
@@ -33,9 +40,10 @@ async def get_all_groups(
 
 
 @router.get(
-        '/me',
-        response_model=list[GroupRead],
-        dependencies=[Depends(current_user)]
+    '/me',
+    response_model=list[GroupRead],
+    dependencies=[Depends(current_user)],
+    responses=GET_GROUPS
 )
 async def get_self_groups(
     user: User = Depends(current_user),
@@ -46,9 +54,10 @@ async def get_self_groups(
 
 
 @router.get(
-        '/me/{group_id}',
-        response_model=GroupRead,
-        dependencies=[Depends(current_user)]
+    '/me/{group_id}',
+    response_model=GroupRead,
+    dependencies=[Depends(current_user)],
+    responses=GET_USER_GROUP
 )
 async def get_self_group_by_id(
     group_id: int,
@@ -71,9 +80,10 @@ async def get_self_group_by_id(
 
 
 @router.get(
-        '/{group_id}',
-        response_model=GroupRead,
-        dependencies=[Depends(current_superuser)]
+    '/{group_id}',
+    response_model=GroupRead,
+    dependencies=[Depends(current_superuser)],
+    responses=GET_GROUP
 )
 async def get_group(
     group_id: int,
@@ -87,10 +97,13 @@ async def get_group(
     "/",
     response_model=GroupRead,
     dependencies=[Depends(current_superuser)],
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
+    responses=CREATE_GROUP
 )
 async def create_group(
-    group: GroupCreate, session: AsyncSession = Depends(get_async_session)
+    group: GroupCreate = Body(
+        openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
+    session: AsyncSession = Depends(get_async_session)
 ):
     """Создать группу"""
     await check_name_duplicate(group.name, group_crud, session)
@@ -98,16 +111,18 @@ async def create_group(
 
 
 @router.patch(
-        '/{group_id}',
-        dependencies=[Depends(current_superuser)],
-        response_model=GroupRead
+    '/{group_id}',
+    dependencies=[Depends(current_superuser)],
+    response_model=GroupRead,
+    responses=GET_GROUP
 )
 async def update_group(
     group_id: int,
-    group: GroupUpdate,
+    group: GroupUpdate = Body(
+        openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
     session: AsyncSession = Depends(get_async_session)
 ):
-    """Апдейт группы."""
+    """Обновить группу"""
     _group = await group_crud.get(group_id, session)
     return await group_crud.update(_group, group, session)
 
@@ -115,11 +130,12 @@ async def update_group(
 @router.delete(
     "/{obj_id}",
     dependencies=[Depends(current_superuser)],
-    status_code=status.HTTP_204_NO_CONTENT
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses=DELETE_GROUP
 )
 async def delete_group(
     obj_id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Удалить объект"""
+    """Удалить группу"""
     return await delete_obj(obj_id=obj_id, crud=group_crud, session=session)

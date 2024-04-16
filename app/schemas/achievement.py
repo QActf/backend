@@ -18,5 +18,5 @@ class AchievementRead(BaseModel):
 
 
 class AchievementUpdate(BaseModel):
-    name: Optional[str] = Field(None,)
-    description: Optional[str] = Field(None,)
+    name: Optional[str] = Field(None)
+    description: Optional[str] = Field(None)

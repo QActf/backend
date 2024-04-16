@@ -18,8 +18,8 @@ class CourseRead(BaseModel):
 
 
 class CourseUpdate(BaseModel):
-    name: Optional[str] = Field(None,)
-    description: Optional[str] = Field(None,)
+    name: Optional[str] = Field(None)
+    description: Optional[str] = Field(None)
 
     @validator('name')
     def name_cannot_be_null(cls, value):

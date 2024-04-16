@@ -1,7 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate, check_obj_exists
+from app.api_docs_responses.achievement import (CREATE_ACHIEVEMENT,
+                                                DELETE_ACHIEVEMENT,
+                                                GET_ACHIEVEMENT,
+                                                GET_ACHIEVEMENTS,
+                                                GET_ME_ACHIEVEMENT)
+from app.api_docs_responses.utils_docs import \
+    REQUEST_NAME_AND_DESCRIPTION_VALUE
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import achievement_crud
@@ -18,14 +25,15 @@ router = APIRouter()
 @router.get(
     "/",
     response_model=list[AchievementRead],
-    dependencies=[Depends(current_superuser)]
+    dependencies=[Depends(current_superuser)],
+    responses=GET_ACHIEVEMENTS
 )
 async def get_all_achievements(
     response: Response,
     pagination: Pagination = Depends(get_pagination_params),
     session: AsyncSession = Depends(get_async_session),
 ) -> list[AchievementRead]:
-    """Возвращает все achievement."""
+    """Возвращает все достижения."""
     achievements = await achievement_crud.get_multi(session)
     add_response_headers(
         response, achievements, pagination
@@ -34,9 +42,10 @@ async def get_all_achievements(
 
 
 @router.get(
-        '/me',
-        response_model=list[AchievementRead],
-        dependencies=[Depends(current_user)]
+    '/me',
+    response_model=list[AchievementRead],
+    dependencies=[Depends(current_user)],
+    responses=GET_ACHIEVEMENTS
 )
 async def get_self_achievements(
     response: Response,
@@ -44,7 +53,7 @@ async def get_self_achievements(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session)
 ):
-    """Возвращает ачивментс юзера."""
+    """Возвращает достижения текущего пользователя."""
     achievements = await achievement_crud.get_users_obj(user.id, session)
     add_response_headers(
         response, achievements, pagination
@@ -53,28 +62,29 @@ async def get_self_achievements(
 
 
 @router.get(
-        '/me/{achievement_id}',
-        response_model=AchievementRead,
-        dependencies=[Depends(current_user)]
+    '/me/{achievement_id}',
+    response_model=AchievementRead,
+    dependencies=[Depends(current_user)],
+    responses=GET_ME_ACHIEVEMENT
 )
 async def get_self_achievement_by_id(
     achievement_id: int,
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session)
 ):
-    """Возвращает ачивмент юзера по id."""
+    """Возвращает достижение текущего пользователя по id."""
     achievement: Achievement = await achievement_crud.get(
         achievement_id, session
     )
     if achievement is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail='Achievement не существует.'
+            detail='Достижение не существует.'
         )
     if user.id not in [_.id for _ in achievement.profiles]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail='У вас нет этого achievement.'
+            detail='У вас нет этого достижения.'
         )
     return achievement
 
@@ -83,28 +93,32 @@ async def get_self_achievement_by_id(
     "/",
     response_model=AchievementRead,
     dependencies=[Depends(current_superuser)],
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
+    responses=CREATE_ACHIEVEMENT
 )
 async def create_achievement(
-    achievement: AchievementCreate,
+    achievement: AchievementCreate = Body(
+        openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
     session: AsyncSession = Depends(get_async_session)
 ):
-    """Создать Achievement"""
+    """Создать достижение"""
     await check_name_duplicate(achievement.name, achievement_crud, session)
     return await achievement_crud.create(obj_in=achievement, session=session)
 
 
 @router.patch(
-        '/{achievement_id}',
-        response_model=AchievementRead,
-        dependencies=[Depends(current_superuser)]
+    '/{achievement_id}',
+    response_model=AchievementRead,
+    dependencies=[Depends(current_superuser)],
+    responses=GET_ACHIEVEMENT
 )
 async def update_achievement(
     achievement_id: int,
-    data: AchievementUpdate,
+    data: AchievementUpdate = Body(
+        openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
     session: AsyncSession = Depends(get_async_session)
 ):
-    """Апдейт ачивмент."""
+    """Обновить достижение."""
     _achievement = await check_obj_exists(
         achievement_id,
         achievement_crud,
@@ -115,13 +129,17 @@ async def update_achievement(
     )
 
 
-@router.delete("/{obj_id}", dependencies=[Depends(current_superuser)],
-               status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{obj_id}",
+    dependencies=[Depends(current_superuser)],
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses=DELETE_ACHIEVEMENT
+)
 async def delete_achievement(
     obj_id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Удалить объект"""
+    """Удалить достижение."""
     return await delete_obj(
         obj_id=obj_id, crud=achievement_crud, session=session
     )
