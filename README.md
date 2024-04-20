@@ -5,7 +5,7 @@
 # Стек технологий:
 
 ![image](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
-![image](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=green)
+![image](https://img.shields.io/badge/fastapi-109989?style=for-the-badge&logo=FASTAPI&logoColor=white)
 ![image](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 ![image](https://img.shields.io/badge/redis-CC0000.svg?&style=for-the-badge&logo=redis&logoColor=white)
 ![image](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)
@@ -45,7 +45,12 @@ FIRST_SUPERUSER_PASSWORD=123
 Локальная сборка контейнеров:
 ```
 # Linux
-sudo docker compose --file=docker-compose.yaml up --build -d
+sudo docker compose --file=docker-compose.yml up --build -d
+```
+
+Либо, если у вас еще не установлен докер, можно запустить командой:
+```
+uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
 Документация будет доступна по http://127.0.0.1/docs/

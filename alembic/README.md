@@ -22,7 +22,7 @@ alembic upgrade head
 
 Чтобы отменить все миграции, которые были в проекте, используется команда
 ```
-alembic upgrade head
+alembic downgrade base
 ```
 
 ---
