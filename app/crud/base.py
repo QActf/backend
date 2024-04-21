@@ -1,5 +1,7 @@
+from http import HTTPStatus
 from typing import Optional
 
+from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,10 +18,20 @@ class CRUDBase:
         obj_id: int,
         session: AsyncSession,
     ):
+        """
+        Возвращает обьект модели по его id
+        или 404 в случае отсутствия.
+        """
         db_obj = await session.execute(
             select(self.model).where(self.model.id == obj_id)
         )
-        return db_obj.scalars().first()
+        obj = db_obj.scalars().first()
+        if obj is None:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail=f"Объект {self.model.__tablename__}не найден.",
+            )
+        return obj
 
     async def get_multi(self, session: AsyncSession):
         db_objs = await session.execute(select(self.model))

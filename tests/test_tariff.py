@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Tariff
 
+from .fixtures.tariff import TEST_TARIFF_COUNT
 from .utils import get_obj_by_id, get_obj_count
 
 CREATE_SCHEME = {
@@ -77,6 +78,19 @@ class TestGetTariff:
         assert response.status_code == status.HTTP_200_OK
         result = response.json()
         assert result['id'] == tariff.id
+
+    async def test_get_tariff_by_nonexist_id(
+        self,
+        moc_tariffs,
+        db_session: AsyncSession,
+        new_client: TestClient
+    ):
+        """Тест полученя тарифа по несуществующему id."""
+        stmt = select(Tariff).where(Tariff.id == TEST_TARIFF_COUNT+1)
+        tariff = await db_session.execute(stmt)
+        tariff = tariff.scalar()
+        response = new_client.get(f"/tariffs/{TEST_TARIFF_COUNT+1}")
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 class TestUpdateTariff:
