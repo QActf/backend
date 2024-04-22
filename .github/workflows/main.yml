@@ -24,6 +24,8 @@ jobs:
           path: "app"
           args: "--config pyproject.toml"
       - uses: isort/isort-action@master
+        with:
+          configuration: "pyproject.toml"
 
   pytest:
     runs-on: ubuntu-latest

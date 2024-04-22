@@ -1,6 +1,7 @@
-from app.api_docs_responses.utils_docs import (get_200_docs, get_201_docs,
-                                               get_400_docs, get_401_docs,
-                                               get_403_docs, get_404_docs)
+from app.api_docs_responses.utils_docs import (
+    get_200_docs, get_201_docs, get_400_docs, get_401_docs, get_403_docs,
+    get_404_docs
+)
 
 
 def get_custom_204_docs():
@@ -61,17 +62,15 @@ content_course = {
 }
 
 get_courses_response = get_200_docs(content_courses)
-
 get_user_courses_response = {
     **get_200_docs(content_courses),
     **get_401_docs(),
 }
-
 get_user_course_response = {
     **get_200_docs(content_course),
     **get_401_docs(),
     **get_403_docs("Вы не записаны на данный курс."),
-    **get_404_docs("Объект course не найден."),
+    **get_404_docs("Объект course не найден.."),
 }
 
 get_course_response = {

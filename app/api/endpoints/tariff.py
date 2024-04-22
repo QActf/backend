@@ -3,16 +3,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing_extensions import Annotated
 
 from app.api.validators import check_name_duplicate, check_obj_exists
-from app.api_docs_responses.tariff import (ALL_TARIFFS_DECRIPTION,
-                                           CREATE_TARIFF, DELETE_TARIFF,
-                                           GET_TARIFF, GET_TARIFFS,
-                                           TARIFF_CREATE_DESCRIPTION,
-                                           TARIFF_ID_DELETE,
-                                           TARIFF_ID_DESCRIPTION,
-                                           TARIFF_ID_PATCH_ODESCRIPTION,
-                                           UPDATE_TARIFF)
-from app.api_docs_responses.utils_docs import \
+from app.api_docs_responses.tariff import (
+    ALL_TARIFFS_DECRIPTION, CREATE_TARIFF, DELETE_TARIFF, GET_TARIFF,
+    GET_TARIFFS, TARIFF_CREATE_DESCRIPTION, TARIFF_ID_DELETE,
+    TARIFF_ID_DESCRIPTION, TARIFF_ID_PATCH_ODESCRIPTION, UPDATE_TARIFF
+)
+from app.api_docs_responses.utils_docs import (
     REQUEST_NAME_AND_DESCRIPTION_VALUE
+)
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud import tariff_crud

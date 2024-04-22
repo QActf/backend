@@ -2,20 +2,22 @@ from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate, check_obj_exists
-from app.api_docs_responses.course import (CREATE_COURSE, DELETE_COURSE,
-                                           GET_COURSE, GET_COURSES,
-                                           GET_USER_COURSE, GET_USER_COURSES,
-                                           PATCH_COURSE)
-from app.api_docs_responses.utils_docs import \
+from app.api_docs_responses.course import (
+    CREATE_COURSE, DELETE_COURSE, GET_COURSE, GET_COURSES, GET_USER_COURSE,
+    GET_USER_COURSES, PATCH_COURSE
+)
+from app.api_docs_responses.utils_docs import (
     REQUEST_NAME_AND_DESCRIPTION_VALUE
+)
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import course_crud
 from app.models import Course, User
 from app.schemas.course import CourseCreate, CourseRead, CourseUpdate
 from app.services.endpoints_services import delete_obj
-from app.services.utils import (Pagination, add_response_headers,
-                                get_pagination_params, paginated)
+from app.services.utils import (
+    Pagination, add_response_headers, get_pagination_params, paginated
+)
 
 router = APIRouter()
 

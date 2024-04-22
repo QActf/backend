@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import (Column, ForeignKey, Integer, String, Table, Text,
-                        UniqueConstraint)
+from sqlalchemy import (
+    Column, ForeignKey, Integer, String, Table, Text, UniqueConstraint
+)
 from sqlalchemy.orm import Mapped, relationship
 
 from app.core.config import settings
