@@ -154,10 +154,10 @@ class TestDeleteTariff:
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_delete_tariff_superuser(
-            self,
-            moc_tariffs,
-            db_session: AsyncSession,
-            auth_superuser: TestClient
+        self,
+        moc_tariffs,
+        db_session: AsyncSession,
+        auth_superuser: TestClient
     ):
         """Тест удаления тарифа."""
         tariff_count = await get_obj_count(Tariff, db_session)
