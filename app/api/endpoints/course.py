@@ -2,7 +2,6 @@ from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate, check_obj_exists
-# from app.api_docs_responses.course import (CREATE_COURSE, DELETE_COURSE,
 from app.api_docs_responses.course import (CREATE_COURSE, DELETE_COURSE,
                                            GET_COURSE, GET_COURSES,
                                            GET_USER_COURSE, GET_USER_COURSES,
@@ -82,36 +81,6 @@ async def get_user_course_id(
             detail='Вы не записаны на данный курс.'
         )
     return course
-
-
-@router.get(
-    "/{course_id}",
-    response_model=CourseRead,
-    dependencies=[Depends(current_user)],
-    **GET_COURSE,
-)
-async def get_id_course(
-    course_id: int,
-    session: AsyncSession = Depends(get_async_session),
-) -> CourseRead:
-    """Возвращает курс по его id."""
-    return await check_obj_exists(
-        obj_id=course_id, crud=course_crud, session=session
-    )
-
-
-@router.get(
-    '/me',
-    response_model=list[CourseRead],
-    dependencies=[Depends(current_user)],
-    **GET_USER_COURSES,
-)
-async def get_self_courses_user(
-    user: User = Depends(current_user),
-    session: AsyncSession = Depends(get_async_session)
-):
-    """Возвращает список курсов текущего пользователя."""
-    return await course_crud.get_users_obj(user.id, session)
 
 
 @router.get(
