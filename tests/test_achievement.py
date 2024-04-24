@@ -72,8 +72,8 @@ class TestCreateAchievement:
     ):
         """Тест создания ачивмент."""
         achievements = await get_obj_count(Achievement, db_session)
-        response = auth_superuser.post(
-            '/achievements',
+        response = await auth_superuser.post(
+            '/achievements/',
             json=CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_201_CREATED
@@ -87,8 +87,8 @@ class TestCreateAchievement:
     ):
         """Тест с неправильными данными для ачивмент."""
         achievements = await get_obj_count(Achievement, db_session)
-        response = auth_superuser.post(
-            '/achievements',
+        response = await auth_superuser.post(
+            '/achievements/',
             json=WRONG_CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
@@ -102,8 +102,8 @@ class TestCreateAchievement:
     ):
         """Тест запрета создания ачивмент юзером."""
         achievements = await get_obj_count(Achievement, db_session)
-        response = auth_client.post(
-            '/achievements',
+        response = await auth_client.post(
+            '/achievements/',
             json=CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -117,8 +117,8 @@ class TestCreateAchievement:
     ):
         """Тест запрета создания ачивмент юзером."""
         achievements = await get_obj_count(Achievement, db_session)
-        response = new_client.post(
-            '/achievements',
+        response = await new_client.post(
+            '/achievements/',
             json=CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
@@ -135,7 +135,7 @@ class TestGetAchievement:
     ):
         """Тест получения всех ачивмент суперюзером."""
         achievements = await get_obj_count(Achievement, db_session)
-        response = auth_superuser.get('/achievements')
+        response = await auth_superuser.get('/achievements/')
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == achievements
 
@@ -146,7 +146,7 @@ class TestGetAchievement:
             auth_client: TestClient
     ):
         """Тест запрета получения всех ачивмент юзером."""
-        response = auth_client.get('/achievements')
+        response = await auth_client.get('/achievements/')
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_forbidden_get_all_achievements_nonauth(
@@ -155,7 +155,7 @@ class TestGetAchievement:
             new_client: TestClient
     ):
         """Тест запрета получения ачивментс неавторизованным."""
-        response = new_client.get('/achievements')
+        response = await new_client.get('/achievements/')
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_get_self_achievements_user(
@@ -174,7 +174,7 @@ class TestGetAchievement:
         achiv.profiles.append(profile)
         achievement.profiles.append(profile)
         await db_session.commit()
-        response = auth_client.get('achievements/me')
+        response = await auth_client.get('achievements/me')
         assert response.status_code == status.HTTP_200_OK
         result = response.json()
         assert len(result) == 2
@@ -198,12 +198,12 @@ class TestGetAchievement:
         achiv.profiles.append(profile)
         achievement.profiles.append(profile)
         await db_session.commit()
-        response = auth_client.get('/achievements/me/1')
+        response = await auth_client.get('/achievements/me/1')
         assert response.status_code == status.HTTP_200_OK
         assert response.json()['id'] == 1
-        response = auth_client.get('/achievements/me/3')
+        response = await auth_client.get('/achievements/me/3')
         assert response.status_code == status.HTTP_403_FORBIDDEN
-        response = auth_client.get('/achievements/me/22')
+        response = await auth_client.get('/achievements/me/22')
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -215,7 +215,7 @@ class TestUpdateAchievement:
             auth_client: TestClient
     ):
         """Тест запрета апдейта ачивмент юзером."""
-        response = auth_client.patch(
+        response = await auth_client.patch(
             '/achievements/1'
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -227,7 +227,7 @@ class TestUpdateAchievement:
             new_client: TestClient
     ):
         """Тест запрета апдейта ачивмент неавторизованным."""
-        response = new_client.patch(
+        response = await new_client.patch(
             '/achievements/1'
         )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
@@ -240,7 +240,7 @@ class TestUpdateAchievement:
     ):
         """Тест апдейта ачивмент суперюзером."""
         achievement = await get_obj_by_id(1, Achievement, db_session)
-        response = auth_superuser.patch(
+        response = await auth_superuser.patch(
             '/achievements/1',
             json=UPDATE_SCHEME
         )
@@ -261,7 +261,7 @@ class TestDeleteAchievement:
         """Тест запрета удаления ачивмент юзером."""
         achievements = await get_obj_count(Achievement, db_session)
         assert achievements > 0
-        response = auth_client.delete('/achievements/1')
+        response = await auth_client.delete('/achievements/1')
         assert response.status_code == status.HTTP_403_FORBIDDEN
         check_achiv = await get_obj_count(Achievement, db_session)
         assert check_achiv == achievements
@@ -275,7 +275,7 @@ class TestDeleteAchievement:
         """Тест запрета удаления ачивмент неавторизованным."""
         achievements = await get_obj_count(Achievement, db_session)
         assert achievements > 0
-        response = new_client.delete('/achievements/1')
+        response = await new_client.delete('/achievements/1')
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
         check_achiv = await get_obj_count(Achievement, db_session)
         assert check_achiv == achievements
@@ -290,7 +290,7 @@ class TestDeleteAchievement:
         achievement = await _get_achievement_by_id(1, db_session)
         assert achievement is not None
         achiv_count = await get_obj_count(Achievement, db_session)
-        response = auth_superuser.delete('/achievements/1')
+        response = await auth_superuser.delete('/achievements/1')
         assert response.status_code == status.HTTP_204_NO_CONTENT
         removed_achiv = await _get_achievement_by_id(1, db_session)
         assert removed_achiv is None
@@ -305,14 +305,14 @@ class TestPaginationGroup:
             auth_superuser: TestClient
     ):
         """Тест пагинации профилей"""
-        response = auth_superuser.get(
+        response = await auth_superuser.get(
             '/achievements/?limit=2'
         )
         result = response.json()
         assert len(result) == 2
         assert result[0]['id'] == 1
         assert result[1]['id'] == 2
-        response = auth_superuser.get(
+        response = await auth_superuser.get(
             '/achievements/?offset=2&limit=2'
         )
         result = response.json()

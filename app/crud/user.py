@@ -15,7 +15,6 @@ class CRUDUser(CRUDBase):
             field_value: int,
             session: AsyncSession,
     ):
-        # obj_data = jsonable_encoder(db_obj)
         setattr(db_obj, field, field_value)
         session.add(db_obj)
         await session.commit()

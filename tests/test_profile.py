@@ -25,7 +25,7 @@ REGISTRATION_SCHEMA = {
 
 
 def delete_tmpdir(path: Path):
-    for sub in path.iterdir():  # type: Path
+    for sub in path.iterdir():
         if sub.is_dir():
             delete_tmpdir(sub)
         else:
@@ -53,7 +53,7 @@ class TestProfile:
         """Тест создания профиля при регистрации пользователя."""
         profiles = await get_obj_count(Profile, db_session)
         users = await get_obj_count(User, db_session)
-        response: Response = new_client.post(
+        response: Response = await new_client.post(
             '/auth/register', json=REGISTRATION_SCHEMA
         )
         assert response.status_code == status.HTTP_201_CREATED
@@ -70,7 +70,7 @@ class TestProfile:
     ):
         """Тест получения всех профилей суперюзером."""
         profiles = await get_obj_count(Profile, db_session)
-        response: Response = auth_superuser.get(
+        response: Response = await auth_superuser.get(
             '/profiles/'
         )
         assert response.status_code == status.HTTP_200_OK
@@ -82,7 +82,7 @@ class TestProfile:
             auth_client: TestClient,
     ):
         """Тест запрета получения профилей простым пользователем."""
-        response = auth_client.get(
+        response = await auth_client.get(
             '/profiles/'
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -94,15 +94,15 @@ class TestProfile:
             auth_superuser
     ):
         """Тест фильтрации профилей."""
-        response = auth_superuser.get(
+        response = await auth_superuser.get(
             '/profiles/?age__gte=22&age__lte=23'
         )
         assert len(response.json()) == 2
-        response = auth_superuser.get(
+        response = await auth_superuser.get(
             '/profiles/?first_name__ilike=3'
         )
         assert len(response.json()) == 1
-        response = auth_superuser.get(
+        response = await auth_superuser.get(
             '/profiles/?last_name__ilike=4'
         )
         assert len(response.json()) == 1
@@ -113,14 +113,14 @@ class TestProfile:
             auth_superuser
     ):
         """Тест пагинации профилей"""
-        response = auth_superuser.get(
+        response = await auth_superuser.get(
             '/profiles/?limit=2'
         )
         result = response.json()
         assert len(result) == 2
         assert result[0]['user_id'] == 1
         assert result[1]['user_id'] == 2
-        response = auth_superuser.get(
+        response = await auth_superuser.get(
             '/profiles/?offset=2&limit=2'
         )
         result = response.json()
@@ -136,14 +136,14 @@ class TestProfile:
     ):
         """Тест получения своего профиля текущим юзером."""
         user = await _get_user(1, db_session)
-        response: Response = new_client.post(
+        response: Response = await new_client.post(
            '/auth/jwt/login',
            data={'username': user.email, 'password': 'qwerty'},
         )
         access_token = response.json().get('access_token')
         new_client.headers.update({'Authorization': f'Bearer {access_token}'})
-        response: Response = new_client.get(
-            '/profiles/me/'
+        response: Response = await new_client.get(
+            '/profiles/me'
         )
         result = response.json()
         assert result['first_name'] == user.profile.first_name
@@ -157,13 +157,13 @@ class TestProfile:
         """Тест запрета получения чужого профиля текущим юзером."""
         user: User = await _get_user(1, db_session)
         other_user: User = await _get_user(2, db_session)
-        response: Response = new_client.post(
+        response: Response = await new_client.post(
            '/auth/jwt/login',
            data={'username': user.email, 'password': 'qwerty'},
         )
         access_token = response.json().get('access_token')
         new_client.headers.update({'Authorization': f'Bearer {access_token}'})
-        response = new_client.get(
+        response = await new_client.get(
             f'/profiles/{other_user.profile.id}'
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -176,14 +176,14 @@ class TestProfile:
     ):
         """Тест получения фото своего профиля юзером."""
         user: User = await _get_user(1, db_session)
-        response: Response = new_client.post(
+        response: Response = await new_client.post(
            '/auth/jwt/login',
            data={'username': user.email, 'password': 'qwerty'},
         )
         access_token = response.json().get('access_token')
         new_client.headers.update({'Authorization': f'Bearer {access_token}'})
-        response = new_client.get(
-            '/profiles/me/photo/'
+        response = await new_client.get(
+            '/profiles/me/photo'
         )
         assert response.status_code == status.HTTP_200_OK
 
@@ -195,14 +195,14 @@ class TestProfile:
     ):
         """Тест апдейта своего профиля."""
         user: User = await _get_user(1, db_session)
-        response: Response = new_client.post(
+        response: Response = await new_client.post(
            '/auth/jwt/login',
            data={'username': user.email, 'password': 'qwerty'},
         )
         access_token = response.json().get('access_token')
         new_client.headers.update({'Authorization': f'Bearer {access_token}'})
         data = {'first_name': 'new_first_name'}
-        response = new_client.patch(
+        response = await new_client.patch(
             '/profiles/me',
             json=data
         )
@@ -227,7 +227,7 @@ class TestProfile:
         tmp_image.save(settings.base_dir / 'tmp_for_load' / 'img.jpeg', 'jpeg')
         tmp_image.save(buffer, format='JPEG')
         img_str = base64.b64encode(buffer.getvalue())
-        response: Response = new_client.post(
+        response: Response = await new_client.post(
            '/auth/jwt/login',
            data={'username': user.email, 'password': 'qwerty'},
         )
@@ -235,7 +235,7 @@ class TestProfile:
         new_client.headers.update({'Authorization': f'Bearer {access_token}'})
         with open(settings.base_dir / 'media' / photo, 'rb') as f:
             current_photo = base64.b64encode(f.read())
-        response = new_client.patch(
+        response = await new_client.patch(
             '/profiles/me/update_photo',
             files={
                 'file': (
@@ -259,7 +259,7 @@ class TestProfile:
             new_client: TestClient
     ):
         """Тест запрета создания профиля без создания юзера."""
-        response = new_client.post(
+        response = await new_client.post(
             '/profiles/',
             json={
                 'first_name': 'test_first_name',
@@ -277,7 +277,7 @@ class TestProfile:
     ):
         """Тест запрета удаления профиля."""
         user = await _get_user(1, db_session)
-        response = auth_superuser.delete(
+        response = await auth_superuser.delete(
             f'/profiles/{user.profile.id}'
         )
         assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

@@ -16,7 +16,9 @@ WRONG_PASSWORD = 'wrongpassword'
 class TestRegister:
     async def test_register_new_user(self, new_client):
         """Тест регистрации пользователя с корректными данными."""
-        response = new_client.post('/auth/register', json=REGISTRATION_SCHEMA)
+        response = await new_client.post(
+            '/auth/register', json=REGISTRATION_SCHEMA
+        )
         assert response.status_code == status.HTTP_201_CREATED, (
             'При успешной регистрации пользователя, '
             'должен возвращаться статус-код 201.'
@@ -26,7 +28,9 @@ class TestRegister:
             self, register_client, new_client
     ):
         """Тест регистрации пользователя с некорректными данными."""
-        response = new_client.post('/auth/register', json=REGISTRATION_SCHEMA)
+        response = await new_client.post(
+            '/auth/register', json=REGISTRATION_SCHEMA
+        )
         assert response.status_code == status.HTTP_400_BAD_REQUEST, (
             'Некорректные данные при регистрации пользователя, '
             'должен возвращаться статус-код 400.'
@@ -34,7 +38,9 @@ class TestRegister:
 
     async def test_repeat_register_user(self, register_client, new_client):
         """Тест регистрации пользователя, который уже есть в БД."""
-        response = new_client.post('/auth/register', json=REGISTRATION_SCHEMA)
+        response = await new_client.post(
+            '/auth/register', json=REGISTRATION_SCHEMA
+        )
         assert response.json().get('detail') == (
             'REGISTER_USER_ALREADY_EXISTS'), (
             'Пользователь с указанными данными уже есть в БД.'
@@ -44,7 +50,9 @@ class TestRegister:
         """Тест регистрации пользователя с паролем менее трёх символов."""
         data_new_client = REGISTRATION_SCHEMA
         data_new_client['password'] = '!'
-        response = new_client.post('/auth/register', json=data_new_client)
+        response = await new_client.post(
+            '/auth/register', json=data_new_client
+        )
         data = response.json()
         assert data == {
             'detail': {
@@ -59,7 +67,9 @@ class TestRegister:
         """Тест регистрации пользователя с паролем, содержащим email."""
         data_new_client = REGISTRATION_SCHEMA
         data_new_client['password'] = USER_EMAIL
-        response = new_client.post('/auth/register', json=data_new_client)
+        response = await new_client.post(
+            '/auth/register', json=data_new_client
+        )
         data = response.json()
         assert data == {
             'detail': {
@@ -73,7 +83,7 @@ class TestRegister:
 
     async def test_register_invalid_json(self, new_client):
         """Тест регистрации пользователя с недопустимыми данными."""
-        response = new_client.post('/auth/register', json={})
+        response = await new_client.post('/auth/register', json={})
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, (
             'Недопустимые данные при регистрации пользователя, '
             'должен возвращаться статус-код 422.'
@@ -83,7 +93,7 @@ class TestRegister:
 class TestLogin:
     async def test_login_correct_client(self, new_client, register_client):
         """Тест входа в систему с корректными данными."""
-        response = new_client.post(
+        response = await new_client.post(
            '/auth/jwt/login',
            data={'username': USER_EMAIL, 'password': USER_PASSWORD},
         )
@@ -94,7 +104,7 @@ class TestLogin:
 
     async def test_login_wrong_client(self, new_client):
         """Тест входа в систему с неверными данными."""
-        response = new_client.post(
+        response = await new_client.post(
            '/auth/jwt/login',
            data={'username': WRONG_EMAIL, 'password': WRONG_PASSWORD},
         )
@@ -105,7 +115,7 @@ class TestLogin:
 
     async def test_login_wrong_username(self, new_client, register_client):
         """Тест входа в систему с неверным email."""
-        response = new_client.post(
+        response = await new_client.post(
            '/auth/jwt/login',
            data={'username': WRONG_EMAIL, 'password': USER_PASSWORD},
         )
@@ -115,7 +125,7 @@ class TestLogin:
 
     async def test_login_invalid_data(self, new_client, register_client):
         """Тест входа в систему с недопустимыми данными."""
-        response = new_client.post(
+        response = await new_client.post(
            '/auth/jwt/login',
            data={},
         )
@@ -128,7 +138,7 @@ class TestLogin:
 class TestLogout:
     async def test_logout_auth_client(self, auth_client):
         """Тест выхода из системы залогиненного пользователя."""
-        response = auth_client.post('/auth/jwt/logout')
+        response = await auth_client.post('/auth/jwt/logout')
 
         assert response.status_code == status.HTTP_204_NO_CONTENT, (
             'При попытке выхода из системы залогиненного пользователя, '
@@ -137,7 +147,7 @@ class TestLogout:
 
     async def test_logout_new_client(self, new_client):
         """Тест выхода из системы незалогиненного пользователя."""
-        response = new_client.post('/auth/jwt/logout')
+        response = await new_client.post('/auth/jwt/logout')
         assert response.status_code == status.HTTP_401_UNAUTHORIZED, (
             'При попытке выхода из системы незалогиненного пользователя, '
             'должен возвращаться статус-код 401.'
