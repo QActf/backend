@@ -1,18 +1,17 @@
-from pathlib import Path
 from typing import AsyncGenerator
 
 import pytest_asyncio
 from fastapi import FastAPI
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
+                                    create_async_engine)
 from sqlalchemy.pool import NullPool
 
+from app.core.config import settings
 from app.core.db import Base
 from app.main import app
 
-BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
-TEST_DB = BASE_DIR / 'test.db'
-DATABASE_URL_TEST = f'sqlite+aiosqlite:///{str(TEST_DB)}'
+DATABASE_URL_TEST = f'{settings.database_url}_test'
+
 
 fixtures = 'tests.fixtures'
 
@@ -24,16 +23,15 @@ pytest_plugins = [
     f'{fixtures}.tariff',
     f'{fixtures}.task',
     f'{fixtures}.course',
-    f'{fixtures}.examination',
+    f'{fixtures}.examination'
 ]
 
 engine_test = create_async_engine(
     DATABASE_URL_TEST,
     poolclass=NullPool,
-    connect_args={'check_same_thread': False},
 )
 
-AsyncSessionLocalTest = sessionmaker(
+AsyncSessionLocalTest = async_sessionmaker(
     bind=engine_test,
     class_=AsyncSession,
     autocommit=False,
@@ -41,7 +39,7 @@ AsyncSessionLocalTest = sessionmaker(
 )
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture()
 async def prepare_database() -> AsyncGenerator:
     """Фикстура для создания тестовой БД."""
     async with engine_test.begin() as conn:
@@ -51,13 +49,13 @@ async def prepare_database() -> AsyncGenerator:
         await conn.run_sync(Base.metadata.drop_all)
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture()
 async def db_session(prepare_database: FastAPI) -> AsyncGenerator:
     """Фикстура для создания асинхронного сеанса тестовой базы данных."""
     connection = await engine_test.connect()
-    transaction = await connection.begin()
+    transaction = await connection.get_raw_connection()
     session = AsyncSessionLocalTest(bind=connection)
     yield session
     await session.close()
-    await transaction.rollback()
+    transaction.rollback()
     await connection.close()

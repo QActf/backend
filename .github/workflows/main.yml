@@ -2,16 +2,15 @@ name: fastapi-app workflow
 
 on:
   push:
-    branches: [ "develop"]
+    branches: [ "develop", "feature/replacement_sqlite_to_postgresql" ]
   pull_request:
     branches: [ "develop" ]
   workflow_dispatch:
 
-
 jobs:
-  tests:
+  tests_lint:
     runs-on: ubuntu-latest
-    name: Lint and Pytest
+    name: Lint
     steps:
       - name: Check out source repository
         uses: actions/checkout@v3
@@ -23,13 +22,36 @@ jobs:
         uses: py-actions/flake8@v2
         with:
           path: "app"
+          args: "--config pyproject.toml"
       - uses: isort/isort-action@master
+
+  pytest:
+    runs-on: ubuntu-latest
+    name: pytest
+    needs: tests_lint
+    services:
+      postgres:
+        image: postgres:16.2-alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB_TEST }}
+          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST_TEST }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
       - name: Install dependencies
-        
         run: |
           pip install --upgrade pip
           pip install -r app/requirements.txt
       - name: Test with pytest
+        env:
+          DATABASE_URL: postgresql+asyncpg://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@${{ secrets.POSTGRES_HOST_TEST }}:5432/${{ secrets.POSTGRES_DB }}
         run: |
           pytest
-  

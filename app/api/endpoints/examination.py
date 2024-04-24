@@ -6,8 +6,8 @@ from app.api_docs_responses.examination import (CREATE_EXAMINATION,
                                                 DELETE_EXAMINATION,
                                                 GET_EXAMINATION,
                                                 GET_EXAMINATIONS,
-                                                GET_USER_EXAMINATION,
-                                                GET_USER_EXAMINATIONS)
+                                                GET_USER_EXAMINATIONS,
+                                                UPDATE_EXAMINATION)
 from app.api_docs_responses.utils_docs import \
     REQUEST_NAME_AND_DESCRIPTION_VALUE
 from app.core.db import get_async_session
@@ -24,7 +24,7 @@ router = APIRouter()
 @router.get(
     "/",
     response_model=list[ExaminationRead],
-    responses=GET_EXAMINATIONS
+    **GET_EXAMINATIONS,
 )
 async def get_all_examinations(
     session: AsyncSession = Depends(get_async_session),
@@ -37,7 +37,7 @@ async def get_all_examinations(
     '/me',
     response_model=list[ExaminationRead],
     dependencies=[Depends(current_user)],
-    responses=GET_USER_EXAMINATIONS
+    **GET_USER_EXAMINATIONS,
 )
 async def get_self_examinations(
     user: User = Depends(current_user),
@@ -50,7 +50,7 @@ async def get_self_examinations(
 @router.get(
     '/{examination_id}',
     response_model=ExaminationRead,
-    responses=GET_EXAMINATION
+    **GET_EXAMINATION,
 )
 async def get_examination(
     examination_id: int,
@@ -65,7 +65,7 @@ async def get_examination(
     response_model=ExaminationRead,
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_201_CREATED,
-    responses=CREATE_EXAMINATION
+    **CREATE_EXAMINATION,
 )
 async def create_examination(
     examination: ExaminationCreate = Body(
@@ -83,9 +83,9 @@ async def create_examination(
     '/{examination_id}',
     dependencies=[Depends(current_superuser)],
     response_model=ExaminationRead,
-    responses=GET_USER_EXAMINATION
+    **UPDATE_EXAMINATION,
 )
-async def update_group(
+async def update_examination(
     examination_id: int,
     data: ExaminationUpdate = Body(
         openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
@@ -99,16 +99,16 @@ async def update_group(
 
 
 @router.delete(
-    "/{obj_id}",
+    "/{examination_id}",
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_204_NO_CONTENT,
-    responses=DELETE_EXAMINATION
+    **DELETE_EXAMINATION
 )
 async def delete_examination(
-    obj_id: int,
+    examination_id: int,
     session: AsyncSession = Depends(get_async_session)
 ):
     """Удалить экзамен."""
     return await delete_obj(
-        obj_id=obj_id, crud=examination_crud, session=session
+        obj_id=examination_id, crud=examination_crud, session=session
     )

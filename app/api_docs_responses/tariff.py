@@ -61,3 +61,61 @@ DELETE_TARIFF = {
     **get_204_docs(),
     **get_401_docs()
 }
+
+ALL_TARIFFS_DECRIPTION = """
+    Получение всех тарифов, который есть в БД.
+
+    Args:\n
+        tariff_id (int): Идентификатор тарифа.\n
+    Returns:\n
+        list: dict(Информация о тарифе).\n
+    Permissions:\n
+        Доступно всем.
+"""
+
+TARIFF_ID_DESCRIPTION = """
+    Получение тарифа по его id или
+    получение ошибки 404 в случае отсутствия данного тарифа.
+
+    Args:\n
+        tariff_id (int): Идентификатор тарифа.\n
+    Returns:\n
+        dict: Информация о тарифе.\n
+    Permissions:\n
+        Доступно всем.
+"""
+
+TARIFF_ID_PATCH_ODESCRIPTION = """
+    Частичное обновление информации о тарифе по его идентификатору.
+
+    Args:\n
+        tariff_id (int): Идентификатор тарифа.\n
+        data (TariffUpdate): Данные для обновления.\n
+    Returns:\n
+        dict: Информация о тарифе.\n
+    Permissions:\n
+"""
+
+TARIFF_CREATE_DESCRIPTION = """
+    Создание тарифа.
+
+    Args:\n
+        tariff(dict): Данные нового тарифа.\n
+        data (TariffUpdate): Данные для обновления.\n
+    Returns:\n
+        dict: Новый тариф.\n
+    Permissions:\n
+        Только суперпользователь.\n
+"""
+
+TARIFF_ID_DELETE = """
+    Удаление тарифа по его идентификатору.
+
+    Args:\n
+        tariff(dict): Данные нового тарифа.\n
+        data (TariffUpdate): Данные для обновления.\n
+    Returns:\n
+        dict: Новый тариф.\n
+    Permissions:\n
+        Только суперпользователь.\n
+"""

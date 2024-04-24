@@ -21,6 +21,15 @@ class Settings(BaseSettings):
     offset: int = 0
     limit: int = 10
 
+    # ======== email config ==========
+    # EMAIL_FROM: str
+    # hostname: str
+    # port: int
+    # email_user: str
+    # password: str
+    # use_tls: bool
+    # ================================
+
     class Config:
         env_file = "infra/.env"
 

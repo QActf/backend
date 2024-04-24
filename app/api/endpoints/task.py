@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
 from app.api_docs_responses.task import (CREATE_TASK, DELETE_TASK, GET_TASK,
-                                         GET_TASKS)
+                                         GET_TASKS, PATCH_TASK)
 from app.api_docs_responses.utils_docs import \
     REQUEST_NAME_AND_DESCRIPTION_VALUE
 from app.core.db import get_async_session
@@ -21,7 +21,7 @@ router = APIRouter()
     "/",
     response_model=List[TaskRead],
     dependencies=[Depends(current_superuser)],
-    responses=GET_TASKS
+    **GET_TASKS,
 )
 async def get_all_tasks(
     session: AsyncSession = Depends(get_async_session),
@@ -34,7 +34,7 @@ async def get_all_tasks(
     '/{task_id}',
     response_model=TaskRead,
     dependencies=[Depends(current_superuser)],
-    responses=GET_TASK
+    **GET_TASK,
 )
 async def get_task_by_id(
     task_id: int,
@@ -49,7 +49,7 @@ async def get_task_by_id(
     response_model=TaskRead,
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_201_CREATED,
-    responses=CREATE_TASK
+    **CREATE_TASK,
 )
 async def create_task(
     task: TaskCreate = Body(
@@ -65,7 +65,7 @@ async def create_task(
     '/{task_id}',
     response_model=TaskRead,
     dependencies=[Depends(current_superuser)],
-    responses=GET_TASK
+    **PATCH_TASK,
 )
 async def update_task(
     task_id: int,
@@ -79,14 +79,14 @@ async def update_task(
 
 
 @router.delete(
-    "/{obj_id}",
+    "/{task_id}",
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_204_NO_CONTENT,
-    responses=DELETE_TASK
+    **DELETE_TASK,
 )
 async def delete_task(
-    obj_id: int,
+    task_id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
     """Удалить задачу"""
-    return await delete_obj(obj_id=obj_id, crud=task_crud, session=session)
+    return await delete_obj(obj_id=task_id, crud=task_crud, session=session)
