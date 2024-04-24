@@ -2,11 +2,12 @@ from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate, check_obj_exists
-from app.api_docs_responses.achievement import (CREATE_ACHIEVEMENT,
-                                                DELETE_ACHIEVEMENT,
-                                                GET_ACHIEVEMENT,
-                                                GET_ACHIEVEMENTS,
-                                                GET_ME_ACHIEVEMENT)
+from app.api_docs_responses.achievement import (
+    CREATE_ACHIEVEMENT, DELETE_ACHIEVEMENT, GET_ACHIEVEMENT, GET_ACHIEVEMENTS,
+    GET_ME_ACHIEVEMENT, GET_ALL_ACHIEVEMENTS_DESCRIPTION,
+    GET_ACHIEVEMENTS_CURRENTUSER_DESCRIPTION,
+    GET_ACHIEVEMENT_CURRENTUSER_ID_DESCRIPTION, CREATE_ACHIEVEMENT_DESCRIPTION,
+    PATCH_ACHIEVEMENT_ID_DESCRIPTION, DELETE_ACHIEVEMENT_DESCRIPTION)
 from app.api_docs_responses.utils_docs import \
     REQUEST_NAME_AND_DESCRIPTION_VALUE
 from app.core.db import get_async_session
@@ -23,10 +24,12 @@ router = APIRouter()
 
 
 @router.get(
-    "/",
+    '/',
     response_model=list[AchievementRead],
     dependencies=[Depends(current_superuser)],
-    responses=GET_ACHIEVEMENTS
+    responses=GET_ACHIEVEMENTS,
+    summary='Все достижения в БД.',
+    description=GET_ALL_ACHIEVEMENTS_DESCRIPTION,
 )
 async def get_all_achievements(
     response: Response,
@@ -45,7 +48,9 @@ async def get_all_achievements(
     '/me',
     response_model=list[AchievementRead],
     dependencies=[Depends(current_user)],
-    responses=GET_ACHIEVEMENTS
+    responses=GET_ACHIEVEMENTS,
+    summary='Достижения текущего пользователя.',
+    description=GET_ACHIEVEMENTS_CURRENTUSER_DESCRIPTION
 )
 async def get_self_achievements(
     response: Response,
@@ -65,7 +70,9 @@ async def get_self_achievements(
     '/me/{achievement_id}',
     response_model=AchievementRead,
     dependencies=[Depends(current_user)],
-    responses=GET_ME_ACHIEVEMENT
+    responses=GET_ME_ACHIEVEMENT,
+    summary='Достижение текущего пользователя по id.',
+    description=GET_ACHIEVEMENT_CURRENTUSER_ID_DESCRIPTION
 )
 async def get_self_achievement_by_id(
     achievement_id: int,
@@ -94,7 +101,9 @@ async def get_self_achievement_by_id(
     response_model=AchievementRead,
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_201_CREATED,
-    responses=CREATE_ACHIEVEMENT
+    responses=CREATE_ACHIEVEMENT,
+    summary='Создание достижения.',
+    description=CREATE_ACHIEVEMENT_DESCRIPTION
 )
 async def create_achievement(
     achievement: AchievementCreate = Body(
@@ -110,7 +119,9 @@ async def create_achievement(
     '/{achievement_id}',
     response_model=AchievementRead,
     dependencies=[Depends(current_superuser)],
-    responses=GET_ACHIEVEMENT
+    responses=GET_ACHIEVEMENT,
+    summary='Обновление достижения.',
+    description=PATCH_ACHIEVEMENT_ID_DESCRIPTION
 )
 async def update_achievement(
     achievement_id: int,
@@ -130,16 +141,18 @@ async def update_achievement(
 
 
 @router.delete(
-    "/{obj_id}",
+    "/{achievement_id}",
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_204_NO_CONTENT,
-    responses=DELETE_ACHIEVEMENT
+    responses=DELETE_ACHIEVEMENT,
+    summary='Удаление достижения.',
+    description=DELETE_ACHIEVEMENT_DESCRIPTION
 )
 async def delete_achievement(
-    obj_id: int,
+    achievement_id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
     """Удалить достижение."""
     return await delete_obj(
-        obj_id=obj_id, crud=achievement_crud, session=session
+        obj_id=achievement_id, crud=achievement_crud, session=session
     )
