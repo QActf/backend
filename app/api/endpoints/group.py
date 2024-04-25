@@ -2,19 +2,21 @@ from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
-from app.api_docs_responses.group import (CREATE_GROUP, DELETE_GROUP,
-                                          GET_GROUP, GET_GROUPS,
-                                          GET_USER_GROUP)
-from app.api_docs_responses.utils_docs import \
+from app.api_docs_responses.group import (
+    CREATE_GROUP, DELETE_GROUP, GET_GROUP, GET_GROUPS, GET_USER_GROUP
+)
+from app.api_docs_responses.utils_docs import (
     REQUEST_NAME_AND_DESCRIPTION_VALUE
+)
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import group_crud
 from app.models import Group, User
 from app.schemas.group import GroupCreate, GroupRead, GroupUpdate
 from app.services.endpoints_services import delete_obj
-from app.services.utils import (Pagination, add_response_headers,
-                                get_pagination_params, paginated)
+from app.services.utils import (
+    Pagination, add_response_headers, get_pagination_params, paginated
+)
 
 router = APIRouter()
 

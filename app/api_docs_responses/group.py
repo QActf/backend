@@ -1,6 +1,7 @@
-from app.api_docs_responses.utils_docs import (get_200_docs, get_201_docs,
-                                               get_204_docs, get_401_docs,
-                                               get_403_docs, get_404_docs)
+from app.api_docs_responses.utils_docs import (
+    get_200_docs, get_201_docs, get_204_docs, get_401_docs, get_403_docs,
+    get_404_docs
+)
 
 content_groups = {
     'application/json': {

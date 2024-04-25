@@ -1,8 +1,9 @@
 from fastapi_users.router.common import ErrorCode
 
-from app.api_docs_responses.utils_docs import (get_200_docs, get_204_docs,
-                                               get_401_docs, get_403_docs,
-                                               get_404_docs, get_405_docs)
+from app.api_docs_responses.utils_docs import (
+    get_200_docs, get_204_docs, get_401_docs, get_403_docs, get_404_docs,
+    get_405_docs
+)
 
 auth_context = {
     'application/json': {
