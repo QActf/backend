@@ -3,10 +3,10 @@ from typing import Annotated
 from fastapi import APIRouter, Body, HTTPException, status
 
 from app.api.endpoints import register
-from app.api_docs_responses.user import (DELETE_USER, GET_CURRENT_USER,
-                                         GET_USER_BY_ID, LOGIN_USER,
-                                         LOGOUT_USER, UPDATE_CURRENT_USER,
-                                         UPDATE_USER_BY_ID)
+from app.api_docs_responses.user import (
+    DELETE_USER, GET_CURRENT_USER, GET_USER_BY_ID, LOGIN_USER, LOGOUT_USER,
+    UPDATE_CURRENT_USER, UPDATE_USER_BY_ID
+)
 from app.api_docs_responses.utils_docs import LOGIN_WARNING, USER_VALUE
 from app.core.user import auth_backend, fastapi_users
 from app.schemas.user import UserCreate, UserRead, UserUpdate

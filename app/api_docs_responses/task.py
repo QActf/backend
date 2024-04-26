@@ -1,5 +1,6 @@
-from app.api_docs_responses.utils_docs import (get_200_docs, get_201_docs,
-                                               get_204_docs, get_401_docs)
+from app.api_docs_responses.utils_docs import (
+    get_200_docs, get_201_docs, get_204_docs, get_401_docs
+)
 
 content_tasks = {
     'application/json': {
