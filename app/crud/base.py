@@ -29,7 +29,7 @@ class CRUDBase:
         if obj is None:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail=f"Объект {self.model.__tablename__}не найден.",
+                detail=f"Объект {self.model.__tablename__} не найден.",
             )
         return obj
 
