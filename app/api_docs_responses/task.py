@@ -1,5 +1,6 @@
 from app.api_docs_responses.utils_docs import (
-    get_200_docs, get_201_docs, get_204_docs, get_400_docs, get_401_docs, get_404_docs
+    get_200_docs, get_201_docs, get_204_docs,
+    get_400_docs, get_401_docs, get_404_docs,
 )
 
 
@@ -80,7 +81,7 @@ GET_TASKS = dict(
 
     Permissions:
     - Требуется аутентификация на уровне admin.
-    
+
     Returns:
     - HTTP 200 OK: Если список задач успешно получен.
     - HTTP 401 Unauthorized: Если пользователь не авторизован.
@@ -119,7 +120,7 @@ CREATE_TASK = dict(
     """
 )
 
-PATCH_TASK= dict(
+PATCH_TASK = dict(
     responses=update_task_response,
     summary="Изменение задачи",
     description="""
