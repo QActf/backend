@@ -23,6 +23,7 @@ jobs:
         uses: py-actions/flake8@v2
         with:
           path: "app"
+          args: "--config pyproject.toml"
       - uses: isort/isort-action@master
         with:
           configuration: .pyproject.toml
