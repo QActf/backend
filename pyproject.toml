@@ -1,8 +1,11 @@
-# isort
 [tool.isort]
 skip=["alembic", "venv", "media"]
 multi_line_output = 5
 line_length = 79
 
-[tool.flake8]
-exclude=["alembic", "venv"]
+[flake8]
+ignore=
+    W503,
+    W605,
+    E126,
+exclude=["alembic", "venv", "media"]
