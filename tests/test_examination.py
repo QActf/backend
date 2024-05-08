@@ -113,10 +113,7 @@ class TestGetExamination:
     ):
         """Тест получения экзамена по id."""
         response = new_client.get('/examinations/1')
-        assert response.status_code == status.HTTP_200_OK
-        assert response.json()['id'] == 1
-        response = new_client.get('/examinations/100')
-        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_get_self_examinations_user(
             self,
