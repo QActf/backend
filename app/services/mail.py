@@ -38,11 +38,11 @@ class MailMessage:
         message.set_content(self.text)
 
         smtp_client = SMTP(
-            hostname=settings.hostname,
-            port=settings.port,
-            username=settings.email_user,
-            password=settings.password,
-            use_tls=settings.use_tls,
+            hostname=settings.EMAIL_HOST,
+            port=settings.EMAIL_PORT,
+            username=settings.EMAIL_HOST_USER,
+            password=settings.EMAIL_HOST_PASSWORD,
+            use_tls=settings.EMAIL_USE_TLS,
         )
         try:
             async with smtp_client:
@@ -60,12 +60,5 @@ class MailMessage:
         except Exception:
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
-                detail='увы, что-то пошло не так.',
+                detail='Увы, что-то пошло не так.',
             )
-
-
-hello_mail = MailMessage(
-    subject='Welcome to QActf.',
-    to='wildmv@gmail.com',
-    text='Hello dear. we are warm welcome you to our web app.'
-)
