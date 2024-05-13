@@ -70,7 +70,7 @@ get_user_course_response = {
     **get_200_docs(content_course),
     **get_401_docs(),
     **get_403_docs("Вы не записаны на данный курс."),
-    **get_404_docs("Объект course не найден.."),
+    **get_404_docs("Объект course не найден."),
 }
 
 get_course_response = {

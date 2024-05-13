@@ -194,6 +194,19 @@ USER_ID_DEL_DESCRIPTION = """
         Только суперпользователь.\n
 """
 
+USER_CONFIRM_DESCRIPTION = """
+    По полученной пользователем ссылке на почту происходит подтверждение
+    а верификация пользователя с его ящиком.
+
+    Args:\n
+        int: id пользователя для верификации.\n
+        str: token пользователя для верификации.\n
+    Returns:\n
+        None.\n
+    Permissions:\n
+        Доступно всем.\n
+"""
+
 
 def add_router_doc(router):
     router.routes[RouteEnum.auth_login].responses = LOGIN_USER

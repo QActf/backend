@@ -50,6 +50,7 @@ async def get_self_examinations(
 @router.get(
     '/{examination_id}',
     response_model=ExaminationRead,
+    dependencies=[Depends(current_user)],
     **GET_EXAMINATION,
 )
 async def get_examination(
