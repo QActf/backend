@@ -22,12 +22,12 @@ class Settings(BaseSettings):
     limit: int = 10
 
     # ======== email config ==========
-    # EMAIL_FROM: str
-    # hostname: str
-    # port: int
-    # email_user: str
-    # password: str
-    # use_tls: bool
+    EMAIL_FROM: str
+    EMAIL_HOST: str
+    EMAIL_PORT: int
+    EMAIL_HOST_USER: str
+    EMAIL_HOST_PASSWORD: str
+    EMAIL_USE_TLS: bool = True
     # ================================
 
     class Config:
