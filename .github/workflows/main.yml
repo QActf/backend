@@ -48,7 +48,6 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: '3.10'
-          configuration: .pyproject.toml
       - name: Install dependencies
         run: |
           pip install --upgrade pip
@@ -56,5 +55,10 @@ jobs:
       - name: Test with pytest
         env:
           DATABASE_URL: postgresql+asyncpg://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@${{ secrets.POSTGRES_HOST_TEST }}:5432/${{ secrets.POSTGRES_DB }}
+          EMAIL_FROM: userexample@example.com
+          EMAIL_HOST: email_host
+          EMAIL_PORT: 64000
+          EMAIL_HOST_USER: email_host_user
+          EMAIL_HOST_PASSWORD: email_host_password
         run: |
           pytest
