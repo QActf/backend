@@ -8,8 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.filters import ProfileFilter
 from app.api_docs_responses.profile import (
-    CREATE_PROFILE, DELETE_PROFILE, GET_PROFILE, GET_PROFILE_PHOTO,
-    GET_PROFILES
+    CREATE_PROFILE, DELETE_PROFILE, GET_ME_PROFILE, GET_PROFILE,
+    GET_PROFILE_PHOTO, GET_PROFILES, UPDATE_PROFILE, UPDATE_PROFILE_PHOTO
 )
 from app.api_docs_responses.utils_docs import PROFILE_UPDATE_VALUE
 from app.core.db import get_async_session
@@ -30,7 +30,7 @@ router = APIRouter()
     response_model=list[ProfileRead],
     response_model_exclude_none=True,
     dependencies=[Depends(current_superuser)],
-    responses=GET_PROFILES
+    **GET_PROFILES,
 )
 async def get_all_profiles(
     response: Response,
@@ -52,7 +52,7 @@ async def get_all_profiles(
     '/me',
     response_model=ProfileRead,
     response_model_exclude_none=True,
-    responses=GET_PROFILE
+    **GET_ME_PROFILE,
 )
 async def get_current_user_profile(
         session: AsyncSession = Depends(get_async_session),
@@ -69,12 +69,12 @@ async def get_current_user_profile(
     '/{profile_id}',
     response_model=ProfileRead,
     dependencies=[Depends(current_superuser)],
-    responses=GET_PROFILE
+    **GET_PROFILE
 )
 async def get_profile(
     profile_id: int,
     session: AsyncSession = Depends(get_async_session)
-):
+) -> ProfileRead:
     """Возвращает профиль пользователя по id."""
     return await profile_crud.get(profile_id, session)
 
@@ -82,7 +82,7 @@ async def get_profile(
 @router.get(
     '/me/photo',
     dependencies=[Depends(current_user)],
-    responses=GET_PROFILE_PHOTO
+    **GET_PROFILE_PHOTO
 )
 async def get_user_photo(
     user: User = Depends(current_user),
@@ -96,7 +96,7 @@ async def get_user_photo(
     '/me',
     response_model=ProfileRead,
     dependencies=[Depends(current_user)],
-    responses=GET_PROFILE
+    **UPDATE_PROFILE,
 )
 async def update_profile(
     profile: ProfileUpdate = Body(example=PROFILE_UPDATE_VALUE),
@@ -112,7 +112,7 @@ async def update_profile(
     '/me/update_photo',
     response_model=ProfileRead,
     dependencies=[Depends(current_user)],
-    responses=GET_PROFILE
+    **UPDATE_PROFILE_PHOTO
 )
 async def update_photo(
     file: UploadFile = File(...),
@@ -136,7 +136,7 @@ async def update_photo(
     '/me',
     response_model=ProfileRead,
     deprecated=True,
-    responses=CREATE_PROFILE
+    **CREATE_PROFILE,
 )
 def create_profile():
     """Профиль создаётся при создании юзера."""
@@ -148,10 +148,10 @@ def create_profile():
 
 
 @router.delete(
-    '/{obj_id}',
+    '/{profile_id}',
     deprecated=True,
     status_code=status.HTTP_204_NO_CONTENT,
-    responses=DELETE_PROFILE
+    **DELETE_PROFILE,
 )
 def delete_profile():
     """Профиль удаляется при удалении пользователя."""
