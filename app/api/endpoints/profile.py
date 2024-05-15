@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.filters import ProfileFilter
 from app.api_docs_responses.profile import (
     CREATE_PROFILE, DELETE_PROFILE, GET_ME_PROFILE, GET_PROFILE,
-    GET_PROFILE_PHOTO, GET_PROFILES, UPDATE_PROFILE, UPDATE_PROFILE_PHOTO
+    GET_PROFILE_PHOTO, GET_PROFILES, UPDATE_PROFILE, UPDATE_PROFILE_PHOTO,
 )
 from app.api_docs_responses.utils_docs import PROFILE_UPDATE_VALUE
 from app.core.db import get_async_session
@@ -69,7 +69,7 @@ async def get_current_user_profile(
     '/{profile_id}',
     response_model=ProfileRead,
     dependencies=[Depends(current_superuser)],
-    **GET_PROFILE
+    **GET_PROFILE,
 )
 async def get_profile(
     profile_id: int,
@@ -82,7 +82,7 @@ async def get_profile(
 @router.get(
     '/me/photo',
     dependencies=[Depends(current_user)],
-    **GET_PROFILE_PHOTO
+    **GET_PROFILE_PHOTO,
 )
 async def get_user_photo(
     user: User = Depends(current_user),
@@ -112,7 +112,7 @@ async def update_profile(
     '/me/update_photo',
     response_model=ProfileRead,
     dependencies=[Depends(current_user)],
-    **UPDATE_PROFILE_PHOTO
+    **UPDATE_PROFILE_PHOTO,
 )
 async def update_photo(
     file: UploadFile = File(...),

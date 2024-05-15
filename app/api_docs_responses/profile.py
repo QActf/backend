@@ -25,11 +25,6 @@ content_profile = {
     }
 }
 
-content_profile_photo = {
-    'application/json': {
-        'example': 'Ссылка на изображение'
-    }
-}
 get_profiles_response = {
     **get_200_docs(content_profiles),
     **get_401_docs(),
@@ -48,10 +43,12 @@ get_profile_response = {
 }
 
 get_profile_photo_response = {
-    200: {
-        'description': 'Success',
-        'content': content_profile_photo
-    },
+    **get_200_docs(content_profile),
+    **get_401_docs(),
+}
+
+update_profile_photo_response = {
+    **get_200_docs(content_profile),
     **get_401_docs(),
 }
 
@@ -148,7 +145,7 @@ GET_PROFILE_PHOTO = dict(
 )
 
 UPDATE_PROFILE_PHOTO = dict(
-    responses=get_profile_photo_response,
+    responses=update_profile_photo_response,
     summary="Обновление фото профиля",
     description="""
     ## Обновление фото своего профиля пользователя.
