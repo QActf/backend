@@ -2,7 +2,7 @@ name: fastapi-app workflow
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "develop", "feature/replacement_sqlite_to_postgresql" ]
   pull_request:
     branches: [ "develop" ]
   workflow_dispatch:
