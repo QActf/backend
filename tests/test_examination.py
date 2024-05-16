@@ -116,7 +116,7 @@ class TestGetExamination:
             new_client: TestClient
     ):
         """Тест получения экзамена по id."""
-        response = new_client.get('/examinations/1')
+        response = await new_client.get('/examinations/1')
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
         # response = await new_client.get('/examinations/1')
         # assert response.status_code == status.HTTP_200_OK
