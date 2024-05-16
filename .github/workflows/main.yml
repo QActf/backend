@@ -69,8 +69,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd backend/infra
-            docker compose down
-            rm .env
             touch .env
             echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
             echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
