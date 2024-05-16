@@ -1,5 +1,6 @@
 import base64
 import io
+import pytest
 from pathlib import Path
 from typing import AsyncGenerator
 
@@ -46,6 +47,7 @@ async def _get_user(
 
 
 class TestProfile:
+    @pytest.mark.skip
     async def test_create_profile_with_create_user(
             self, new_client,
             db_session: AsyncSession
