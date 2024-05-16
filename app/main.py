@@ -14,8 +14,14 @@ from app.core.init_db import create_first_superuser
 def swagger_monkey_patch(*args, **kwargs):
     return get_swagger_ui_html(
         *args, **kwargs,
-        swagger_js_url="https://cdn.staticfile.net/swagger-ui/5.1.0/swagger-ui-bundle.min.js",
-        swagger_css_url="https://cdn.staticfile.net/swagger-ui/5.1.0/swagger-ui.min.css")
+        swagger_js_url=(
+            "https://cdn.staticfile.net/swagger-ui/5.1.0/"
+            "swagger-ui-bundle.min.js"
+        ),
+        swagger_css_url=(
+            "https://cdn.staticfile.net/swagger-ui/5.1.0/swagger-ui.min.css"
+        ))
+
 
 applications.get_swagger_ui_html = swagger_monkey_patch
 
