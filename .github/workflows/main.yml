@@ -68,6 +68,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            cd backend/infra
             docker compose down
             rm .env
             touch .env
