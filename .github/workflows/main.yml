@@ -64,4 +64,9 @@ jobs:
     steps:
       - uses: appleboy/ssh-action@master
         with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            sudo docker
           
