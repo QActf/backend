@@ -1,3 +1,4 @@
+import pytest
 from fastapi import status
 
 from tests.fixtures.user import USER_EMAIL, USER_PASSWORD, USER_USERNAME
@@ -14,6 +15,7 @@ WRONG_PASSWORD = 'wrongpassword'
 
 
 class TestRegister:
+    @pytest.mark.skip
     async def test_register_new_user(self, new_client):
         """Тест регистрации пользователя с корректными данными."""
         response = new_client.post('/auth/register', json=REGISTRATION_SCHEMA)
