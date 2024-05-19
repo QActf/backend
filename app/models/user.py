@@ -24,9 +24,9 @@ if TYPE_CHECKING:
 
 
 class UserRoleEnum(enum.Enum):
-    user = "user"
-    manager = "manager"
-    admin = "admin"
+    user = 'user'
+    manager = 'manager'
+    admin = 'admin'
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
@@ -35,21 +35,21 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     )
     username: Mapped[str] = Column(String(length=100), nullable=False)
     tariff_id: Mapped[int] = Column(
-        ForeignKey("tariff.id"),
+        ForeignKey('tariff.id'),
     )
-    tariff: Mapped[Tariff] = relationship(back_populates="users")
-    profile: Mapped[Profile] = relationship(back_populates="user")
+    tariff: Mapped[Tariff] = relationship(back_populates='users')
+    profile: Mapped[Profile] = relationship(back_populates='user')
     groups: Mapped[list[Group]] = relationship(
-        secondary=group_user_association, back_populates="users"
+        secondary=group_user_association, back_populates='users'
     )
     notifications: Mapped[Notification] = relationship(
-        secondary=notification_user_association, back_populates="users"
+        secondary=notification_user_association, back_populates='users'
     )
     examinations: Mapped[list[Examination]] = relationship(
-        secondary=examination_user_association, back_populates="users"
+        secondary=examination_user_association, back_populates='users'
     )
     courses: Mapped[list[Course]] = relationship(
-        secondary=course_user_association, back_populates="users"
+        secondary=course_user_association, back_populates='users'
     )
 
     def __repr__(self):

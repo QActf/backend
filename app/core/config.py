@@ -5,10 +5,10 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    app_title: str = "QActf"
-    description: str = "QActf"
-    database_url: str = "sqlite+aiosqlite:///./fastapi.db"
-    secret: str = "SECRET"
+    app_title: str = 'QActf'
+    description: str = 'QActf'
+    database_url: str = 'sqlite+aiosqlite:///./fastapi.db'
+    secret: str = 'SECRET'
     first_superuser_email: Optional[str] = None
     first_superuser_password: Optional[str] = None
 
@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     # ================================
 
     class Config:
-        env_file = "infra/.env"
+        env_file = 'infra/.env'
 
 
 settings = Settings()

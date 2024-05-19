@@ -1,16 +1,15 @@
 from app.api_docs_responses.utils_docs import (
-    get_200_docs, get_204_docs, get_401_docs, get_403_docs,
-    get_404_docs, get_405_docs
+    get_200_docs, get_204_docs, get_401_docs, get_403_docs, get_404_docs,
+    get_405_docs,
 )
 
-
 profile_example = {
-    "id": 0,
-    "first_name": 'Имя',
-    "last_name": 'Фамилия',
-    "age": 0,
-    "user_id": 0,
-    "image": 'Ссылка на изображение'
+    'id': 0,
+    'first_name': 'Имя',
+    'last_name': 'Фамилия',
+    'age': 0,
+    'user_id': 0,
+    'image': 'Ссылка на изображение'
 }
 
 content_profiles = {
@@ -38,8 +37,8 @@ get_me_profile_response = {
 get_profile_response = {
     **get_200_docs(content_profile),
     **get_401_docs(),
-    **get_403_docs("У вас нет доступа к этому профилю."),
-    **get_404_docs("Объект profile не найден."),
+    **get_403_docs('У вас нет доступа к этому профилю.'),
+    **get_404_docs('Объект profile не найден.'),
 }
 
 get_profile_photo_response = {
@@ -55,7 +54,7 @@ update_profile_photo_response = {
 update_profile_response = {
     **get_200_docs(content_profile),
     **get_401_docs(),
-    **get_403_docs("У вас нет доступа для изменения этого профиля."),
+    **get_403_docs('У вас нет доступа для изменения этого профиля.'),
 }
 
 create_profile_response = {
@@ -72,7 +71,7 @@ delete_profile_response = {
 
 GET_PROFILES = dict(
     responses=get_profiles_response,
-    summary="Получение всех профилей",
+    summary='Получение всех профилей',
     description="""
     ## Получение всех профилей.
 
@@ -89,7 +88,7 @@ GET_PROFILES = dict(
 
 GET_ME_PROFILE = dict(
     responses=get_me_profile_response,
-    summary="Получение своего профиля пользователя",
+    summary='Получение своего профиля пользователя',
     description="""
     ## Получение информации о своем профиле пользователя.
 
@@ -106,7 +105,7 @@ GET_ME_PROFILE = dict(
 
 GET_PROFILE = dict(
     responses=get_profile_response,
-    summary="Получение профиля пользователя",
+    summary='Получение профиля пользователя',
     description="""
     ## Получение информации о профиле пользователя по id.
 
@@ -129,7 +128,7 @@ GET_PROFILE = dict(
 
 GET_PROFILE_PHOTO = dict(
     responses=get_profile_photo_response,
-    summary="Получение фото профиля",
+    summary='Получение фото профиля',
     description="""
     ## Получение фото своего профиля пользователя.
 
@@ -146,7 +145,7 @@ GET_PROFILE_PHOTO = dict(
 
 UPDATE_PROFILE_PHOTO = dict(
     responses=update_profile_photo_response,
-    summary="Обновление фото профиля",
+    summary='Обновление фото профиля',
     description="""
     ## Обновление фото своего профиля пользователя.
 
@@ -163,7 +162,7 @@ UPDATE_PROFILE_PHOTO = dict(
 
 CREATE_PROFILE = dict(
     responses=create_profile_response,
-    summary="Создание профиля",
+    summary='Создание профиля',
     description="""
     ## Создание профиля.
 
@@ -182,7 +181,7 @@ CREATE_PROFILE = dict(
 
 UPDATE_PROFILE = dict(
     responses=update_profile_response,
-    summary="Изменение своего профиля",
+    summary='Изменение своего профиля',
     description="""
     ## Изменение своего профиля пользователя.
 
@@ -201,7 +200,7 @@ UPDATE_PROFILE = dict(
 
 DELETE_PROFILE = dict(
     responses=delete_profile_response,
-    summary="Удаление профиля",
+    summary='Удаление профиля',
     description="""
     ## Удаление профиля пользователя.
 

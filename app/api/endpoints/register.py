@@ -19,11 +19,11 @@ def get_register_router(
     router = APIRouter()
 
     @router.post(
-        "/register",
-        tags=["auth"],
+        '/register',
+        tags=['auth'],
         response_model=user_schema,
         status_code=status.HTTP_201_CREATED,
-        name="register:register",
+        name='register:register',
         responses=CREATE_REGISTER
     )
     async def register(
@@ -48,8 +48,8 @@ def get_register_router(
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail={
-                    "code": ErrorCode.REGISTER_INVALID_PASSWORD,
-                    "reason": e.reason,
+                    'code': ErrorCode.REGISTER_INVALID_PASSWORD,
+                    'reason': e.reason,
                 },
             )
         response_schema = schemas.model_validate(user_schema, created_user)

@@ -4,17 +4,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.validators import check_name_duplicate, check_obj_exists
 from app.api_docs_responses.examination import (
     CREATE_EXAMINATION, DELETE_EXAMINATION, GET_EXAMINATION, GET_EXAMINATIONS,
-    GET_USER_EXAMINATIONS, UPDATE_EXAMINATION
+    GET_USER_EXAMINATIONS, UPDATE_EXAMINATION,
 )
 from app.api_docs_responses.utils_docs import (
-    REQUEST_NAME_AND_DESCRIPTION_VALUE
+    REQUEST_NAME_AND_DESCRIPTION_VALUE,
 )
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import examination_crud
 from app.models import User
 from app.schemas.examination import (
-    ExaminationCreate, ExaminationRead, ExaminationUpdate
+    ExaminationCreate, ExaminationRead, ExaminationUpdate,
 )
 from app.services.endpoints_services import delete_obj
 
@@ -22,7 +22,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/",
+    '/',
     response_model=list[ExaminationRead],
     **GET_EXAMINATIONS,
 )
@@ -62,7 +62,7 @@ async def get_examination(
 
 
 @router.post(
-    "/",
+    '/',
     response_model=ExaminationRead,
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_201_CREATED,
@@ -100,7 +100,7 @@ async def update_examination(
 
 
 @router.delete(
-    "/{examination_id}",
+    '/{examination_id}',
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_204_NO_CONTENT,
     **DELETE_EXAMINATION

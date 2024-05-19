@@ -3,10 +3,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
 from app.api_docs_responses.group import (
-    CREATE_GROUP, DELETE_GROUP, GET_GROUP, GET_GROUPS, GET_USER_GROUP
+    CREATE_GROUP, DELETE_GROUP, GET_GROUP, GET_GROUPS, GET_USER_GROUP,
 )
 from app.api_docs_responses.utils_docs import (
-    REQUEST_NAME_AND_DESCRIPTION_VALUE
+    REQUEST_NAME_AND_DESCRIPTION_VALUE,
 )
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
@@ -15,14 +15,14 @@ from app.models import Group, User
 from app.schemas.group import GroupCreate, GroupRead, GroupUpdate
 from app.services.endpoints_services import delete_obj
 from app.services.utils import (
-    Pagination, add_response_headers, get_pagination_params, paginated
+    Pagination, add_response_headers, get_pagination_params, paginated,
 )
 
 router = APIRouter()
 
 
 @router.get(
-    "/",
+    '/',
     response_model=list[GroupRead],
     dependencies=[Depends(current_superuser)],
     responses=GET_GROUPS,
@@ -96,7 +96,7 @@ async def get_group(
 
 
 @router.post(
-    "/",
+    '/',
     response_model=GroupRead,
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_201_CREATED,
@@ -130,7 +130,7 @@ async def update_group(
 
 
 @router.delete(
-    "/{obj_id}",
+    '/{obj_id}',
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_204_NO_CONTENT,
     responses=DELETE_GROUP

@@ -22,15 +22,15 @@ REQUEST_NAME_AND_DESCRIPTION_VALUE = {
         'value': {}
     }
 }
-PROFILE_UPDATE_VALUE = {"first_name": "Имя", "last_name": "Фамилия", "age": 20}
+PROFILE_UPDATE_VALUE = {'first_name': 'Имя', 'last_name': 'Фамилия', 'age': 20}
 USER_VALUE = {
-    "password": "Пароль",
-    "email": "user@example.com",
-    "is_active": True,
-    "is_superuser": True,
-    "is_verified": True,
-    "role": "user",
-    "username": "Имя"
+    'password': 'Пароль',
+    'email': 'user@example.com',
+    'is_active': True,
+    'is_superuser': True,
+    'is_verified': True,
+    'role': 'user',
+    'username': 'Имя'
 }
 
 
@@ -58,7 +58,7 @@ def get_204_docs():
             'description': 'Запись удалена.',
             'content': {
                 'application/json': {
-                    'example': ""
+                    'example': ''
                 }
             }
         }
@@ -70,7 +70,7 @@ def get_400_docs(detail):
         400: {
             'content': {
                 'application/json': {
-                    "example": {"detail": detail}
+                    'example': {'detail': detail}
                 }
             }
         }
@@ -83,7 +83,7 @@ def get_401_docs(description=None):
             'description': description,
             'content': {
                 'application/json': {
-                    "example": {"detail": "Unauthorized"}
+                    'example': {'detail': 'Unauthorized'}
                 }
             }
         }
@@ -96,7 +96,7 @@ def get_403_docs(detail, description=None):
             'description': description,
             'content': {
                 'application/json': {
-                    "example": {"detail": detail}
+                    'example': {'detail': detail}
                 }
             }
         }
@@ -109,7 +109,7 @@ def get_404_docs(detail, description=None):
             'description': description,
             'content': {
                 'application/json': {
-                    "example": {"detail": detail}
+                    'example': {'detail': detail}
                 }
             }
         }
@@ -122,8 +122,8 @@ def get_405_docs(detail):
             'description': 'Использование этого метода запрещено.',
             'content': {
                 'application/json': {
-                    "example": {
-                        "detail": detail
+                    'example': {
+                        'detail': detail
                     }
                 }
             }

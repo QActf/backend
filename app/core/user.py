@@ -3,10 +3,10 @@ from typing import Optional, Union
 
 from fastapi import Depends, Request
 from fastapi_users import (
-    BaseUserManager, FastAPIUsers, IntegerIDMixin, InvalidPasswordException
+    BaseUserManager, FastAPIUsers, IntegerIDMixin, InvalidPasswordException,
 )
 from fastapi_users.authentication import (
-    AuthenticationBackend, BearerTransport, JWTStrategy
+    AuthenticationBackend, BearerTransport, JWTStrategy,
 )
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,7 +16,7 @@ from app.core.db import get_async_session
 from app.models.user import User
 from app.schemas.user import UserCreate
 from app.services import mail
-from app.services.token_generator import tokens, crypto
+from app.services.token_generator import crypto, tokens
 
 URL = 'http://127.0.0.1:8000'
 

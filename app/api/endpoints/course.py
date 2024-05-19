@@ -4,10 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.validators import check_name_duplicate, check_obj_exists
 from app.api_docs_responses.course import (
     CREATE_COURSE, DELETE_COURSE, GET_COURSE, GET_COURSES, GET_USER_COURSE,
-    GET_USER_COURSES, PATCH_COURSE
+    GET_USER_COURSES, PATCH_COURSE,
 )
 from app.api_docs_responses.utils_docs import (
-    REQUEST_NAME_AND_DESCRIPTION_VALUE
+    REQUEST_NAME_AND_DESCRIPTION_VALUE,
 )
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
@@ -16,14 +16,14 @@ from app.models import Course, User
 from app.schemas.course import CourseCreate, CourseRead, CourseUpdate
 from app.services.endpoints_services import delete_obj
 from app.services.utils import (
-    Pagination, add_response_headers, get_pagination_params, paginated
+    Pagination, add_response_headers, get_pagination_params, paginated,
 )
 
 router = APIRouter()
 
 
 @router.get(
-    "/",
+    '/',
     response_model=list[CourseRead],
     **GET_COURSES,
 )
@@ -39,7 +39,7 @@ async def get_all_courses(
 
 
 @router.get(
-    "/me",
+    '/me',
     response_model=list[CourseRead],
     dependencies=[Depends(current_user)],
     **GET_USER_COURSES,
@@ -59,7 +59,7 @@ async def get_all_user_courses(
 
 
 @router.get(
-    "/me/{course_id}",
+    '/me/{course_id}',
     response_model=CourseRead,
     dependencies=[Depends(current_user)],
     **GET_USER_COURSE,
@@ -100,7 +100,7 @@ async def get_course(
 
 
 @router.post(
-    "/",
+    '/',
     response_model=CourseRead,
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_201_CREATED,
@@ -117,7 +117,7 @@ async def create_course(
 
 
 @router.patch(
-    "/{course_id}",
+    '/{course_id}',
     response_model=CourseRead,
     dependencies=[Depends(current_superuser)],
     **PATCH_COURSE,
@@ -142,7 +142,7 @@ async def update_course(
 
 
 @router.delete(
-    "/{course_id}",
+    '/{course_id}',
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_204_NO_CONTENT,
     **DELETE_COURSE,

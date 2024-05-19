@@ -22,7 +22,7 @@ admin = Admin(
 )
 
 
-@app.on_event("startup")
+@app.on_event('startup')
 async def startup():
     await create_first_superuser()
     await add_admin_models(admin)

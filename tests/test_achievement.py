@@ -304,7 +304,7 @@ class TestPaginationGroup:
             moc_achievements,
             auth_superuser: TestClient
     ):
-        """Тест пагинации профилей"""
+        """Тест пагинации профилей."""
         response = auth_superuser.get(
             '/achievements/?limit=2'
         )

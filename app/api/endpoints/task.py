@@ -5,10 +5,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_name_duplicate
 from app.api_docs_responses.task import (
-    CREATE_TASK, DELETE_TASK, GET_TASK, GET_TASKS, PATCH_TASK
+    CREATE_TASK, DELETE_TASK, GET_TASK, GET_TASKS, PATCH_TASK,
 )
 from app.api_docs_responses.utils_docs import (
-    REQUEST_NAME_AND_DESCRIPTION_VALUE
+    REQUEST_NAME_AND_DESCRIPTION_VALUE,
 )
 from app.core.db import get_async_session
 from app.core.user import current_superuser
@@ -20,7 +20,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/",
+    '/',
     response_model=List[TaskRead],
     dependencies=[Depends(current_superuser)],
     **GET_TASKS,
@@ -47,7 +47,7 @@ async def get_task_by_id(
 
 
 @router.post(
-    "/",
+    '/',
     response_model=TaskRead,
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_201_CREATED,
@@ -81,7 +81,7 @@ async def update_task(
 
 
 @router.delete(
-    "/{task_id}",
+    '/{task_id}',
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_204_NO_CONTENT,
     **DELETE_TASK,

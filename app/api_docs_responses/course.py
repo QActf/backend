@@ -1,6 +1,6 @@
 from app.api_docs_responses.utils_docs import (
     get_200_docs, get_201_docs, get_400_docs, get_401_docs, get_403_docs,
-    get_404_docs
+    get_404_docs,
 )
 
 
@@ -71,35 +71,35 @@ get_user_courses_response = {
 get_user_course_response = {
     **get_200_docs(content_course),
     **get_401_docs(),
-    **get_403_docs("Вы не записаны на данный курс."),
-    **get_404_docs("Объект course не найден."),
+    **get_403_docs('Вы не записаны на данный курс.'),
+    **get_404_docs('Объект course не найден.'),
 }
 
 get_course_response = {
     **get_200_docs(content_course),
-    **get_404_docs("Объект course не найден."),
+    **get_404_docs('Объект course не найден.'),
 }
 
 update_course_response = {
     **get_200_docs(content_course),
-    **get_404_docs("Объект course не найден."),
-    **get_400_docs("Объект course с таким именем уже существует!"),
+    **get_404_docs('Объект course не найден.'),
+    **get_400_docs('Объект course с таким именем уже существует!'),
 }
 
 create_course_response = {
     **get_201_docs(content_course),
-    **get_400_docs("Объект course с таким именем уже существует!"),
+    **get_400_docs('Объект course с таким именем уже существует!'),
 }
 
 delete_course_response = {
     **get_custom_204_docs(),
-    **get_400_docs("Данный курс уже закрыт."),
+    **get_400_docs('Данный курс уже закрыт.'),
     **get_401_docs(),
 }
 
 GET_COURSES = dict(
     responses=get_courses_response,
-    summary="Получение всех курсов",
+    summary='Получение всех курсов',
     description="""
     ## Получение всех курсов.
 
@@ -113,7 +113,7 @@ GET_COURSES = dict(
 
 GET_USER_COURSES = dict(
     responses=get_user_courses_response,
-    summary="Получение курсов пользователя",
+    summary='Получение курсов пользователя',
     description="""
     ## Получение курсов, на которые записан текущий пользователь.
 
@@ -127,7 +127,7 @@ GET_USER_COURSES = dict(
 
 GET_USER_COURSE = dict(
     responses=get_user_course_response,
-    summary="Получение курса пользователя",
+    summary='Получение курса пользователя',
     description="""
     ## Получение информации о курсе, на который записан текущий пользователь.
 
@@ -144,7 +144,7 @@ GET_USER_COURSE = dict(
 
 GET_COURSE = dict(
     responses=get_course_response,
-    summary="Получение курса",
+    summary='Получение курса',
     description="""
     ## Получение информации о курсе по его идентификатору.
 
@@ -161,7 +161,7 @@ GET_COURSE = dict(
 
 CREATE_COURSE = dict(
     responses=create_course_response,
-    summary="Создание курса",
+    summary='Создание курса',
     description="""
     ## Создание нового курса в системе.
 
@@ -180,7 +180,7 @@ CREATE_COURSE = dict(
 
 PATCH_COURSE = dict(
     responses=get_course_response,
-    summary="Изменение курса",
+    summary='Изменение курса',
     description="""
     ## Изменение информации о курсе по его идентификатору.
 
@@ -203,7 +203,7 @@ PATCH_COURSE = dict(
 
 DELETE_COURSE = dict(
     responses=delete_course_response,
-    summary="Удаление курса",
+    summary='Удаление курса',
     description="""
     ## Удаляет курс.
 

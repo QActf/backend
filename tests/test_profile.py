@@ -1,9 +1,9 @@
 import base64
 import io
-import pytest
 from pathlib import Path
 from typing import AsyncGenerator
 
+import pytest
 from fastapi import Response, status
 from fastapi.testclient import TestClient
 from PIL import Image

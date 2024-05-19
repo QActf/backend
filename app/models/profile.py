@@ -39,7 +39,7 @@ class Profile(Base):
     )
     user: Mapped[User] = relationship(back_populates='profile')
     achievements: Mapped[list[Achievement]] = relationship(
-        secondary=achievement_profile_association, back_populates="profiles"
+        secondary=achievement_profile_association, back_populates='profiles'
     )
     image: Mapped[str] = Column(
         String(),

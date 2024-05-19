@@ -16,7 +16,7 @@ class MailMessage:
         self.text = text
 
     def _is_valid_to(self, to):
-        regex = "^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,62}$"
+        regex = r'^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,62}$'
         return re.match(regex, to)
 
     def _is_valid_subject(self, subject):

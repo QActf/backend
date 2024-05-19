@@ -9,7 +9,7 @@ from app.schemas.notification import NotificationCreate, NotificationRead
 router = APIRouter()
 
 
-@router.post("/", dependencies=[Depends(current_superuser)])
+@router.post('/', dependencies=[Depends(current_superuser)])
 async def create_notification(
     notification: NotificationCreate,
         session: AsyncSession = Depends(get_async_session)
@@ -18,7 +18,7 @@ async def create_notification(
 
 
 @router.get(
-    "/",
+    '/',
     response_model=list[NotificationRead],
     dependencies=[Depends(current_user)]
 )

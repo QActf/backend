@@ -86,10 +86,10 @@ class TestGetTariff:
         new_client: TestClient
     ):
         """Тест полученя тарифа по несуществующему id."""
-        stmt = select(Tariff).where(Tariff.id == TEST_TARIFF_COUNT+1)
+        stmt = select(Tariff).where(Tariff.id == TEST_TARIFF_COUNT + 1)
         tariff = await db_session.execute(stmt)
         tariff = tariff.scalar()
-        response = new_client.get(f"/tariffs/{TEST_TARIFF_COUNT+1}")
+        response = new_client.get(f"/tariffs/{TEST_TARIFF_COUNT + 1}")
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
