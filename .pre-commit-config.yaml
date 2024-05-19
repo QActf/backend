@@ -4,6 +4,7 @@ repos:
       hooks:
         - id: check-yaml
         - id: end-of-file-fixer
+          exclude: app/requirements.txt
         - id: trailing-whitespace
         - id: check-merge-conflict
         - id: double-quote-string-fixer
