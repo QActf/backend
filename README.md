@@ -60,7 +60,6 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
 <details>
   <summary><h3>Команды pre-commit</h3></summary>
 
-  **Важно** С использованием poetry, выполнение команд из виртуального окружения происходит через `poetry run <команда>`.
 - Установить pre-commit в проекте: `pre-commit install`
 - Запустить проверку всех хуков: `pre-commit run -a`
 - Запустить конкретный хук: `poetry run pre-commit run <имя-хука>`
