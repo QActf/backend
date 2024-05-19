@@ -23,10 +23,10 @@ jobs:
         uses: py-actions/flake8@v2
         with:
           path: "app"
-          args: "--config pyproject.toml"
+          args: "--config setup.cfg"
       - uses: isort/isort-action@master
         with:
-          configuration: .pyproject.toml
+          configuration: .setup.cfg
       - name: Install dependencies
         run: |
           pip install --upgrade pip
