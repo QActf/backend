@@ -10,10 +10,10 @@ from app.crud import user_crud
 
 class AdminAuth(AuthenticationBackend):
     async def login(
-            self,
-            request: Request,
-            session: AsyncSession = AsyncSessionLocal(),
-            strategy: JWTStrategy = get_jwt_strategy()
+        self,
+        request: Request,
+        session: AsyncSession = AsyncSessionLocal(),
+        strategy: JWTStrategy = get_jwt_strategy()
     ) -> bool:
         form = await request.form()
         email, password = form['username'], form['password']
@@ -33,9 +33,9 @@ class AdminAuth(AuthenticationBackend):
         return True
 
     async def authenticate(
-            self,
-            request: Request,
-            session: AsyncSession = AsyncSessionLocal()
+        self,
+        request: Request,
+        session: AsyncSession = AsyncSessionLocal()
     ) -> bool:
         token = request.session.get('token')
         if not token:

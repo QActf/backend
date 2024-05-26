@@ -62,9 +62,9 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
 
 - Установить pre-commit в проекте: `pre-commit install`
 - Запустить проверку всех хуков: `pre-commit run -a`
-- Запустить конкретный хук: `poetry run pre-commit run <имя-хука>`
-- Деактивировать автоматическое выполнение хуков перед коммитом: `poetry run pre-commit uninstall`
-- Обновить pre-commit хуки: `poetry run pre-commit autoupdate`
+- Запустить конкретный хук: `pre-commit run <имя-хука>`
+- Деактивировать автоматическое выполнение хуков перед коммитом: `pre-commit uninstall`
+- Обновить pre-commit хуки: `pre-commit autoupdate`
 
 </details>
 

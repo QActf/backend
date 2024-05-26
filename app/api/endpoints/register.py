@@ -27,12 +27,12 @@ def get_register_router(
         responses=CREATE_REGISTER
     )
     async def register(
-            request: Request,
-            user_create: user_create_schema,
-            user_manager: BaseUserManager[models.UP, models.ID] = Depends(
-                get_user_manager
-            ),
-            session: AsyncSession = Depends(get_async_session)
+        request: Request,
+        user_create: user_create_schema,
+        user_manager: BaseUserManager[models.UP, models.ID] = Depends(
+            get_user_manager
+        ),
+        session: AsyncSession = Depends(get_async_session)
     ):
         try:
             created_user = await user_manager.create(

@@ -46,7 +46,7 @@ class TestCreateGroup:
             db_session: AsyncSession,
             auth_superuser: TestClient
     ):
-        """Создание группы суперюзером/."""
+        """Создание группы суперюзером."""
         groups = await get_obj_count(Group, db_session)
         response = auth_superuser.post(
             '/groups',
