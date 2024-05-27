@@ -7,11 +7,10 @@ on:
     branches: [ "develop" ]
   workflow_dispatch:
 
-
 jobs:
-  tests:
+  tests_lint:
     runs-on: ubuntu-latest
-    name: Lint and Pytest
+    name: Lint
     steps:
       - name: Check out source repository
         uses: actions/checkout@v3
@@ -26,13 +25,36 @@ jobs:
           args: "--config pyproject.toml"
       - uses: isort/isort-action@master
         with:
-          configuration: .pyproject.toml
+          configuration: "pyproject.toml"
+
+  pytest:
+    runs-on: ubuntu-latest
+    name: pytest
+    needs: tests_lint
+    services:
+      postgres:
+        image: postgres:16.2-alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB_TEST }}
+          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST_TEST }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
       - name: Install dependencies
         run: |
           pip install --upgrade pip
           pip install -r app/requirements.txt
       - name: Test with pytest
         env:
+          DATABASE_URL: postgresql+asyncpg://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@${{ secrets.POSTGRES_HOST_TEST }}:5432/${{ secrets.POSTGRES_DB }}
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
           EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
           EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
@@ -40,4 +62,21 @@ jobs:
           EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
         run: |
           pytest
-  
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: pytest
+    steps:
+      - uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd backend/infra
+            rm .env
+            touch .env
+            echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
+            echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker compose down
+            echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker rmi infra-backend:latest
+            echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker compose up -d --build

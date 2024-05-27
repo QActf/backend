@@ -1,7 +1,20 @@
-version: '3.3'
+
 
 services:
+
+  db:
+    container_name: db
+    image: postgres:16.2-alpine
+    restart: always
+    volumes:
+      - db_volume_qactf:/var/lib/postgresql/data/
+    ports:
+      - '5432:5432'
+    env_file:
+      - ./.env
+
   backend:
+    container_name: backend
     build:
       context: ../
       dockerfile: Dockerfile
@@ -10,10 +23,13 @@ services:
       - "8000:8000"
     env_file:
       - ./.env
+    depends_on:
+      - db
 
   nginx:
     container_name: proxy
     image: nginx:1.19.3
+    restart: always
     ports:
       - "80:80"
     volumes:
@@ -21,3 +37,5 @@ services:
     depends_on:
       - backend
 
+volumes:
+  db_volume_qactf:

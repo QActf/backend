@@ -62,12 +62,10 @@ content_course = {
 }
 
 get_courses_response = get_200_docs(content_courses)
-
 get_user_courses_response = {
     **get_200_docs(content_courses),
     **get_401_docs(),
 }
-
 get_user_course_response = {
     **get_200_docs(content_course),
     **get_401_docs(),
