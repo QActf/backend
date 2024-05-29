@@ -305,7 +305,7 @@ class TestPaginationGroup:
             auth_superuser: TestClient
     ):
         """Тест пагинации профилей."""
-        response = auth_superuser.get(
+        response = await auth_superuser.get(
             '/achievements/?limit=2'
         )
         result = response.json()
