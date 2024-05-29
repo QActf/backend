@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-import enum
 from typing import TYPE_CHECKING
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
-from sqlalchemy import Column, Enum, ForeignKey, String
+from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.orm import Mapped, relationship
+from sqlalchemy_utils import ChoiceType
 
+from app.core.constants import Role
 from app.core.db import Base
 
 from .course import course_user_association
@@ -23,15 +24,10 @@ if TYPE_CHECKING:
     from .tariff import Tariff
 
 
-class UserRoleEnum(enum.Enum):
-    user = 'user'
-    manager = 'manager'
-    admin = 'admin'
-
-
 class User(SQLAlchemyBaseUserTable[int], Base):
+    ROLES = [(role.name, role.value) for role in Role]
     role: Mapped[str] = Column(
-        Enum(UserRoleEnum), default=UserRoleEnum.user, nullable=False
+        ChoiceType(ROLES), default='user', nullable=False
     )
     username: Mapped[str] = Column(String(length=100), nullable=False)
     tariff_id: Mapped[int] = Column(

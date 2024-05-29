@@ -24,7 +24,7 @@ class TestCreateTask:
             new_client: TestClient
     ):
         """Тест запрета создания таск неавторизованным."""
-        response = new_client.post('/tasks')
+        response = await new_client.post('/tasks/')
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_forbidden_create_task_user(
@@ -32,7 +32,7 @@ class TestCreateTask:
             auth_client: TestClient
     ):
         """Тест запрета создания таск юзером."""
-        response = auth_client.post('/tasks')
+        response = await auth_client.post('/tasks/')
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_create_task(
@@ -42,8 +42,8 @@ class TestCreateTask:
     ):
         """Тест создания таски."""
         tasks = await get_obj_count(Task, db_session)
-        response = auth_superuser.post(
-            '/tasks',
+        response = await auth_superuser.post(
+            '/tasks/',
             json=CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_201_CREATED
@@ -57,8 +57,8 @@ class TestCreateTask:
     ):
         """Тест неполных данных для создания таски."""
         tasks = await get_obj_count(Task, db_session)
-        response = auth_superuser.post(
-            '/tasks',
+        response = await auth_superuser.post(
+            '/tasks/',
             json=WRONG_CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
@@ -71,13 +71,13 @@ class TestCreateTask:
             auth_superuser: TestClient
     ):
         """Тест запрета создания дубля таски."""
-        auth_superuser.post(
-            '/tasks',
+        await auth_superuser.post(
+            '/tasks/',
             json=CREATE_SCHEME
         )
         tasks = await get_obj_count(Task, db_session)
-        response = auth_superuser.post(
-            '/tasks',
+        response = await auth_superuser.post(
+            '/tasks/',
             json=CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -91,7 +91,7 @@ class TestGetTask:
             new_client: TestClient
     ):
         """Тест запрета получения таск неавторизованным."""
-        response = new_client.get('/tasks')
+        response = await new_client.get('/tasks/')
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_forbidden_get_tasks_user(
@@ -99,7 +99,7 @@ class TestGetTask:
             auth_client: TestClient
     ):
         """Тест запрета получения таск юзером."""
-        response = auth_client.get('/tasks')
+        response = await auth_client.get('/tasks/')
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_get_tasks_superuser(
@@ -110,7 +110,7 @@ class TestGetTask:
     ):
         """Тест получения всех таск."""
         tasks_count = await get_obj_count(Task, db_session)
-        response = auth_superuser.get('/tasks')
+        response = await auth_superuser.get('/tasks/')
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == tasks_count
 
@@ -121,7 +121,7 @@ class TestGetTask:
             auth_superuser: TestClient
     ):
         """Получение таски по id."""
-        response = auth_superuser.get('/tasks/1')
+        response = await auth_superuser.get('/tasks/1')
         assert response.status_code == status.HTTP_200_OK
         assert response.json()['id'] == 1
 
@@ -132,7 +132,7 @@ class TestUpdateTask:
             new_client: TestClient
     ):
         """Тест запрета апдейта таск неавторизованным."""
-        response = new_client.patch('/tasks/1', json=UPDATE_SCHEME)
+        response = await new_client.patch('/tasks/1', json=UPDATE_SCHEME)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_forbidden_update_task_user(
@@ -140,7 +140,7 @@ class TestUpdateTask:
             auth_client: TestClient
     ):
         """Тест запрета апдейта таск юзером."""
-        response = auth_client.patch('/tasks/1', json=UPDATE_SCHEME)
+        response = await auth_client.patch('/tasks/1', json=UPDATE_SCHEME)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_update_task_superuser(
@@ -151,7 +151,7 @@ class TestUpdateTask:
     ):
         """Тест апдейта таск."""
         task: Task = await get_obj_by_id(1, Task, db_session)
-        response = auth_superuser.patch(
+        response = await auth_superuser.patch(
             '/tasks/1',
             json=UPDATE_SCHEME
         )
@@ -167,7 +167,7 @@ class TestDeleteTask:
             new_client: TestClient
     ):
         """Тест запрета удаления таск неавторизованным."""
-        response = new_client.delete('/tasks/1')
+        response = await new_client.delete('/tasks/1')
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_forbidden_delete_task_user(
@@ -175,7 +175,7 @@ class TestDeleteTask:
             auth_client: TestClient
     ):
         """Тест запрета удаления таск юзером."""
-        response = auth_client.delete('/tasks/1')
+        response = await auth_client.delete('/tasks/1')
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_delete_task(
@@ -188,7 +188,7 @@ class TestDeleteTask:
         tasks_count: int = await get_obj_count(Task, db_session)
         task: Task = await get_obj_by_id(1, Task, db_session)
         assert task.id == 1
-        response = auth_superuser.delete('/tasks/1')
+        response = await auth_superuser.delete('/tasks/1')
         assert response.status_code == status.HTTP_204_NO_CONTENT
         check_tasks_count = await get_obj_count(Task, db_session)
         assert check_tasks_count == tasks_count - 1

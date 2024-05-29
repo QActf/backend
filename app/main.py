@@ -1,4 +1,5 @@
-
+from fastapi import applications
+from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi import FastAPI
 from sqladmin import Admin
 
@@ -8,6 +9,21 @@ from app.api.routers import main_router
 from app.core.config import settings
 from app.core.db import engine
 from app.core.init_db import create_first_superuser
+
+
+def swagger_monkey_patch(*args, **kwargs):
+    return get_swagger_ui_html(
+        *args, **kwargs,
+        swagger_js_url=(
+            "https://cdn.staticfile.net/swagger-ui/5.1.0/"
+            "swagger-ui-bundle.min.js"
+        ),
+        swagger_css_url=(
+            "https://cdn.staticfile.net/swagger-ui/5.1.0/swagger-ui.min.css"
+        ))
+
+
+applications.get_swagger_ui_html = swagger_monkey_patch
 
 app = FastAPI(title=settings.app_title)
 

@@ -41,7 +41,7 @@ class TestCreateExamination:
         new_client: TestClient
     ):
         """Тест запрета создания экзамена неавторизованным."""
-        response = new_client.post('/examinations', json=CREATE_SCHEME)
+        response = await new_client.post('/examinations/', json=CREATE_SCHEME)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_create_examination_forbidden_user(
@@ -49,7 +49,7 @@ class TestCreateExamination:
         auth_client: TestClient
     ):
         """Тест запрета создания экзамена юзером."""
-        response = auth_client.post('/examinations', json=CREATE_SCHEME)
+        response = await auth_client.post('/examinations/', json=CREATE_SCHEME)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_create_examination_superuser(
@@ -59,7 +59,9 @@ class TestCreateExamination:
     ):
         """Тест создания экзамена."""
         examinations_count = await get_obj_count(Examination, db_session)
-        response = auth_superuser.post('/examinations', json=CREATE_SCHEME)
+        response = await auth_superuser.post(
+            '/examinations/', json=CREATE_SCHEME
+        )
         assert response.status_code == status.HTTP_201_CREATED
         check_examinations_count = await get_obj_count(Examination, db_session)
         assert check_examinations_count == examinations_count + 1
@@ -71,8 +73,8 @@ class TestCreateExamination:
     ):
         """Тест неправильных данных создания экзамена."""
         examinations_count = await get_obj_count(Examination, db_session)
-        response = auth_superuser.post(
-            '/examinations', json=WRONG_CREATE_SCHEME
+        response = await auth_superuser.post(
+            '/examinations/', json=WRONG_CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
         check_examinations_count = await get_obj_count(Examination, db_session)
@@ -84,9 +86,11 @@ class TestCreateExamination:
             auth_superuser: TestClient
     ):
         """Тест запрета создания дубля экзамена."""
-        auth_superuser.post('/examinations', json=CREATE_SCHEME)
+        await auth_superuser.post('/examinations/', json=CREATE_SCHEME)
         examinations_count = await get_obj_count(Examination, db_session)
-        response = auth_superuser.post('/examinations', json=CREATE_SCHEME)
+        response = await auth_superuser.post(
+            '/examinations/', json=CREATE_SCHEME
+        )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         check_examinations_count = await get_obj_count(Examination, db_session)
         assert check_examinations_count == examinations_count
@@ -101,7 +105,7 @@ class TestGetExamination:
     ):
         """Тест получения всех экзаменов."""
         examinations_count = await get_obj_count(Examination, db_session)
-        response = new_client.get('/examinations')
+        response = await new_client.get('/examinations/')
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == examinations_count
 
@@ -112,7 +116,7 @@ class TestGetExamination:
             new_client: TestClient
     ):
         """Тест получения экзамена по id."""
-        response = new_client.get('/examinations/1')
+        response = await new_client.get('/examinations/1')
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_get_self_examinations_user(
@@ -133,7 +137,7 @@ class TestGetExamination:
         examination_1.users.append(user)
         examination_2.users.append(user)
         await db_session.commit()
-        response = auth_client.get('/examinations/me')
+        response = await auth_client.get('/examinations/me')
         assert response.status_code == status.HTTP_200_OK
         result = response.json()
         assert len(result) == 2
@@ -148,7 +152,9 @@ class TestUpdateExamination:
         new_client: TestClient
     ):
         """Тест запрета апдейта экзамена неавторизованным."""
-        response = new_client.patch('/examinations/1', json=UPDATE_SCHEME)
+        response = await new_client.patch(
+            '/examinations/1', json=UPDATE_SCHEME
+        )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_update_examination_forbidden_user(
@@ -156,7 +162,9 @@ class TestUpdateExamination:
         auth_client: TestClient
     ):
         """Тест запрета апдейта экзамена юзером."""
-        response = auth_client.patch('/examinations/1', json=UPDATE_SCHEME)
+        response = await auth_client.patch(
+            '/examinations/1', json=UPDATE_SCHEME
+        )
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_update_examination_superuser(
@@ -169,7 +177,7 @@ class TestUpdateExamination:
         examination: Examination = await get_obj_by_id(
             1, Examination, db_session
         )
-        response = auth_superuser.patch(
+        response = await auth_superuser.patch(
             '/examinations/1', json=UPDATE_SCHEME
         )
         assert response.status_code == status.HTTP_200_OK
@@ -189,7 +197,7 @@ class TestDeleteExamination:
     ):
         """Тест запрета удаления экзамена неавторизованным."""
         examinations_count = await get_obj_count(Examination, db_session)
-        response = new_client.delete('/examinations/1')
+        response = await new_client.delete('/examinations/1')
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
         check_examinations_count = await get_obj_count(Examination, db_session)
         assert check_examinations_count == examinations_count
@@ -202,7 +210,7 @@ class TestDeleteExamination:
     ):
         """Тест запрета удаления экзамена юзером."""
         examinations_count = await get_obj_count(Examination, db_session)
-        response = auth_client.delete('/examinations/1')
+        response = await auth_client.delete('/examinations/1')
         assert response.status_code == status.HTTP_403_FORBIDDEN
         check_examinations_count = await get_obj_count(Examination, db_session)
         assert check_examinations_count == examinations_count
@@ -217,7 +225,7 @@ class TestDeleteExamination:
         examinations_count = await get_obj_count(Examination, db_session)
         examination = await get_obj_by_id(1, Examination, db_session)
         assert examination.id == 1
-        response = auth_superuser.delete('/examinations/1')
+        response = await auth_superuser.delete('/examinations/1')
         assert response.status_code == status.HTTP_204_NO_CONTENT
         check_examinations_count = await get_obj_count(Examination, db_session)
         assert check_examinations_count == examinations_count - 1
