@@ -1,8 +1,9 @@
 import datetime
 
-from .base_converter import base36_to_int, int_to_base36
-from .crypto import salted_hmac, constant_time_compare
 from app.core.config import settings
+
+from .base_converter import base36_to_int, int_to_base36
+from .crypto import constant_time_compare, salted_hmac
 
 
 class TokenGenerator:
@@ -72,7 +73,7 @@ class TokenGenerator:
             return False
         # Parse the token
         try:
-            ts_b36, _ = token.split("-")
+            ts_b36, _ = token.split('-')
         except ValueError:
             return False
 

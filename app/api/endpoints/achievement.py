@@ -7,21 +7,21 @@ from app.api_docs_responses.achievement import (
     DELETE_ACHIEVEMENT_DESCRIPTION, GET_ACHIEVEMENT,
     GET_ACHIEVEMENT_CURRENTUSER_ID_DESCRIPTION, GET_ACHIEVEMENTS,
     GET_ACHIEVEMENTS_CURRENTUSER_DESCRIPTION, GET_ALL_ACHIEVEMENTS_DESCRIPTION,
-    GET_ME_ACHIEVEMENT, PATCH_ACHIEVEMENT_ID_DESCRIPTION
+    GET_ME_ACHIEVEMENT, PATCH_ACHIEVEMENT_ID_DESCRIPTION,
 )
 from app.api_docs_responses.utils_docs import (
-    REQUEST_NAME_AND_DESCRIPTION_VALUE
+    REQUEST_NAME_AND_DESCRIPTION_VALUE,
 )
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import achievement_crud
 from app.models import Achievement, User
 from app.schemas.achievement import (
-    AchievementCreate, AchievementRead, AchievementUpdate
+    AchievementCreate, AchievementRead, AchievementUpdate,
 )
 from app.services.endpoints_services import delete_obj
 from app.services.utils import (
-    Pagination, add_response_headers, get_pagination_params, paginated
+    Pagination, add_response_headers, get_pagination_params, paginated,
 )
 
 router = APIRouter()
@@ -101,7 +101,7 @@ async def get_self_achievement_by_id(
 
 
 @router.post(
-    "/",
+    '/',
     response_model=AchievementRead,
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_201_CREATED,
@@ -145,7 +145,7 @@ async def update_achievement(
 
 
 @router.delete(
-    "/{achievement_id}",
+    '/{achievement_id}',
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_204_NO_CONTENT,
     responses=DELETE_ACHIEVEMENT,

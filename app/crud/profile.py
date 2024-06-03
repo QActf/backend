@@ -79,11 +79,11 @@ class CRUDProfile(CRUDBase):
             session: AsyncSession
     ):
         db_obj = await session.execute(
-                select(self.model)
-                .where(self.model.user_id == user_id)
-                .options(
-                    selectinload(self.model.achievements)
-                )
+            select(self.model)
+            .where(self.model.user_id == user_id)
+            .options(
+                selectinload(self.model.achievements)
+            )
         )
         return db_obj.scalars().first()
 
@@ -100,7 +100,7 @@ class CRUDProfile(CRUDBase):
             )
         )
         profile = profile.scalars().first()
-        setattr(profile, 'image', image_url)
+        profile.image = image_url
         session.add(profile)
         await session.commit()
         await session.refresh(profile)

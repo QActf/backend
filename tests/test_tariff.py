@@ -86,7 +86,7 @@ class TestGetTariff:
         new_client: TestClient
     ):
         """Тест полученя тарифа по несуществующему id."""
-        stmt = select(Tariff).where(Tariff.id == TEST_TARIFF_COUNT+1)
+        stmt = select(Tariff).where(Tariff.id == TEST_TARIFF_COUNT + 1)
         tariff = await db_session.execute(stmt)
         tariff = tariff.scalar()
         response = await new_client.get(f"/tariffs/{TEST_TARIFF_COUNT+1}")

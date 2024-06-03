@@ -1,6 +1,6 @@
 from app.api_docs_responses.utils_docs import (
     get_200_docs, get_201_docs, get_204_docs, get_401_docs, get_403_docs,
-    get_404_docs
+    get_404_docs,
 )
 
 content_achievements = {
@@ -59,8 +59,8 @@ GET_ACHIEVEMENT = {
 GET_ME_ACHIEVEMENT = {
     **get_200_docs(content_achievements),
     **get_401_docs(),
-    **get_403_docs("У вас нет этого достижения."),
-    **get_404_docs("Достижение не существует")
+    **get_403_docs('У вас нет этого достижения.'),
+    **get_404_docs('Достижение не существует')
 }
 
 CREATE_ACHIEVEMENT = {

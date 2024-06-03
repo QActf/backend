@@ -1,6 +1,6 @@
 from app.api_docs_responses.utils_docs import (
-    get_200_docs, get_201_docs, get_204_docs,
-    get_400_docs, get_401_docs, get_404_docs,
+    get_200_docs, get_201_docs, get_204_docs, get_400_docs, get_401_docs,
+    get_404_docs,
 )
 
 examenations_with_all_fields = {
@@ -47,7 +47,7 @@ get_examinations_response = get_200_docs(content_examenations)
 
 get_examination_response = {
     **get_200_docs(content_examenation),
-    **get_404_docs("Объект examination не найден."),
+    **get_404_docs('Объект examination не найден.'),
 }
 
 get_user_examinations_response = {
@@ -57,14 +57,14 @@ get_user_examinations_response = {
 
 create_examination_response = {
     **get_201_docs(content_examenation),
-    **get_400_docs("Объект examination с таким именем уже существует!"),
+    **get_400_docs('Объект examination с таким именем уже существует!'),
     **get_401_docs(),
 }
 
 update_examination_response = {
     **get_200_docs(content_examenation),
-    **get_400_docs("Объект examination с таким именем уже существует!"),
-    **get_404_docs("Объект examination не найден."),
+    **get_400_docs('Объект examination с таким именем уже существует!'),
+    **get_404_docs('Объект examination не найден.'),
 }
 
 delete_examination_response = {
@@ -74,7 +74,7 @@ delete_examination_response = {
 
 GET_EXAMINATIONS = dict(
     responses=get_examinations_response,
-    summary="Получение всех экзаменов",
+    summary='Получение всех экзаменов',
     description="""
     ## Получение всех экзаменов.
 
@@ -88,7 +88,7 @@ GET_EXAMINATIONS = dict(
 
 GET_EXAMINATION = dict(
     responses=get_examination_response,
-    summary="Получение информации об экзамене",
+    summary='Получение информации об экзамене',
     description="""
     ## Получение информации об экзамене по его идентификатору.
 
@@ -110,7 +110,7 @@ GET_EXAMINATION = dict(
 
 GET_USER_EXAMINATIONS = dict(
     responses=get_user_examinations_response,
-    summary="Получение экзаменов пользователя",
+    summary='Получение экзаменов пользователя',
     description="""
     ## Получение экзаменов, на которые записан текущий пользователь.
 
@@ -127,7 +127,7 @@ GET_USER_EXAMINATIONS = dict(
 
 CREATE_EXAMINATION = dict(
     responses=create_examination_response,
-    summary="Создание экзамена",
+    summary='Создание экзамена',
     description="""
     ## Создание нового экзамена в системе.
 
@@ -146,7 +146,7 @@ CREATE_EXAMINATION = dict(
 
 UPDATE_EXAMINATION = dict(
     responses=update_examination_response,
-    summary="Изменение экзамена",
+    summary='Изменение экзамена',
     description="""
     ## Изменение информации об экзамене по его идентификатору.
 
@@ -170,7 +170,7 @@ UPDATE_EXAMINATION = dict(
 
 DELETE_EXAMINATION = dict(
     responses=delete_examination_response,
-    summary="Удаление экзамена",
+    summary='Удаление экзамена',
     description="""
     ## Удаление экзамена.
 

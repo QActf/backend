@@ -46,7 +46,7 @@ class TestCreateGroup:
             db_session: AsyncSession,
             auth_superuser: TestClient
     ):
-        """Создание группы суперюзером"""
+        """Создание группы суперюзером."""
         groups = await get_obj_count(Group, db_session)
         response = await auth_superuser.post(
             '/groups/',
@@ -60,9 +60,10 @@ class TestCreateGroup:
             self,
             auth_client: TestClient
     ):
-        """Тест запрета создания группы юзером"""
+        """Тест запрета создания группы юзером."""
         response = await auth_client.post(
             '/groups/',
+
             json=GROUP_SCHEME
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -280,7 +281,7 @@ class TestPaginationGroup:
             moc_groups,
             auth_superuser: TestClient
     ):
-        """Тест пагинации профилей"""
+        """Тест пагинации профилей."""
         response = await auth_superuser.get(
             '/groups/?limit=2'
         )

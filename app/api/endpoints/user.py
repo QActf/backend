@@ -4,13 +4,14 @@ from fastapi import APIRouter, Body, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.endpoints import register
-from app.core.db import get_async_session
 from app.api_docs_responses.user import (
-    add_router_doc, USER_CONFIRM_DESCRIPTION)
+    USER_CONFIRM_DESCRIPTION, add_router_doc,
+)
 from app.api_docs_responses.utils_docs import USER_VALUE
+from app.core.db import get_async_session
 from app.core.user import auth_backend, fastapi_users
-from app.schemas.user import UserCreate, UserRead, UserUpdate
 from app.crud.user import user_crud
+from app.schemas.user import UserCreate, UserRead, UserUpdate
 from app.services.token_generator.tokens import token_generator
 
 router = APIRouter()
@@ -41,7 +42,7 @@ router.include_router(
 
 
 @router.post(
-    "/users/{user_id}/{confirm_code}",
+    '/users/{user_id}/{confirm_code}',
     tags=['users'],
     status_code=status.HTTP_200_OK,
     summary='Подтверждение почты и активация аккаунта.',

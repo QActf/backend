@@ -1,8 +1,7 @@
 from app.api_docs_responses.utils_docs import (
-    get_200_docs, get_201_docs, get_204_docs,
-    get_400_docs, get_401_docs, get_404_docs,
+    get_200_docs, get_201_docs, get_204_docs, get_400_docs, get_401_docs,
+    get_404_docs,
 )
-
 
 tasks_with_all_fields = {
     'id': 0,
@@ -63,19 +62,19 @@ create_task_response = {
 update_task_response = {
     **get_200_docs(content_task),
     **get_401_docs(),
-    **get_400_docs("Объект tasks с таким именем уже существует!"),
-    **get_404_docs("Объект tasks не найден."),
+    **get_400_docs('Объект tasks с таким именем уже существует!'),
+    **get_404_docs('Объект tasks не найден.'),
 }
 
 delete_task_response = {
     **get_204_docs(),
     **get_401_docs(),
-    **get_404_docs("Объект tasks не найден."),
+    **get_404_docs('Объект tasks не найден.'),
 }
 
 GET_TASKS = dict(
     responses=get_tasks_response,
-    summary="Получение всех задач",
+    summary='Получение всех задач',
     description="""
     ## Получение всех задач.
 
@@ -90,7 +89,7 @@ GET_TASKS = dict(
 
 GET_TASK = dict(
     responses=get_task_response,
-    summary="Получение задачи",
+    summary='Получение задачи',
     description="""
     ## Получение информации о задаче по её идентификатору.
 
@@ -105,7 +104,7 @@ GET_TASK = dict(
 
 CREATE_TASK = dict(
     responses=create_task_response,
-    summary="Создание задачи",
+    summary='Создание задачи',
     description="""
     ## Создание новой задачи.
 
@@ -122,7 +121,7 @@ CREATE_TASK = dict(
 
 PATCH_TASK = dict(
     responses=update_task_response,
-    summary="Изменение задачи",
+    summary='Изменение задачи',
     description="""
     ## Изменение информации о задаче по её идентификатору.
 
@@ -145,7 +144,7 @@ PATCH_TASK = dict(
 
 DELETE_TASK = dict(
     responses=delete_task_response,
-    summary="Удаление задачи",
+    summary='Удаление задачи',
     description="""
     ## Удаление задачи по её идентификатору.
 

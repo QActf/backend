@@ -4,6 +4,7 @@ import hmac
 import secrets
 
 from app.core.config import settings
+
 from .exceptions import InvalidAlgorithm
 
 _PROTECTED_TYPES = (

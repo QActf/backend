@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from sqlalchemy import (
-    Column, ForeignKey, Integer, String, Table, Text, UniqueConstraint
+    Column, ForeignKey, Integer, String, Table, Text, UniqueConstraint,
 )
 from sqlalchemy.orm import Mapped, relationship
 
@@ -15,12 +15,12 @@ if TYPE_CHECKING:
 
 
 task_course_association = Table(
-    "task_course_association",
+    'task_course_association',
     Base.metadata,
-    Column("id", Integer, primary_key=True),
-    Column("task_id", ForeignKey("task.id")),
-    Column("course_id", ForeignKey("course.id")),
-    UniqueConstraint("task_id", "course_id", name="constraint_task_course"),
+    Column('id', Integer, primary_key=True),
+    Column('task_id', ForeignKey('task.id')),
+    Column('course_id', ForeignKey('course.id')),
+    UniqueConstraint('task_id', 'course_id', name='constraint_task_course'),
 )
 
 
@@ -30,7 +30,7 @@ class Task(Base):
     )
     description: str = Column(Text)
     courses: Mapped[list[Course]] = relationship(
-        secondary=task_course_association, back_populates="tasks"
+        secondary=task_course_association, back_populates='tasks'
     )
 
     def __repr__(self):

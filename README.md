@@ -55,7 +55,20 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
 
 Документация будет доступна по http://127.0.0.1/docs/
 
-## Разработчики 
+## Полезные материалы
+
+<details>
+  <summary><h3>Команды pre-commit</h3></summary>
+
+- Установить pre-commit в проекте: `pre-commit install`
+- Запустить проверку всех хуков: `pre-commit run -a`
+- Запустить конкретный хук: `pre-commit run <имя-хука>`
+- Деактивировать автоматическое выполнение хуков перед коммитом: `pre-commit uninstall`
+- Обновить pre-commit хуки: `pre-commit autoupdate`
+
+</details>
+
+## Разработчики
 
 -----
 
@@ -79,5 +92,3 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
 
  - [Глеб Кондратьев](https://github.com/gleb60)
 ----
-
-
