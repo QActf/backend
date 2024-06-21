@@ -7,3 +7,4 @@ from .profile import profile_crud  # noqa
 from .tariff import tariff_crud  # noqa
 from .task import task_crud  # noqa
 from .user import user_crud  # noqa
+from .locale import locale_crud  # noqa
