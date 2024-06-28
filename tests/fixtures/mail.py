@@ -8,7 +8,7 @@ from app.core.config import settings
 def mock_mail_server() -> None:
     """Фикстура тестового почтового сервера."""
     if settings.EMAIL_MOCK_SERVER:
-        controller = Controller(handler=None)
+        controller = Controller(handler=None, port=settings.EMAIL_PORT)
         controller.start()
         yield
         controller.stop()
