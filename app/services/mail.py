@@ -37,13 +37,16 @@ class MailMessage:
         message['Subject'] = self.subject
         message.set_content(self.text)
 
-        smtp_client = SMTP(
-            hostname=settings.EMAIL_HOST,
-            port=settings.EMAIL_PORT,
-            username=settings.EMAIL_HOST_USER,
-            password=settings.EMAIL_HOST_PASSWORD,
-            use_tls=settings.EMAIL_USE_TLS,
-        )
+        if settings.EMAIL_MOCK_SERVER:
+            smtp_client = SMTP(port=settings.EMAIL_PORT)
+        else:
+            smtp_client = SMTP(
+                hostname=settings.EMAIL_HOST,
+                port=settings.EMAIL_PORT,
+                username=settings.EMAIL_HOST_USER,
+                password=settings.EMAIL_HOST_PASSWORD,
+                use_tls=settings.EMAIL_USE_TLS,
+            )
         try:
             async with smtp_client:
                 await smtp_client.send_message(message)

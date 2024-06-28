@@ -3,7 +3,6 @@ import io
 from pathlib import Path
 from typing import AsyncGenerator
 
-import pytest
 from fastapi import Response, status
 from fastapi.testclient import TestClient
 from PIL import Image
@@ -47,9 +46,10 @@ async def _get_user(
 
 
 class TestProfile:
-    @pytest.mark.skip
     async def test_create_profile_with_create_user(
-            self, new_client,
+            self,
+            mock_mail_server,
+            new_client,
             db_session: AsyncSession
     ):
         """Тест создания профиля при регистрации пользователя."""
