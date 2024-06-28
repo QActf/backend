@@ -67,7 +67,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
             'Welcome to QActf.',
             f'{URL}/auth/confirm/{user_uid}/{user_code}',
         )
-        await cofirm_email.send_email_message()
+        # await cofirm_email.send_email_message()
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):
