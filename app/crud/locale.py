@@ -1,10 +1,11 @@
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
 from app.crud.base import CRUDBase
 from app.models import (
-    Locale, Common, Header, Auth, Contacts, Help, Main, Restore, Subscription,
-    Tasks, Errors
+    Auth, Common, Contacts, Errors, Header, Help, Locale, Main, Restore,
+    Subscription, Tasks,
 )
 from app.schemas.locale import LocaleCreate
 

@@ -2,9 +2,9 @@ from .achievement import achievement_crud  # noqa
 from .course import course_crud  # noqa
 from .examination import examination_crud  # noqa
 from .group import group_crud  # noqa
+from .locale import locale_crud  # noqa
 from .notification import notification_crud  # noqa
 from .profile import profile_crud  # noqa
 from .tariff import tariff_crud  # noqa
 from .task import task_crud  # noqa
 from .user import user_crud  # noqa
-from .locale import locale_crud  # noqa

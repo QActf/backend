@@ -3,12 +3,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_async_session
 from app.core.user import current_superuser
-from app.schemas.locale import (
-    LocaleCreate, LocaleReadByID,
-    LocaleRead, LocaleCreated
-)
 from app.crud import locale_crud
-
+from app.schemas.locale import (
+    LocaleCreate, LocaleCreated, LocaleRead, LocaleReadByID,
+)
 
 router = APIRouter()
 

@@ -1,10 +1,9 @@
-from fastapi import status, Response
+from fastapi import Response, status
 from fastapi.testclient import TestClient
 
 from app.models import Locale
 
 from .utils import get_obj_count
-
 
 CREATE_SCHEME = {
     'language': 'en',
