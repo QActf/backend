@@ -1,6 +1,5 @@
-from fastapi import applications
+from fastapi import FastAPI, applications
 from fastapi.openapi.docs import get_swagger_ui_html
-from fastapi import FastAPI
 from sqladmin import Admin
 
 from app.admin.authentication import AdminAuth
@@ -15,11 +14,11 @@ def swagger_monkey_patch(*args, **kwargs):
     return get_swagger_ui_html(
         *args, **kwargs,
         swagger_js_url=(
-            "https://cdn.staticfile.net/swagger-ui/5.1.0/"
-            "swagger-ui-bundle.min.js"
+            'https://cdn.staticfile.net/swagger-ui/5.1.0/'
+            'swagger-ui-bundle.min.js'
         ),
         swagger_css_url=(
-            "https://cdn.staticfile.net/swagger-ui/5.1.0/swagger-ui.min.css"
+            'https://cdn.staticfile.net/swagger-ui/5.1.0/swagger-ui.min.css'
         ))
 
 
