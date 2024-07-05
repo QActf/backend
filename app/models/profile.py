@@ -44,7 +44,9 @@ class Profile(Base):
     image: Mapped[str] = Column(
         String(),
         nullable=True,
-        default=_random_photo(settings.base_dir / settings.media_url / 'default_photo/')
+        default=_random_photo(
+            settings.base_dir / settings.media_url / 'default_photo/'
+        )
     )
 
     def __repr__(self):
