@@ -7,7 +7,9 @@ profile_example = {
     'id': 0,
     'first_name': 'Имя',
     'last_name': 'Фамилия',
-    'age': 0,
+    'second_name': 'Отчество',
+    'birthday': '1976-05-28',
+    'gender': 'male',
     'user_id': 0,
     'image': 'Ссылка на изображение'
 }

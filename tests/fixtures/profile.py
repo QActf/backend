@@ -1,3 +1,4 @@
+import datetime
 from typing import AsyncGenerator
 
 import pytest_asyncio
@@ -29,7 +30,9 @@ async def moc_users(
         Profile(
             first_name=f'name_{user.username}',
             last_name=f'surname_{user.username}',
-            age=i + 20,
+            second_name=f'second_name_{user.username}',
+            birthday=datetime.datetime.strptime('1976-05-28', '%Y-%m-%d'),
+            gender='male',
             user_id=user.id
         ) for i, user in enumerate(moc_users)
     ]

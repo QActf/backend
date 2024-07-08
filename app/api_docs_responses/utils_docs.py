@@ -22,7 +22,9 @@ REQUEST_NAME_AND_DESCRIPTION_VALUE = {
         'value': {}
     }
 }
-PROFILE_UPDATE_VALUE = {'first_name': 'Имя', 'last_name': 'Фамилия', 'age': 20}
+PROFILE_UPDATE_VALUE = {
+    'first_name': 'Имя', 'last_name': 'Фамилия', 'birthday': '1976-05-28'
+}
 USER_VALUE = {
     'password': 'Пароль',
     'email': 'user@example.com',

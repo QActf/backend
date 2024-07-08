@@ -1,13 +1,16 @@
 from __future__ import annotations
 
+import datetime
 from pathlib import Path
 from random import randint
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, ForeignKey, SmallInteger, String
+from sqlalchemy import Column, DateTime, ForeignKey, String
 from sqlalchemy.orm import Mapped, relationship
+from sqlalchemy_utils import ChoiceType
 
 from app.core.config import settings
+from app.core.constants import Gender
 from app.core.db import Base
 
 from .achievement import achievement_profile_association
@@ -25,14 +28,21 @@ def _random_photo(path: Path):
 
 
 class Profile(Base):
+    GENDERS = [(gender.name, gender.value) for gender in Gender]
     first_name: Mapped[str] = Column(
         String(length=settings.max_length_string)
     )
     last_name: Mapped[str] = Column(
         String(length=settings.max_length_string)
     )
-    age: Mapped[int] = Column(
-        SmallInteger
+    second_name: Mapped[str] = Column(
+        String(length=settings.max_length_string)
+    )
+    birthday: Mapped[datetime.date] = Column(
+        DateTime
+    )
+    gender: Mapped[str] = Column(
+        ChoiceType(GENDERS)
     )
     user_id: Mapped[int] = Column(
         ForeignKey('user.id'), unique=True

@@ -97,10 +97,6 @@ class TestProfile:
     ):
         """Тест фильтрации профилей."""
         response = await auth_superuser.get(
-            '/profiles/?age__gte=22&age__lte=23'
-        )
-        assert len(response.json()) == 2
-        response = await auth_superuser.get(
             '/profiles/?first_name__ilike=3'
         )
         assert len(response.json()) == 1
