@@ -25,6 +25,8 @@ services:
       - ./.env
     depends_on:
       - db
+    volumes:
+      - backend_static:/app/media/photo_profile/
 
   nginx:
     container_name: proxy
@@ -39,3 +41,4 @@ services:
 
 volumes:
   db_volume_qactf:
+  backend_static:

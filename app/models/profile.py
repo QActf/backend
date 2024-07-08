@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 def _random_photo(path: Path):
     """Возвращает рандомный файл из указанной папки."""
-    files = [f'cats/{file.name}' for file in path.iterdir()]
+    files = [f'default_photo/{file.name}' for file in path.iterdir()]
     random_index = randint(0, len(files) - 1)
     return str(files[random_index])
 
@@ -44,7 +44,9 @@ class Profile(Base):
     image: Mapped[str] = Column(
         String(),
         nullable=True,
-        default=_random_photo(settings.base_dir / settings.media_url / 'cats/')
+        default=_random_photo(
+            settings.base_dir / settings.media_url / 'default_photo/'
+        )
     )
 
     def __repr__(self):
