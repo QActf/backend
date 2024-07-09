@@ -1,4 +1,5 @@
 from fastapi import FastAPI, applications
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
 from sqladmin import Admin
 
@@ -25,6 +26,18 @@ def swagger_monkey_patch(*args, **kwargs):
 applications.get_swagger_ui_html = swagger_monkey_patch
 
 app = FastAPI(title=settings.app_title)
+
+origins = [
+    f'http://{settings.host}'
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*']
+)
 
 app.include_router(main_router)
 
