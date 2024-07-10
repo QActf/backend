@@ -30,6 +30,8 @@ class Settings(BaseSettings):
     EMAIL_USE_TLS: bool = True
     # ================================
 
+    host: str = 'localhost'
+
     class Config:
         env_file = 'infra/.env'
 
