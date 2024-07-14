@@ -74,10 +74,18 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            cd backend/
+            git pull
             cd backend/infra
             rm .env
             touch .env
             echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
+            echo EMAIL_FROM=${{ secrets.EMAIL_FROM }} >> .env
+            echo EMAIL_HOST=${{ secrets.EMAIL_HOST }} >> .env
+            echo EMAIL_PORT=${{ secrets.EMAIL_PORT }} >> .env
+            echo EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} >> .env
+            echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
+            echo HOST=${{ secrets.HOST }} >> .env
             echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker compose down
             echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker rmi infra-backend:latest
             echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker compose up -d --build
