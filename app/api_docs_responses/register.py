@@ -11,7 +11,6 @@ CREATE_REGISTER = {
                 'is_active': True,
                 'is_superuser': True,
                 'is_verified': False,
-                'role': 'user',
                 'username': 'Имя',
                 'tariff_id': 0
             }

@@ -11,7 +11,7 @@ from app.api_docs_responses.utils_docs import USER_VALUE
 from app.core.db import get_async_session
 from app.core.user import auth_backend, fastapi_users
 from app.crud.user import user_crud
-from app.schemas.user import UserCreate, UserRead, UserUpdate
+from app.schemas.user import UserCreate, UserRead, UserReadRegister, UserUpdate
 from app.services.token_generator.tokens import token_generator
 
 router = APIRouter()
@@ -24,7 +24,7 @@ router.include_router(
 
 router.include_router(
     register.get_register_router(
-        UserRead,
+        UserReadRegister,
         Annotated[UserCreate, Body(example=USER_VALUE)]
     ),
     prefix='/auth',

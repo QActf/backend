@@ -8,17 +8,20 @@ from typing_extensions import Annotated
 from app.core.constants import Role
 
 
-class UserRead(schemas.BaseUser[int]):
-    role: Annotated[
-        Choice,
-        WithJsonSchema({'type': 'str'})
-    ]
+class UserReadRegister(schemas.BaseUser[int]):
     username: str
     tariff_id: Optional[int]
 
     class Config:
         from_attributes = True
         arbitrary_types_allowed = True
+
+
+class UserRead(UserReadRegister):
+    role: Annotated[
+        Choice,
+        WithJsonSchema({'type': 'str'})
+    ]
 
     @field_serializer('role')
     def serialize_role(self, role: Choice, _info):
