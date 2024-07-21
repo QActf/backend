@@ -1,12 +1,9 @@
-from http import HTTPStatus
 from typing import Optional
 
-from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import check_obj_exists
 from app.models import User
 
 
