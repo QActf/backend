@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body, Depends, Path, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing_extensions import Annotated
 
-from app.api.validators import check_name_duplicate, check_obj_exists
+from app.api.validators import check_obj_duplicate, check_obj_exists
 from app.api_docs_responses.tariff import (
     ALL_TARIFFS_DECRIPTION, CREATE_TARIFF, DELETE_TARIFF, GET_TARIFF,
     GET_TARIFFS, TARIFF_CREATE_DESCRIPTION, TARIFF_ID_DELETE,
@@ -51,7 +51,13 @@ async def get_tariff(
     Получение тарифа по его id или
     получение ошибки 404 в случае отсутствия данного тарифа.
     """
-    return await tariff_crud.get(tariff_id, session)
+    obj = await tariff_crud.get_by_attr(
+        attr_name='id',
+        attr_value=tariff_id,
+        session=session,
+    )
+    await check_obj_exists(obj=obj)
+    return obj
 
 
 @router.patch(
@@ -71,9 +77,16 @@ async def update_tariff(
     """
     Частичное обновление информации о тарифе по его идентификатору.
     """
-    _tariff = await check_obj_exists(tariff_id, tariff_crud, session)
+    obj = await tariff_crud.get_by_attr(
+        attr_name='id',
+        attr_value=tariff_id,
+        session=session,
+    )
+    await check_obj_exists(obj=obj)
     return await tariff_crud.update(
-        _tariff, data, session
+        db_obj=obj,
+        obj_in=data,
+        session=session,
     )
 
 
@@ -91,10 +104,13 @@ async def create_tariff(
         openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
     session: AsyncSession = Depends(get_async_session)
 ):
-    """
-    Создание тарифа.
-    """
-    await check_name_duplicate(tariff.name, tariff_crud, session)
+    """Создание тарифа."""
+    obj = await tariff_crud.get_by_attr(
+        attr_name='name',
+        attr_value=tariff.name,
+        session=session,
+    )
+    await check_obj_duplicate(obj=obj)
     return await tariff_crud.create(obj_in=tariff, session=session)
 
 

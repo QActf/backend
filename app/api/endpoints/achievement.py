@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import check_name_duplicate, check_obj_exists
+from app.api.validators import check_obj_duplicate, check_obj_exists
 from app.api_docs_responses.achievement import (
     CREATE_ACHIEVEMENT, CREATE_ACHIEVEMENT_DESCRIPTION, DELETE_ACHIEVEMENT,
     DELETE_ACHIEVEMENT_DESCRIPTION, GET_ACHIEVEMENT,
@@ -115,7 +115,12 @@ async def create_achievement(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Создать достижение"""
-    await check_name_duplicate(achievement.name, achievement_crud, session)
+    obj = await achievement_crud.get_by_attr(
+        attr_name='name',
+        attr_value=achievement.name,
+        session=session,
+    )
+    await check_obj_duplicate(obj=obj)
     return await achievement_crud.create(obj_in=achievement, session=session)
 
 
@@ -134,13 +139,16 @@ async def update_achievement(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Обновить достижение."""
-    _achievement = await check_obj_exists(
-        achievement_id,
-        achievement_crud,
-        session
+    obj = await achievement_crud.get_by_attr(
+        attr_name='id',
+        attr_value=achievement_id,
+        session=session,
     )
+    await check_obj_exists(obj=obj)
     return await achievement_crud.update(
-        _achievement, data, session
+        db_obj=obj,
+        obj_in=data,
+        session=session,
     )
 
 
@@ -158,5 +166,5 @@ async def delete_achievement(
 ):
     """Удалить достижение."""
     return await delete_obj(
-        obj_id=achievement_id, crud=achievement_crud, session=session
+        obj_id=achievement_id, crud=achievement_crud, session=session,
     )

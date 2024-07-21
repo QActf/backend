@@ -8,6 +8,7 @@ from fastapi_filter import FilterDepends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.filters import ProfileFilter
+from app.api.validators import check_obj_exists
 from app.api_docs_responses.profile import (
     CREATE_PROFILE, DELETE_PROFILE, GET_ME_PROFILE, GET_PROFILE,
     GET_PROFILE_PHOTO, GET_PROFILES, UPDATE_PROFILE, UPDATE_PROFILE_PHOTO,
@@ -43,9 +44,7 @@ async def get_all_profiles(
     profiles = await profile_crud.get_profile_filter(
         profile_filter, session
     )
-    response = add_response_headers(
-        response, profiles, pagination
-    )
+    add_response_headers(response, profiles, pagination)
     return paginated(profiles, pagination)
 
 
@@ -77,7 +76,9 @@ async def get_profile(
     session: AsyncSession = Depends(get_async_session)
 ) -> ProfileRead:
     """Возвращает профиль пользователя по id."""
-    return await profile_crud.get(profile_id, session)
+    obj = await profile_crud.get(obj_id=profile_id, session=session)
+    await check_obj_exists(obj=obj)
+    return obj
 
 
 @router.get(
@@ -90,7 +91,7 @@ async def get_user_photo(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Возвращает фото профиля."""
-    return await profile_crud.get_user_photo(user.id, session)
+    return await profile_crud.get_user_photo(user_id=user.id, session=session)
 
 
 @router.patch(
@@ -105,8 +106,12 @@ async def update_profile(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Обновить профиль текущего пользователя."""
-    _profile = await profile_crud.get_users_obj(user.id, session)
-    return await profile_crud.update(_profile, profile, session)
+    obj = await profile_crud.get_users_obj(user_id=user.id, session=session)
+    return await profile_crud.update(
+        db_obj=obj,
+        obj_in=profile,
+        session=session,
+    )
 
 
 @router.patch(

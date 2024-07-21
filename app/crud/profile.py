@@ -15,10 +15,10 @@ class CRUDProfile(CRUDBase):
     async def get_profile_filter(
             self,
             profile_filter: ProfileFilter,
-            sesion: AsyncSession
+            session: AsyncSession
     ):
         query_filter = profile_filter.filter(select(self.model))
-        db_objs = await sesion.execute(
+        db_objs = await session.execute(
             query_filter
             .options(
                 selectinload(self.model.achievements)
@@ -37,8 +37,9 @@ class CRUDProfile(CRUDBase):
 
     async def get(self, obj_id: int, session: AsyncSession):
         profile = await session.execute(
-            select(self.model)
-            .options(
+            select(self.model).where(
+                self.model.user_id == obj_id
+            ).options(
                 selectinload(Profile.achievements)
             )
         )
@@ -63,7 +64,8 @@ class CRUDProfile(CRUDBase):
         )
 
     async def create(
-            self, obj_in: ProfileCreate,
+            self,
+            obj_in: ProfileCreate,
             session: AsyncSession
     ):
         obj_in_data: dict = obj_in.model_dump()

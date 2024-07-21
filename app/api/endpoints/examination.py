@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import check_name_duplicate, check_obj_exists
+from app.api.validators import check_obj_duplicate, check_obj_exists
 from app.api_docs_responses.examination import (
     CREATE_EXAMINATION, DELETE_EXAMINATION, GET_EXAMINATION, GET_EXAMINATIONS,
     GET_USER_EXAMINATIONS, UPDATE_EXAMINATION,
@@ -58,7 +58,13 @@ async def get_examination(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Возвращает экзамен по id."""
-    return await check_obj_exists(examination_id, examination_crud, session)
+    obj = await examination_crud.get_by_attr(
+        attr_name='id',
+        attr_value=examination_id,
+        session=session,
+    )
+    await check_obj_exists(obj=obj)
+    return obj
 
 
 @router.post(
@@ -74,10 +80,13 @@ async def create_examination(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Создать экзамен."""
-    await check_name_duplicate(examination.name, examination_crud, session)
-    return await examination_crud.create(
-        obj_in=examination, session=session
+    obj = await examination_crud.get_by_attr(
+        attr_name='name',
+        attr_value=examination.name,
+        session=session,
     )
+    await check_obj_duplicate(obj)
+    return await examination_crud.create(obj_in=examination, session=session)
 
 
 @router.patch(
@@ -93,10 +102,17 @@ async def update_examination(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Обновить экзамен."""
-    _examination = await check_obj_exists(
-        examination_id, examination_crud, session
+    obj = await examination_crud.get_by_attr(
+        attr_name='id',
+        attr_value=examination_id,
+        session=session,
     )
-    return await examination_crud.update(_examination, data, session)
+    await check_obj_exists(obj=obj)
+    return await examination_crud.update(
+        db_obj=obj,
+        obj_in=data,
+        session=session,
+    )
 
 
 @router.delete(
