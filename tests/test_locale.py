@@ -1,5 +1,6 @@
 from fastapi import Response, status
 from fastapi.testclient import TestClient
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Locale
 
@@ -109,11 +110,15 @@ CREATE_SCHEME = {
     }
 }
 
+WRONG_CREATE_SCHEME = {
+    'language': 'en',
+}
+
 
 class TestCreateLocale:
     async def test_create_locale(
             self,
-            db_session,
+            db_session: AsyncSession,
             auth_superuser: TestClient,
     ):
         """Тест создания локали."""
@@ -126,3 +131,84 @@ class TestCreateLocale:
         assert response.status_code == status.HTTP_201_CREATED
         new_locale = await get_obj_count(Locale, db_session)
         assert new_locale == locales + 1
+
+    async def test_create_locale_wrong_data(
+            self,
+            db_session: AsyncSession,
+            auth_superuser: TestClient
+    ):
+        """Тест попытки создания локали с неправильными данными."""
+        locales_count = await get_obj_count(Locale, db_session)
+        response = await auth_superuser.post(
+            '/locales/',
+            json=WRONG_CREATE_SCHEME,
+        )
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        new_locales_count = await get_obj_count(Locale, db_session)
+        assert locales_count == new_locales_count
+
+    async def test_create_locale_duplicate(
+            self,
+            db_session: AsyncSession,
+            auth_superuser: TestClient,
+    ):
+        """Тест запрета создания дубликата локали."""
+        await auth_superuser.post('/locales/', json=CREATE_SCHEME)
+        locales_count = await get_obj_count(Locale, db_session)
+        response: Response = await auth_superuser.post(
+            '/locales/',
+            json=CREATE_SCHEME,
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        new_locales_count = await get_obj_count(Locale, db_session)
+        assert locales_count == new_locales_count
+
+    async def test_create_locale_unauthorized_nonauth(
+            self,
+            new_client: TestClient,
+    ):
+        """Тест запрета создания локали неавторизованным пользователем."""
+        response: Response = await new_client.post(
+            '/locales/',
+            json=CREATE_SCHEME
+        )
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    async def test_create_locale_forbidden_auth_user(
+            self,
+            auth_client: TestClient
+    ):
+        """Тест запрета создания локали пользователем."""
+        response: Response = await auth_client.post(
+            '/locales/',
+            json=CREATE_SCHEME,
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+class TestGetLocale:
+    async def test_get_locale_by_id(
+            self,
+            mock_locales,
+            db_session: AsyncSession,
+            new_client: TestClient
+    ):
+        """Тест получения локали по id."""
+        response = await new_client.get('/locales/3')
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json()['id'] == 3
+        response = await new_client.get('/locales/100')
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    async def test_get_all_locales(
+            self,
+            mock_locales,
+            db_session: AsyncSession,
+            new_client: TestClient
+    ):
+        """Тест получения всех локалей."""
+        locales_count = await get_obj_count(Locale, db_session)
+        response = await new_client.get('/locales/')
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.json()) == locales_count
+
