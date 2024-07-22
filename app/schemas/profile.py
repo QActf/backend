@@ -1,11 +1,11 @@
 import datetime
 from typing import Optional
-from typing_extensions import Annotated
 
 from pydantic import (
-    BaseModel, Field, WithJsonSchema, field_serializer, field_validator
+    BaseModel, Field, WithJsonSchema, field_serializer, field_validator,
 )
 from sqlalchemy_utils import Choice
+from typing_extensions import Annotated
 
 from app.core.constants import Gender
 
@@ -51,4 +51,4 @@ class ProfileUpdate(BaseModel):
 
 
 class ProfileCreate(ProfileUpdate):
-    pass
+    user_id: int
