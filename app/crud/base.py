@@ -1,7 +1,5 @@
-from http import HTTPStatus
 from typing import Optional
 
-from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,39 +11,24 @@ class CRUDBase:
     def __init__(self, model):
         self.model = model
 
-    async def get(
-        self,
-        obj_id: int,
-        session: AsyncSession,
+    async def get_by_attr(
+            self,
+            attr_name: str,
+            attr_value: str,
+            session: AsyncSession,
     ):
-        """
-        Возвращает обьект модели по его id
-        или 404 в случае отсутствия.
-        """
+        """Вернет объект модели по значению указанного атрибута."""
         db_obj = await session.execute(
-            select(self.model).where(self.model.id == obj_id)
+            select(self.model).where(
+                getattr(self.model, attr_name) == attr_value
+            )
         )
         obj = db_obj.scalars().first()
-        if obj is None:
-            raise HTTPException(
-                status_code=HTTPStatus.NOT_FOUND,
-                detail=f'Объект {self.model.__tablename__} не найден.',
-            )
         return obj
 
     async def get_multi(self, session: AsyncSession):
         db_objs = await session.execute(select(self.model))
         return db_objs.scalars().all()
-
-    async def get_obj_by_name(
-        self,
-        name: str,
-        session: AsyncSession,
-    ):
-        db_obj = await session.execute(
-            select(self.model).where(self.model.name == name)
-        )
-        return db_obj.scalars().first()
 
     async def get_users_obj(
         self,

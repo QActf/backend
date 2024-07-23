@@ -4,6 +4,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.endpoints import register
+from app.api.validators import check_obj_exists
 from app.api_docs_responses.user import (
     USER_CONFIRM_DESCRIPTION, add_router_doc,
 )
@@ -60,15 +61,24 @@ async def confirm_email(
     session: AsyncSession = Depends(get_async_session),
 ):
     """Подтверждение почты и активация аккаунта."""
-    user = await user_crud.get(user_id, session)
-    if not token_generator.check_token(
-        user,
-        confirm_code,
-    ):
+    obj = await user_crud.get_by_attr(
+        attr_name='id',
+        attr_value=user_id,
+        session=session,
+    )
+    await check_obj_exists(obj=obj)
+
+    if not token_generator.check_token(obj, confirm_code):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail='Ошибка валидации аккаунта.',
         )
-    await user_crud.update_id(user, 'is_verified', True, session)
+
+    await user_crud.update_id(
+        db_obj=obj,
+        field='is_verified',
+        field_value=True,
+        session=session,
+    )
 
 add_router_doc(router)

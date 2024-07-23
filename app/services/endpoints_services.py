@@ -9,7 +9,11 @@ async def delete_obj(
     session: AsyncSession,
 ):
     try:
-        db_obj = await crud.get(obj_id, session)
+        db_obj = await crud.get_by_attr(
+            attr_name='id',
+            attr_value=obj_id,
+            session=session,
+        )
         return await crud.remove(db_obj, session)
     except UnmappedInstanceError:
         raise HTTPException(

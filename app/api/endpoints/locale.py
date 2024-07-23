@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.validators import check_obj_duplicate, check_obj_exists
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud import locale_crud
@@ -22,6 +23,12 @@ async def create_locale(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Создать локаль."""
+    obj = await locale_crud.get_by_attr(
+        attr_name='language',
+        attr_value=locale.language,
+        session=session,
+    )
+    await check_obj_duplicate(obj=obj)
     return await locale_crud.create(locale=locale, session=session)
 
 
@@ -45,4 +52,6 @@ async def get_locale_by_id(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Получение локали по id."""
-    return await locale_crud.get_by_id(locale_id, session)
+    obj = await locale_crud.get_by_id(id=locale_id, session=session)
+    await check_obj_exists(obj=obj)
+    return obj
