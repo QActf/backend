@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, Body, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import check_name_duplicate
+from app.api.validators import check_obj_duplicate, check_obj_exists
 from app.api_docs_responses.task import (
     CREATE_TASK, DELETE_TASK, GET_TASK, GET_TASKS, PATCH_TASK,
 )
@@ -29,7 +29,7 @@ async def get_all_tasks(
     session: AsyncSession = Depends(get_async_session),
 ) -> List[TaskRead]:
     """Возвращает все задачи."""
-    return await task_crud.get_multi(session)
+    return await task_crud.get_multi(session=session)
 
 
 @router.get(
@@ -43,7 +43,13 @@ async def get_task_by_id(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Получение задачи по id."""
-    return await task_crud.get(task_id, session)
+    obj = await task_crud.get_by_attr(
+        attr_name='id',
+        attr_value=task_id,
+        session=session,
+    )
+    await check_obj_exists(obj=obj)
+    return obj
 
 
 @router.post(
@@ -59,7 +65,12 @@ async def create_task(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Создать задачу"""
-    await check_name_duplicate(task.name, task_crud, session)
+    obj = await task_crud.get_by_attr(
+        attr_name='name',
+        attr_value=task.name,
+        session=session,
+    )
+    await check_obj_duplicate(obj=obj)
     return await task_crud.create(obj_in=task, session=session)
 
 
@@ -76,8 +87,13 @@ async def update_task(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Обновление задачи."""
-    _task = await task_crud.get(task_id, session)
-    return await task_crud.update(_task, data, session)
+    obj = await task_crud.get_by_attr(
+        attr_name='id',
+        attr_value=task_id,
+        session=session,
+    )
+    await check_obj_exists(obj=obj)
+    return await task_crud.update(db_obj=obj, obj_in=data, session=session)
 
 
 @router.delete(

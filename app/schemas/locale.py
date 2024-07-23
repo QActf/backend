@@ -218,6 +218,7 @@ class LocaleRead(BaseModel):
 
 
 class LocaleReadByID(BaseModel):
+    id: int
     common: CommonRead
     header: HeaderRead
     auth: AuthRead

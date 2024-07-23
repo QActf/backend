@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import check_name_duplicate
+from app.api.validators import check_obj_duplicate, check_obj_exists
 from app.api_docs_responses.group import (
     CREATE_GROUP, DELETE_GROUP, GET_GROUP, GET_GROUPS, GET_USER_GROUP,
 )
@@ -35,9 +35,7 @@ async def get_all_groups(
 ) -> list[GroupRead]:
     """Возвращает все группы."""
     groups = await group_crud.get_multi(session)
-    response = add_response_headers(
-        response, groups, pagination
-    )
+    add_response_headers(response, groups, pagination)
     return paginated(groups, pagination)
 
 
@@ -67,18 +65,15 @@ async def get_self_group_by_id(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Получение группы по id юзером."""
-    group: Group | None = await group_crud.get(group_id, session)
-    if group is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail='Такой группы не существует.'
-        )
-    if user not in group.users:
+    obj: Group | None = await group_crud.get(group_id, session)
+    await check_obj_exists(obj=obj)
+
+    if user not in obj.users:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail='Вы не состоите в этой группе.'
         )
-    return group
+    return obj
 
 
 @router.get(
@@ -92,7 +87,9 @@ async def get_group(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Получение группы по id"""
-    return await group_crud.get(group_id, session)
+    obj = await group_crud.get(group_id, session)
+    await check_obj_exists(obj=obj)
+    return obj
 
 
 @router.post(
@@ -108,7 +105,12 @@ async def create_group(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Создать группу"""
-    await check_name_duplicate(group.name, group_crud, session)
+    obj = await group_crud.get_by_attr(
+        attr_name='name',
+        attr_value=group.name,
+        session=session,
+    )
+    await check_obj_duplicate(obj=obj)
     return await group_crud.create(obj_in=group, session=session)
 
 
@@ -125,8 +127,9 @@ async def update_group(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Обновить группу"""
-    _group = await group_crud.get(group_id, session)
-    return await group_crud.update(_group, group, session)
+    obj = await group_crud.get(group_id=group_id, session=session)
+    await check_obj_exists(obj=obj)
+    return await group_crud.update(db_obj=obj, obj_in=group, session=session)
 
 
 @router.delete(

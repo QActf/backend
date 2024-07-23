@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import check_name_duplicate, check_obj_exists
+from app.api.validators import check_obj_duplicate, check_obj_exists
 from app.api_docs_responses.course import (
     CREATE_COURSE, DELETE_COURSE, GET_COURSE, GET_COURSES, GET_USER_COURSE,
     GET_USER_COURSES, PATCH_COURSE,
@@ -12,7 +12,7 @@ from app.api_docs_responses.utils_docs import (
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import course_crud
-from app.models import Course, User
+from app.models import User
 from app.schemas.course import CourseCreate, CourseRead, CourseUpdate
 from app.services.endpoints_services import delete_obj
 from app.services.utils import (
@@ -70,19 +70,15 @@ async def get_user_course_id(
     session: AsyncSession = Depends(get_async_session),
 ) -> CourseRead:
     """Возвращает конкретный курс текущего пользователя по id."""
-    await check_obj_exists(
-        obj_id=course_id, crud=course_crud, session=session
-    )
-    course: Course | None = await course_crud.get_course(
-        course_id=course_id,
-        session=session
-    )
-    if user not in course.users:
+    obj = await course_crud.get_course(course_id=course_id, session=session)
+    await check_obj_exists(obj=obj)
+
+    if user not in obj.users:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail='Вы не записаны на данный курс.'
         )
-    return course
+    return obj
 
 
 @router.get(
@@ -95,8 +91,13 @@ async def get_course(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Возвращает курс по id."""
-    await check_obj_exists(course_id, course_crud, session)
-    return await course_crud.get(course_id, session)
+    obj = await course_crud.get_by_attr(
+        attr_name='id',
+        attr_value=course_id,
+        session=session,
+    )
+    await check_obj_exists(obj=obj)
+    return obj
 
 
 @router.post(
@@ -112,7 +113,12 @@ async def create_course(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Создать курс."""
-    await check_name_duplicate(course.name, course_crud, session)
+    obj = await course_crud.get_by_attr(
+        attr_name='name',
+        attr_value=course.name,
+        session=session,
+    )
+    await check_obj_duplicate(obj)
     return await course_crud.create(obj_in=course, session=session)
 
 
@@ -129,15 +135,15 @@ async def update_course(
     session: AsyncSession = Depends(get_async_session),
 ) -> CourseRead:
     """Обновляет курс по его id."""
-    course = await check_obj_exists(
-        obj_id=course_id, crud=course_crud, session=session
+    obj = await course_crud.get_course(
+        course_id=course_id,
+        session=session,
     )
-    if obj_in.name:
-        await check_name_duplicate(
-            name=obj_in.name, crud=course_crud, session=session
-        )
+    await check_obj_exists(obj=obj)
     return await course_crud.update(
-        db_obj=course, obj_in=obj_in, session=session
+        db_obj=obj,
+        obj_in=obj_in,
+        session=session,
     )
 
 
@@ -156,26 +162,26 @@ async def close_course(
     Нельзя удалить курс, если у него уже есть пользователи,
     можно лишь закрыть доступ новым пользователям.
     """
-    await check_obj_exists(
-        obj_id=course_id, crud=course_crud, session=session
+    obj = await course_crud.get_course(
+        course_id=course_id,
+        session=session,
     )
-    course = await course_crud.get_course(
-        course_id=course_id, session=session
-    )
-    if not course.users:
+    await check_obj_exists(obj=obj)
+
+    if not obj.users:
         await delete_obj(
             obj_id=course_id, crud=course_crud, session=session
         )
         return
-    if course.is_closed:
+    if obj.is_closed:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='Данный курс уже закрыт.'
         )
     course_closed = await course_crud.close_course(
-        course=course, session=session
+        course=obj, session=session
     )
     return {
         'course': course_closed,
-        'message': 'Курс успешно закрыт'
+        'message': 'Курс успешно закрыт.'
     }
