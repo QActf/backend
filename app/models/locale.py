@@ -100,8 +100,6 @@ class Contacts(Base):
 
 class Help(Base):
     title: Mapped[str]
-    # questions: Mapped[str]
-    # write_us: Mapped[str]
     locale_id = mapped_column(
         Integer, ForeignKey('locale.id')
     )

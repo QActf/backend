@@ -60,7 +60,6 @@ class AuthRead(AuthCreate):
     auth_title1: str = Field(serialization_alias='authTitle1')
     auth_title2: str = Field(serialization_alias='authTitle2')
     forgot_password: str = Field(serialization_alias='forgotPassword')
-    register: str = Field(serialization_alias='register')
 
 
 class ContactsCreate(BaseModel):
@@ -90,12 +89,6 @@ class ContactsRead(ContactsCreate):
 
 class HelpCreate(BaseModel):
     title: str
-    # questions: str
-    # write_us: str
-
-
-# class HelpRead(HelpCreate):
-#     write_us: str = Field(serialization_alias='writeUs')
 
 
 class MainCreate(BaseModel):
