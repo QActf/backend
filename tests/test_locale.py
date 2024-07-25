@@ -7,7 +7,7 @@ from app.models import Locale
 from .utils import get_obj_count
 
 CREATE_SCHEME = {
-    'language': 'en',
+    'language': 'ru',
     'common': {
         'all_notification': 'Все уведомления',
         'profile': 'Профиль',
@@ -145,13 +145,13 @@ CREATE_SCHEME = {
         'upload_avatar': 'Загрузите аватарку',
     },
     'secure': {
-        'changePassword': 'Смена пароля',
-        'currentPassword': 'Текущий пароль',
-        'newPassword': 'Новый пароль',
-        'confirmPassword': 'Подтверждение пароля',
+        'change_password': 'Смена пароля',
+        'current_password': 'Текущий пароль',
+        'new_password': 'Новый пароль',
+        'confirm_password': 'Подтверждение пароля',
     },
     'achievements': {
-        'myAchievements': 'Мои достижения',
+        'my_achievements': 'Мои достижения',
         'level': 'Уровень',
         'tests_completed': 'Пройденых тестов',
         'tasks_completed': 'Выполненных заданий',
