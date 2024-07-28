@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 
 from app.api.endpoints import (
-    achievement_router, course_router, examination_router, group_router,
-    locale_router, profile_router, tariff_router, task_router, user_router,
-    contact_info_router
+    achievement_router, contact_info_router, course_router, examination_router,
+    group_router, locale_router, profile_router, tariff_router, task_router,
+    user_router,
 )
 
 main_router = APIRouter()

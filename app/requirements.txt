@@ -60,6 +60,7 @@ passlib==1.7.4
 pathspec==0.12.1
 pendulum==3.0.0
 pexpect==4.9.0
+phonenumbers==8.13.40
 pickleshare==0.7.5
 Pillow==10.1.0
 platformdirs==4.1.0
@@ -104,3 +105,7 @@ tzdata==2023.3
 urllib3==2.1.0
 uvicorn==0.24.0.post1
 watchfiles==0.21.0
+wcwidth==0.2.12
+websockets==12.0
+WTForms==3.1.1
+yarl==1.9.4

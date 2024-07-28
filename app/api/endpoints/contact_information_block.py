@@ -5,9 +5,8 @@ from app.core.db import get_async_session
 from app.crud.contact_information_block import contact_info_crud
 from app.schemas.contact_information_block import (
     ContactInformationBlockCreate, ContactInformationBlockRead,
-    ContactInformationBlockUpdate
+    ContactInformationBlockUpdate,
 )
-
 
 router = APIRouter()
 

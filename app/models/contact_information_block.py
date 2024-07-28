@@ -1,6 +1,6 @@
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy_utils import EmailType, ScalarListType, PhoneNumberType
+from sqlalchemy_utils import EmailType, PhoneNumberType, ScalarListType
 
 from app.core.db import Base
 

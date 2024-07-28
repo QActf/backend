@@ -1,4 +1,5 @@
 from .achievement import Achievement  # noqa
+from .contact_information_block import ContactInformationBlock  # noqa
 from .course import Course  # noqa
 from .examination import Examination  # noqa
 from .group import Group  # noqa
@@ -11,4 +12,3 @@ from .profile import Profile  # noqa
 from .tariff import Tariff  # noqa
 from .task import Task  # noqa
 from .user import User  # noqa
-from .contact_information_block import ContactInformationBlock  # noqa
