@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Depends, HTTPException, status
+from fastapi import APIRouter, Body, Depends, HTTPException, status, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.endpoints import register
@@ -10,8 +10,12 @@ from app.api_docs_responses.user import (
 )
 from app.api_docs_responses.utils_docs import USER_VALUE
 from app.core.db import get_async_session
-from app.core.user import auth_backend_cookie, auth_backend_jwt, fastapi_users
+from app.core.user import (
+    auth_backend_cookie, auth_backend_jwt, fastapi_users, current_user
+)
 from app.crud.user import user_crud
+from app.crud.question import question_crud
+from app.models import User
 from app.schemas.user import UserCreate, UserRead, UserReadRegister, UserUpdate
 from app.services.token_generator.tokens import token_generator
 
@@ -46,6 +50,28 @@ router.include_router(
     prefix='/users',
     tags=['users'],
 )
+
+
+@router.post(
+    '/users/send_message',
+    tags=['users'],
+    status_code=status.HTTP_201_CREATED,
+    summary='Отправка сообщения от пользователя сервису.',
+    dependencies=[Depends(current_user)]
+)
+async def send_message(
+    email: str = Form(),
+    message: str = Form(),
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    if email != user.email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Проверьте, что вы правильно указали свою почту.'
+        )
+    await question_crud.create(email, message, session)
+    return {'result': 'The message has been sent.'}
 
 
 @router.post(
