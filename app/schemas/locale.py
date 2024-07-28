@@ -229,3 +229,7 @@ class LocaleReadByID(BaseModel):
     subscription: SubscriptionRead
     tasks: TasksRead
     errors: ErrorsRead
+
+
+class LocaleReadByLang(LocaleReadByID):
+    language: str

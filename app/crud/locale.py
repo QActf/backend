@@ -44,12 +44,21 @@ class LocaleCRUD(CRUDBase):
         )
         await session.commit()
         await session.refresh(language)
-        return await self.get_by_id(language.id, session)
+        return await self.get_by_attr(
+            attr_name='id',
+            attr_value=language.id,
+            session=session,
+        )
 
-    async def get_by_id(self, id, session: AsyncSession):
+    async def get_by_attr(
+            self,
+            attr_name: str,
+            attr_value: str,
+            session: AsyncSession,
+    ):
         stmt = (
             select(Locale)
-            .where(Locale.id == id)
+            .where(getattr(Locale, attr_name) == attr_value)
             .options(
                 selectinload(Locale.common),
                 selectinload(Locale.header),
@@ -65,6 +74,43 @@ class LocaleCRUD(CRUDBase):
         )
         locale = await session.execute(stmt)
         return locale.scalars().first()
+
+    async def update(
+            self,
+            db_obj: Locale,
+            obj_in: LocaleCreate,
+            session: AsyncSession,
+    ):
+        attributes = obj_in.__annotations__
+
+        for attr in attributes:
+            if attr == 'language':
+                db_obj.language = obj_in.language
+            else:
+                data = getattr(obj_in, attr).model_dump()
+                for key, value in data.items():
+                    setattr(getattr(db_obj, attr), key, value)
+
+        session.add(db_obj)
+        await session.commit()
+        await session.refresh(db_obj)
+        return db_obj
+
+    async def remove(
+            self,
+            db_obj: Locale,
+            session: AsyncSession,
+    ):
+        attributes = db_obj.__annotations__
+
+        for attr in attributes:
+            if attr != 'language':
+                related_obj = getattr(db_obj, attr)
+                await session.delete(related_obj)
+
+        await session.delete(db_obj)
+        await session.commit()
+        return db_obj
 
 
 locale_crud = LocaleCRUD(Locale)
