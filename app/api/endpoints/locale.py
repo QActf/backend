@@ -109,7 +109,7 @@ async def update_or_create_locale(
     status_code=status.HTTP_204_NO_CONTENT,
     dependencies=[Depends(current_superuser)],
 )
-async def update_or_create_locale(
+async def delete_locale(
     locale_language: str,
     session: AsyncSession = Depends(get_async_session)
 ):
