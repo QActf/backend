@@ -11,3 +11,4 @@ from .profile import Profile  # noqa
 from .tariff import Tariff  # noqa
 from .task import Task  # noqa
 from .user import User  # noqa
+from .contact_information_block import ContactInformationBlock  # noqa

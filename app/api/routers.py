@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from app.api.endpoints import (
     achievement_router, course_router, examination_router, group_router,
     locale_router, profile_router, tariff_router, task_router, user_router,
+    contact_info_router
 )
 
 main_router = APIRouter()
@@ -23,4 +24,7 @@ main_router.include_router(
 )
 main_router.include_router(
     locale_router, prefix='/locales', tags=['Locales']
+)
+main_router.include_router(
+    contact_info_router, prefix='/contact_info', tags=['Contact info']
 )
