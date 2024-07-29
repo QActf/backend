@@ -100,8 +100,7 @@ async def update_or_create_locale(
             obj_in=locale,
             session=session,
         )
-    else:
-        return await locale_crud.create(locale=locale, session=session)
+    return await locale_crud.create(locale=locale, session=session)
 
 
 @router.delete(
