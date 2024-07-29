@@ -2,8 +2,8 @@ import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import (
-    Auth, Common, Contacts, Errors, Header, Help, Locale, Main, Restore,
-    Subscription, Tasks,
+    Achievements, Auth, Common, Contacts, Errors, Header, Help, Locale, Main,
+    Months, ProfileUser, QuestionBanner, Restore, Secure, Subscription, Tasks,
 )
 from tests.test_locale import CREATE_SCHEME
 
@@ -24,8 +24,13 @@ async def mock_locales(db_session: AsyncSession) -> None:
             main=Main(**CREATE_SCHEME['main']),
             restore=Restore(**CREATE_SCHEME['restore']),
             subscription=Subscription(**CREATE_SCHEME['subscription']),
+            profile_user=ProfileUser(**CREATE_SCHEME['profile_user']),
+            secure=Secure(**CREATE_SCHEME['secure']),
+            achievements=Achievements(**CREATE_SCHEME['achievements']),
             tasks=Tasks(**CREATE_SCHEME['tasks']),
+            question_banner=QuestionBanner(**CREATE_SCHEME['question_banner']),
             errors=Errors(**CREATE_SCHEME['errors']),
+            months=Months(**CREATE_SCHEME['months']),
         ) for language in LANGUAGES
     ]
     db_session.add_all(mock_locales)
