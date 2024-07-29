@@ -7,107 +7,200 @@ from app.models import Locale
 from .utils import get_obj_count
 
 CREATE_SCHEME = {
-    'language': 'en',
+    'language': 'ru',
     'common': {
-        'all_notification': 'privet',
-        'profile': 'privet',
-        'ok': 'privet',
-        'exit': 'privet',
-        'cancel': 'privet',
-        'main': 'privet',
-        'tasks': 'privet',
-        'subscription': 'privet',
-        'account': 'privet',
-        'notifications': 'privet',
-        'help': 'privet',
-        'contacts': 'privet',
-        'email': 'privet',
-        'email_placeholder': 'privet',
-        'login': 'privet',
-        'login_placeholder': 'privet',
-        'password': 'privet',
-        'password_placeholder': 'privet',
-        'message': 'privet',
-        'message_placeholder': 'privet'
+        'all_notification': 'Все уведомления',
+        'profile': 'Профиль',
+        'ok': 'Подтвердить',
+        'save': 'Сохранить',
+        'edit': 'Редактировать',
+        'exit': 'Выйти',
+        'cancel': 'Отмена',
+        'main': 'Главная',
+        'tasks': 'Задачи',
+        'subscription': 'Подписка',
+        'account': 'Мой аккаунт',
+        'notifications': 'Уведомления',
+        'help': 'Помощь',
+        'contacts': 'Контакты',
+        'email': 'Почта',
+        'email_placeholder': 'Введите почту',
+        'login': 'Логин',
+        'login_placeholder': 'Введите логин',
+        'password': 'Пароль',
+        'password_placeholder': 'Введите пароль',
+        'message': 'Сообщение',
+        'message_placeholder': 'Введите сообщение',
+        'upload': 'Загрузить',
     },
     'header': {
-        'modal_title': 'privet',
-        'modal_question': 'privet',
+        'modal_title': 'Выход из личного кабинета',
+        'modal_question': 'Вы уверены, что хотите выйти из личного кабинета?',
     },
     'auth': {
-        'welcome': 'privet',
-        'auth_title1': 'privet',
-        'auth_title2': 'privet',
-        'forgot_password': 'privet',
-        'enter': 'privet',
-        'register_': 'privet',
+        'welcome': 'Добро пожаловать!',
+        'auth_title1': 'Введите логин и пароль',
+        'auth_title2': 'Введите свои данные',
+        'forgot_password': 'Забыли пароль?',
+        'enter': 'Войти в систему',
+        'register': 'Зарегистрироваться',
     },
     'contacts': {
-        'support': 'privet',
-        'text': 'privet',
-        'our_contacts': 'privet',
-        'phones': 'privet',
-        'phone1': 'privet',
-        'phone2': 'privet',
-        'select_label': 'privet',
-        'select_placeholder': 'privet',
-        'select_option1': 'privet',
-        'select_option2': 'privet',
-        'select_option3': 'privet',
-        'email_placeholder': 'privet',
+        'support': 'Служба поддержки',
+        'text': (
+            'Если у Вас возникнут вопросы, можете обращаться службу '
+            'поддержки по телефону либо отправить сообщение, мы '
+            'обязательно свяжемся с Вами и поможем!'
+        ),
+        'our_contacts': 'Наши контакты',
+        'phones': 'Телефоны',
+        'phone1': '87212777777',
+        'phone2': '+77776666666',
+        'select_label': 'Тема',
+        'select_placeholder': 'Выберите из списка',
+        'select_option1': 'Тема 1',
+        'select_option2': 'Тема 2',
+        'select_option3': 'Тема 3',
+        'email_placeholder': 'Введите личный email',
     },
     'help': {
-        'title': 'privet',
-        'questions': 'privet',
-        'write_us': 'privet',
+        'title': 'База знаний',
     },
     'main': {
-        'title1': 'privet',
-        'text1': 'privet',
-        'text2': 'privet',
-        'text3': 'privet',
-        'title2': 'privet',
-        'text4': 'privet',
-        'button_text': 'privet',
-        'title3': 'privet',
+        'title1': 'Практика для QA инженеров',
+        'text1': 'Наша миссия',
+        'text2': (
+            '— помочь тем, кто стремится войти в область информационных '
+            'технологий, освоить профессию тестировщика и набраться '
+            'практических навыков.'
+        ),
+        'text3': (
+            'Абсолютно верно, теоретическое обучение - это только начало. '
+            'Существует множество книг и материалов о тестировании, но чтобы '
+            'стать квалифицированным специалистом в области QA, нужно '
+            'получить практический опыт.'
+        ),
+        'title2': 'Обучение на этом курсе — как симулятор стажировки',
+        'text4': (
+            'Мы предоставляем нашим студентам возможность не только учить '
+            'теорию, но и применять полученные знания на практических задачах '
+            'и проектах, что позволит набраться опыта, приближенного к '
+            'реальным условиям работы QA - специалиста.'
+        ),
+        'button_text': 'Начать обучение',
+        'title3': 'Вопросы и ответы',
     },
     'restore': {
-        'restore_password': 'privet',
-        'text': 'privet',
-        'button_text': 'privet',
-        'modal_title': 'privet',
-        'modal_agreements': 'privet',
-        'modal_option1': 'privet',
-        'modal_option2': 'privet',
-        'modal_option3': 'privet',
-        'modal_option4': 'privet',
-        'modal_check1': 'privet',
-        'modal_check2': 'privet',
-        'modal_check3': 'privet',
-        'modal_check4': 'privet',
+        'restore_password': 'Восстановление пароля',
+        'text': (
+            'На указанный Вами e-mail будет отправлено письмо, с '
+            'новым сгенерированным паролем'
+        ),
+        'button_text': 'Отправить код подтверждения',
+        'modal_title': 'Вход в систему «Аналитика»',
+        'modal_agreements': 'ТРЕБУЕТСЯ ВАШЕ СОГЛАСИЕ ПО СЛЕДУЮЩИМ ПУНКТАМ:',
+        'modal_option1': (
+            'Я подтверждаю, что вся представленная '
+            'информация является достоверной и точной;'
+        ),
+        'modal_option2': (
+            'Я несу ответственность в соответствии с '
+            'действующим законодательством РК за предоставление заведомо '
+            'ложных или неполных сведений;'
+        ),
+        'modal_option3': (
+            'Я выражаю свое согласие на необходимое '
+            'использование и обработку своих персональных данных, в том числе '
+            'в информационных системах;'
+        ),
+        'modal_option4': (
+            'В случае обнаружения представленной '
+            'пользователями неполной и/или недостоверной информации, '
+            'услугодатель ответственности не несет.'
+        ),
+        'modal_check1': (
+            'Я подтверждаю свое согласие со всеми вышеперечисленными пунктами'
+        ),
+        'modal_check2': 'С пользовательским соглашением',
+        'modal_check3': 'С политикой конфиденциальности',
+        'modal_check4': 'ознакомлен(-а) и согласен(-на)',
     },
     'subscription': {
-        'button_text1': 'privet',
-        'button_text2': 'privet',
-        'button_text3': 'privet',
+        'button_text1': 'Входит в текущую подписку',
+        'button_text2': 'Текущая подписка',
+        'button_text3': 'Приобрести',
+    },
+    'profile_user': {
+        'study': 'Обучение',
+        'secure': 'Безопасность',
+        'achievement': 'Достижения',
+        'date_not_found': 'Дата не найдена',
+        'breadcrumb': 'Редактирование личных данных',
+        'activity': 'Активность в системе',
+        'firstname': 'Имя',
+        'secondname': 'Отчество (при наличии)',
+        'lastname': 'Фамилия',
+        'birthday': 'Дата рождения',
+        'gender': 'Пол',
+        'upload_avatar': 'Загрузите аватарку',
+    },
+    'secure': {
+        'change_password': 'Смена пароля',
+        'current_password': 'Текущий пароль',
+        'new_password': 'Новый пароль',
+        'confirm_password': 'Подтверждение пароля',
+    },
+    'achievements': {
+        'my_achievements': 'Мои достижения',
+        'level': 'Уровень',
+        'tests_completed': 'Пройденых тестов',
+        'tasks_completed': 'Выполненных заданий',
+        'not_passed': 'Нет пройденных',
+        'achievements_week': 'Успехи за неделю',
+        'achievements_api': 'За тестирование API',
+        'achievements_grade': 'За тестирование по грейду',
+        'achievements_db': 'За тестирование БД',
+        'achievements_month': 'Успехи за месяц',
     },
     'tasks': {
-        'breadcrumb': 'privet',
-        'loading': 'privet',
-        'button_text1': 'privet',
-        'button_text2': 'privet',
-        'button_text3': 'privet',
+        'breadcrumb': 'Практики',
+        'loading': 'Загрузка, подождите...',
+        'button_text1': 'Добавить тестовый кейс',
+        'button_text2': 'Проверить',
+        'button_text3': 'Перейти',
+    },
+    'question_banner': {
+        'questions': 'Возникли вопросы?',
+        'write_us': 'Написать нам',
     },
     'errors': {
-        'incorect_email': 'privet',
-        'required_email': 'privet',
-        'required_login': 'privet',
-        'required_password': 'privet',
-        'requirement_password': 'privet',
-        'error400': 'privet',
-        'error409': 'privet',
-        'error500': 'privet',
-    }
+        'required': 'Поле обязательно',
+        'incorect_email': 'Введите корректную почту',
+        'required_email': 'Почта это обязательное поле',
+        'required_login': 'Логин это обязательное поле',
+        'required_password': 'Пароль это обязательное поле',
+        'requirement_password': (
+            'Пароль должен быть не менее 6 символов, включать '
+            'заглавные и строчные буквы, цифры и специальные символы'
+        ),
+        'error400': 'Неверная почта или пароль',
+        'error409': 'Пользователь уже существует',
+        'error500': 'Что то пошло не так, попробуйте еще раз',
+    },
+    'months': {
+        'january': 'янв.',
+        'february': 'фев.',
+        'march': 'мар.',
+        'april': 'апр.',
+        'may': 'мая',
+        'june': 'июня',
+        'july': 'июля',
+        'august': 'авг.',
+        'september': 'сен.',
+        'october': 'окт.',
+        'november': 'ноя.',
+        'december': 'дек.',
+    },
 }
 
 WRONG_CREATE_SCHEME = {
@@ -211,4 +304,3 @@ class TestGetLocale:
         response = await new_client.get('/locales/')
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == locales_count
-
