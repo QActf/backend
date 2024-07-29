@@ -6,7 +6,7 @@ from fastapi_users import (
     BaseUserManager, FastAPIUsers, IntegerIDMixin, InvalidPasswordException,
 )
 from fastapi_users.authentication import (
-    AuthenticationBackend, BearerTransport, JWTStrategy,
+    AuthenticationBackend, BearerTransport, CookieTransport, JWTStrategy,
 )
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -27,6 +27,8 @@ async def get_user_db(session: AsyncSession = Depends(get_async_session)):
 
 bearer_transport = BearerTransport(tokenUrl='auth/jwt/login')
 
+cookie_transport = CookieTransport()
+
 
 def get_jwt_strategy() -> JWTStrategy:
     return JWTStrategy(
@@ -34,10 +36,16 @@ def get_jwt_strategy() -> JWTStrategy:
     )
 
 
-auth_backend = AuthenticationBackend(
+auth_backend_jwt = AuthenticationBackend(
     name='jwt_auth',
     transport=bearer_transport,
     get_strategy=get_jwt_strategy,
+)
+
+auth_backend_cookie = AuthenticationBackend(
+    name='cookie_auth',
+    transport=cookie_transport,
+    get_strategy=get_jwt_strategy
 )
 
 
@@ -76,7 +84,7 @@ async def get_user_manager(user_db=Depends(get_user_db)):
 
 fastapi_users = FastAPIUsers[User, int](
     get_user_manager,
-    [auth_backend],
+    [auth_backend_jwt, auth_backend_cookie],
 )
 
 current_user = fastapi_users.current_user(active=True)
