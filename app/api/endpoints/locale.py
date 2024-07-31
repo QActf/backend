@@ -20,7 +20,7 @@ router = APIRouter()
     status_code=status.HTTP_201_CREATED
 )
 async def create_locale(
-    locale: LocaleCreate = Body(example=CREATE_SCHEME),
+    locale: LocaleCreate = Body(example=CREATE_SCHEMA),
     session: AsyncSession = Depends(get_async_session)
 ):
     """Создать локаль."""
