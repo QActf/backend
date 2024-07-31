@@ -45,7 +45,7 @@ auth_backend_jwt = AuthenticationBackend(
 auth_backend_cookie = AuthenticationBackend(
     name='cookie_auth',
     transport=cookie_transport,
-    get_strategy=get_jwt_strategy
+    get_strategy=get_jwt_strategy,
 )
 
 
