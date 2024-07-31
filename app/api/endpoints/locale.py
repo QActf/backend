@@ -8,7 +8,7 @@ from app.crud import locale_crud
 from app.schemas.locale import (
     LocaleCreate, LocaleCreated, LocaleRead, LocaleReadByID, LocaleReadByLang,
 )
-from tests.test_locale import CREATE_SCHEME
+from tests.test_locale import CREATE_SCHEMA
 
 router = APIRouter()
 
