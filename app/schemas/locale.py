@@ -320,5 +320,6 @@ class LocaleReadByID(BaseModel):
     errors: ErrorsRead
     months: MonthsCreate
 
+
 class LocaleReadByLang(LocaleReadByID):
     language: str
