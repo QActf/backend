@@ -4,9 +4,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Locale
 
-from .utils import get_obj_count
+from .utils import get_obj_by_id, get_obj_count
 
-CREATE_SCHEME = {
+CREATE_SCHEMA = {
     'language': 'ru',
     'common': {
         'all_notification': 'Все уведомления',
@@ -203,9 +203,16 @@ CREATE_SCHEME = {
     },
 }
 
-WRONG_CREATE_SCHEME = {
+WRONG_SCHEMA = {
     'language': 'en',
+    'common': {
+        'ok': 'ok',
+    }
 }
+
+UPDATE_SCHEMA = dict(
+    CREATE_SCHEMA, common={**CREATE_SCHEMA['common'], 'ok': 'ok'}
+)
 
 
 class TestCreateLocale:
@@ -219,7 +226,7 @@ class TestCreateLocale:
         assert locales == 0
         response: Response = await auth_superuser.post(
             '/locales/',
-            json=CREATE_SCHEME
+            json=CREATE_SCHEMA
         )
         assert response.status_code == status.HTTP_201_CREATED
         new_locale = await get_obj_count(Locale, db_session)
@@ -234,7 +241,7 @@ class TestCreateLocale:
         locales_count = await get_obj_count(Locale, db_session)
         response = await auth_superuser.post(
             '/locales/',
-            json=WRONG_CREATE_SCHEME,
+            json=WRONG_SCHEMA,
         )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
         new_locales_count = await get_obj_count(Locale, db_session)
@@ -246,11 +253,11 @@ class TestCreateLocale:
             auth_superuser: TestClient,
     ):
         """Тест запрета создания дубликата локали."""
-        await auth_superuser.post('/locales/', json=CREATE_SCHEME)
+        await auth_superuser.post('/locales/', json=CREATE_SCHEMA)
         locales_count = await get_obj_count(Locale, db_session)
         response: Response = await auth_superuser.post(
             '/locales/',
-            json=CREATE_SCHEME,
+            json=CREATE_SCHEMA,
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         new_locales_count = await get_obj_count(Locale, db_session)
@@ -263,7 +270,7 @@ class TestCreateLocale:
         """Тест запрета создания локали неавторизованным пользователем."""
         response: Response = await new_client.post(
             '/locales/',
-            json=CREATE_SCHEME
+            json=CREATE_SCHEMA,
         )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -274,7 +281,86 @@ class TestCreateLocale:
         """Тест запрета создания локали пользователем."""
         response: Response = await auth_client.post(
             '/locales/',
-            json=CREATE_SCHEME,
+            json=CREATE_SCHEMA,
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+class TestPutLocale:
+    async def test_update_locale(
+            self,
+            db_session: AsyncSession,
+            auth_superuser: TestClient,
+    ):
+        """Тест обновления локали."""
+        locales_count = await get_obj_count(Locale, db_session)
+        assert locales_count == 0
+        response = await auth_superuser.put(
+            '/locales/',
+            json=CREATE_SCHEMA,
+        )
+        assert response.status_code == status.HTTP_200_OK
+        new_locales_count = await get_obj_count(Locale, db_session)
+        assert new_locales_count == locales_count + 1
+
+        response = await auth_superuser.put(
+            '/locales/',
+            json=UPDATE_SCHEMA,
+        )
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json()['common']['ok'] == UPDATE_SCHEMA['common']['ok']
+        db_obj = await get_obj_by_id(
+            index=1,
+            model=Locale,
+            related_objects=[Locale.common],
+            session=db_session,
+        )
+        assert db_obj.common.ok == UPDATE_SCHEMA['common']['ok']
+
+    async def test_update_locale_wrong_data(
+            self,
+            mock_locales,
+            db_session: AsyncSession,
+            auth_superuser: TestClient,
+    ):
+        """Тест попытки обновления локали с неправильными данными."""
+        locales_count = await get_obj_count(Locale, db_session)
+        response = await auth_superuser.put(
+            '/locales/',
+            json=WRONG_SCHEMA,
+        )
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        new_locales_count = await get_obj_count(Locale, db_session)
+        assert locales_count == new_locales_count
+        db_obj = await get_obj_by_id(
+            index=1,
+            model=Locale,
+            related_objects=[Locale.common],
+            session=db_session,
+        )
+        assert db_obj.common.ok == CREATE_SCHEMA['common']['ok']
+
+    async def test_update_locale_unauthorized_nonauth(
+            self,
+            mock_locales,
+            new_client: TestClient,
+    ):
+        """Тест запрета обновления локали неавторизованным пользователем."""
+        response: Response = await new_client.put(
+            '/locales/',
+            json=UPDATE_SCHEMA,
+        )
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    async def test_update_locale_forbidden_auth_user(
+            self,
+            mock_locales,
+            auth_client: TestClient,
+    ):
+        """Тест запрета обновления локали пользователем."""
+        response: Response = await auth_client.put(
+            '/locales/',
+            json=UPDATE_SCHEMA,
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
@@ -293,6 +379,19 @@ class TestGetLocale:
         response = await new_client.get('/locales/100')
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
+    async def test_get_locale_by_language(
+            self,
+            mock_locales,
+            db_session: AsyncSession,
+            new_client: TestClient
+    ):
+        """Тест получения локали по language."""
+        response = await new_client.get('/locales/lang/ch')
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json()['language'] == 'ch'
+        response = await new_client.get('/locales/lang/xx')
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
     async def test_get_all_locales(
             self,
             mock_locales,
@@ -304,3 +403,38 @@ class TestGetLocale:
         response = await new_client.get('/locales/')
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == locales_count
+
+
+class TestDeleteLocale:
+    async def test_delete_locale_by_language(
+            self,
+            mock_locales,
+            db_session: AsyncSession,
+            auth_superuser: TestClient
+    ):
+        """Тест удаления локали по language."""
+        locales_count = await get_obj_count(Locale, db_session)
+        response = await auth_superuser.delete('/locales/lang/ch')
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        new_locales_count = await get_obj_count(Locale, db_session)
+        assert locales_count - 1 == new_locales_count
+
+    async def test_delete_locale_unauthorized_nonauth(
+            self,
+            mock_locales,
+            db_session: AsyncSession,
+            new_client: TestClient
+    ):
+        """Тест запрета удаления локали неавторизованным пользователем."""
+        response = await new_client.delete('/locales/lang/ch')
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    async def test_delete_locale_forbidden_auth_user(
+            self,
+            mock_locales,
+            db_session: AsyncSession,
+            auth_client: TestClient
+    ):
+        """Тест запрета удаления локали пользователем."""
+        response = await auth_client.delete('/locales/lang/ch')
+        assert response.status_code == status.HTTP_403_FORBIDDEN

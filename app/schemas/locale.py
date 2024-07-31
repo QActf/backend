@@ -319,3 +319,7 @@ class LocaleReadByID(BaseModel):
     tasks: TasksRead
     errors: ErrorsRead
     months: MonthsCreate
+
+
+class LocaleReadByLang(LocaleReadByID):
+    language: str
