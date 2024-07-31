@@ -6,7 +6,7 @@ from app.models import Locale
 
 from .utils import get_obj_by_id, get_obj_count
 
-CREATE_SCHEME = {
+CREATE_SCHEMA = {
     'language': 'ru',
     'common': {
         'all_notification': 'Все уведомления',
