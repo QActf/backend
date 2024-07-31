@@ -12,7 +12,8 @@ from app.api_docs_responses.user import (
 from app.api_docs_responses.utils_docs import USER_VALUE
 from app.core.db import get_async_session
 from app.core.user import (
-    UserManager, auth_backend, current_user, fastapi_users, get_user_manager,
+    UserManager, auth_backend_cookie, auth_backend_jwt, current_user,
+    fastapi_users, get_user_manager,
 )
 from app.crud.hasher import Hasher
 from app.crud.user import user_crud
@@ -25,8 +26,14 @@ from app.services.token_generator.tokens import token_generator
 router = APIRouter()
 
 router.include_router(
-    fastapi_users.get_auth_router(auth_backend),
+    fastapi_users.get_auth_router(auth_backend_jwt),
     prefix='/auth/jwt',
+    tags=['auth'],
+)
+
+router.include_router(
+    fastapi_users.get_auth_router(auth_backend_cookie),
+    prefix='/auth/cookie',
     tags=['auth'],
 )
 

@@ -13,6 +13,6 @@ class UserAdmin(ModelView, model=User):
     name_plural = 'Users'
     icon = 'fa-solid fa-user'
     category = 'accounts'
-    column_searchable_list = [User.username]
+    column_searchable_list = [User.username, User.email]
     column_sortable_list = [User.id]
     column_formatters = {User.username: lambda m, a: m.username[:10]}
