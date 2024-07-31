@@ -5,6 +5,8 @@ class CommonCreate(BaseModel):
     all_notification: str
     profile: str
     ok: str
+    save: str
+    edit: str
     exit: str
     cancel: str
     main: str
@@ -22,6 +24,7 @@ class CommonCreate(BaseModel):
     password_placeholder: str
     message: str
     message_placeholder: str
+    upload: str
 
 
 class CommonRead(CommonCreate):
@@ -50,14 +53,13 @@ class AuthCreate(BaseModel):
     auth_title2: str
     forgot_password: str
     enter: str
-    register_: str
+    register: str
 
 
 class AuthRead(AuthCreate):
     auth_title1: str = Field(serialization_alias='authTitle1')
     auth_title2: str = Field(serialization_alias='authTitle2')
     forgot_password: str = Field(serialization_alias='forgotPassword')
-    register_: str = Field(serialization_alias='register')
 
 
 class ContactsCreate(BaseModel):
@@ -87,12 +89,6 @@ class ContactsRead(ContactsCreate):
 
 class HelpCreate(BaseModel):
     title: str
-    questions: str
-    write_us: str
-
-
-class HelpRead(HelpCreate):
-    write_us: str = Field(serialization_alias='writeUs')
 
 
 class MainCreate(BaseModel):
@@ -153,6 +149,65 @@ class SubscriptionRead(SubscriptionCreate):
     button_text3: str = Field(serialization_alias='buttonText3')
 
 
+class ProfileUserCreate(BaseModel):
+    study: str
+    secure: str
+    achievement: str
+    date_not_found: str
+    breadcrumb: str
+    activity: str
+    firstname: str
+    secondname: str
+    lastname: str
+    birthday: str
+    gender: str
+    upload_avatar: str
+
+
+class ProfileUserRead(ProfileUserCreate):
+    date_not_found: str = Field(serialization_alias='dateNotFound')
+    upload_avatar: str = Field(serialization_alias='uploadAvatar')
+
+
+class SecureCreate(BaseModel):
+    change_password: str
+    current_password: str
+    new_password: str
+    confirm_password: str
+
+
+class SecureRead(SecureCreate):
+    change_password: str = Field(serialization_alias='changePassword')
+    current_password: str = Field(serialization_alias='currentPassword')
+    new_password: str = Field(serialization_alias='newPassword')
+    confirm_password: str = Field(serialization_alias='confirmPassword')
+
+
+class AchievementsCreate(BaseModel):
+    my_achievements: str
+    level: str
+    tests_completed: str
+    tasks_completed: str
+    not_passed: str
+    achievements_week: str
+    achievements_api: str
+    achievements_grade: str
+    achievements_db: str
+    achievements_month: str
+
+
+class AchievementsRead(AchievementsCreate):
+    my_achievements: str = Field(serialization_alias='myAchievements')
+    tests_completed: str = Field(serialization_alias='testsCompleted')
+    tasks_completed: str = Field(serialization_alias='tasksCompleted')
+    not_passed: str = Field(serialization_alias='notPassed')
+    achievements_week: str = Field(serialization_alias='achievementsWeek')
+    achievements_api: str = Field(serialization_alias='achievementsAPI')
+    achievements_grade: str = Field(serialization_alias='achievementsGrade')
+    achievements_db: str = Field(serialization_alias='achievementsDB')
+    achievements_month: str = Field(serialization_alias='achievementsMonth')
+
+
 class TasksCreate(BaseModel):
     breadcrumb: str
     loading: str
@@ -167,7 +222,17 @@ class TasksRead(TasksCreate):
     button_text3: str = Field(serialization_alias='buttonText3')
 
 
+class QuestionBannerCreate(BaseModel):
+    questions: str
+    write_us: str
+
+
+class QuestionBannerRead(QuestionBannerCreate):
+    write_us: str = Field(serialization_alias='writeUs')
+
+
 class ErrorsCreate(BaseModel):
+    required: str
     incorect_email: str
     required_email: str
     required_login: str
@@ -188,6 +253,21 @@ class ErrorsRead(ErrorsCreate):
     )
 
 
+class MonthsCreate(BaseModel):
+    january: str
+    february: str
+    march: str
+    april: str
+    may: str
+    june: str
+    july: str
+    august: str
+    september: str
+    october: str
+    november: str
+    december: str
+
+
 class LocaleCreate(BaseModel):
     language: str
     common: CommonCreate
@@ -198,8 +278,13 @@ class LocaleCreate(BaseModel):
     main: MainCreate
     restore: RestoreCreate
     subscription: SubscriptionCreate
+    profile_user: ProfileUserCreate
+    secure: SecureCreate
+    achievements: AchievementsCreate
+    question_banner: QuestionBannerCreate
     tasks: TasksCreate
     errors: ErrorsCreate
+    months: MonthsCreate
 
 
 class LocaleCreated(LocaleCreate):
@@ -223,13 +308,17 @@ class LocaleReadByID(BaseModel):
     header: HeaderRead
     auth: AuthRead
     contacts: ContactsRead
-    help: HelpRead
+    help: HelpCreate
     main: MainRead
     restore: RestoreRead
     subscription: SubscriptionRead
+    profile_user: ProfileUserRead
+    secure: SecureRead
+    achievements: AchievementsRead
+    question_banner: QuestionBannerRead
     tasks: TasksRead
     errors: ErrorsRead
-
+    months: MonthsCreate
 
 class LocaleReadByLang(LocaleReadByID):
     language: str

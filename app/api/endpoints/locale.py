@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Body, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_obj_duplicate, check_obj_exists
@@ -8,6 +8,7 @@ from app.crud import locale_crud
 from app.schemas.locale import (
     LocaleCreate, LocaleCreated, LocaleRead, LocaleReadByID, LocaleReadByLang,
 )
+from tests.test_locale import CREATE_SCHEME
 
 router = APIRouter()
 
@@ -19,7 +20,7 @@ router = APIRouter()
     status_code=status.HTTP_201_CREATED
 )
 async def create_locale(
-    locale: LocaleCreate,
+    locale: LocaleCreate = Body(example=CREATE_SCHEME),
     session: AsyncSession = Depends(get_async_session)
 ):
     """Создать локаль."""
