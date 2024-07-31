@@ -76,7 +76,7 @@ jobs:
           script: |
             cd backend/
             git pull
-            cd backend/infra
+            cd infra/
             touch .env
             echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
             echo EMAIL_FROM=${{ secrets.EMAIL_FROM }} >> .env
