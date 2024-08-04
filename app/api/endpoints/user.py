@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, HTTPException, status
+from fastapi_users import InvalidPasswordException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.endpoints import register
@@ -10,9 +11,16 @@ from app.api_docs_responses.user import (
 )
 from app.api_docs_responses.utils_docs import USER_VALUE
 from app.core.db import get_async_session
-from app.core.user import auth_backend_cookie, auth_backend_jwt, fastapi_users
+from app.core.user import (
+    UserManager, auth_backend_cookie, auth_backend_jwt, current_user,
+    fastapi_users, get_user_manager,
+)
+from app.crud.hasher import Hasher
 from app.crud.user import user_crud
-from app.schemas.user import UserCreate, UserRead, UserReadRegister, UserUpdate
+from app.models import User
+from app.schemas.user import (
+    UserChangePassword, UserCreate, UserRead, UserReadRegister, UserUpdate,
+)
 from app.services.token_generator.tokens import token_generator
 
 router = APIRouter()
@@ -80,5 +88,56 @@ async def confirm_email(
         field_value=True,
         session=session,
     )
+
+
+@router.post(
+    path='/auth/change-password',
+    tags=['auth'],
+    status_code=status.HTTP_200_OK,
+    summary='Смена пароля пользователя.',
+    dependencies=[Depends(current_user)],
+)
+async def change_password(
+    old_password: str = Body(embed=True),
+    new_password: str = Body(embed=True),
+    confirm_new_password: str = Body(embed=True),
+    user: User = Depends(current_user),
+    user_manager: UserManager = Depends(get_user_manager),
+):
+    """Смена пароля пользователя."""
+    old_password_is_correct: bool = Hasher.verify_password(
+        plain_password=old_password,
+        hashed_password=user.hashed_password,
+    )
+    if not old_password_is_correct:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Старый пароль неверен.',
+        )
+    elif new_password != confirm_new_password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Новый пароль и подтверждение не совпадают.',
+        )
+    elif new_password == old_password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Вы уже используете данный пароль. Придумайте новый.',
+        )
+
+    try:
+        user_update = UserChangePassword(password=new_password)
+        await user_manager.update(
+            user_update=user_update,
+            user=user,
+            safe=True,
+        )
+    except InvalidPasswordException as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=error.reason,
+        )
+
+    return {'detail': 'Пароль был успешно изменен.'}
 
 add_router_doc(router)
