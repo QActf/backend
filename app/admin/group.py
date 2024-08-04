@@ -12,6 +12,6 @@ class GroupAdmin(ModelView, model=Group):
     name = 'Group'
     name_plural = 'Groups'
     icon = 'fa-solid fa-user-group'
-    category = 'accounts'
+    category = 'ACCOUNTS'
     column_searchable_list = [Group.name]
     column_sortable_list = [Group.id]

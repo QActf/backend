@@ -12,6 +12,6 @@ class ProfileAdmin(ModelView, model=Profile):
     name = 'Profile'
     name_plural = 'Profiles'
     icon = 'fa-regular fa-address-card'
-    category = 'accounts'
+    category = 'ACCOUNTS'
     column_searchable_list = [Profile.user]
     column_sortable_list = [Profile.id, Profile.birthday]

@@ -17,6 +17,6 @@ class AchievementAdmin(ModelView, model=Achievement):
     name = 'Achievement'
     name_plural = 'Achievements'
     icon = 'fa-solid fa-medal'
-    category = 'accounts'
+    category = 'ACCOUNTS'
     column_searchable_list = [Achievement.name]
     column_sortable_list = [Achievement.id]

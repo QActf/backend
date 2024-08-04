@@ -12,4 +12,4 @@ class TariffAdmin(ModelView, model=Tariff):
     name = 'Tariff'
     name_plural = 'Tariffs'
     icon = 'fa-solid fa-dollar-sign'
-    category = 'tariff'
+    category = 'TARIFF'

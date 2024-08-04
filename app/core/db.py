@@ -12,6 +12,9 @@ class PreBase:
 
     id = Column(Integer, primary_key=True)
 
+    def __repr__(self) -> str:
+        return self.__tablename__
+
 
 Base = declarative_base(cls=PreBase)
 
