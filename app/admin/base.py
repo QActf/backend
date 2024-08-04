@@ -1,22 +1,26 @@
 from app.admin import (
-    AchievementAdmin, CourseAdmin, ExaminationAdmin, GroupAdmin, ProfileAdmin,
-    TariffAdmin, TaskAdmin, UserAdmin,
+    AchievementAdmin, AchievementsAdmin, AuthAdmin, CommonAdmin, ContactsAdmin,
+    CourseAdmin, ErrorsAdmin, ExaminationAdmin, GroupAdmin, HeaderAdmin,
+    HelpAdmin, LocaleAdmin, MainAdmin, MonthsAdmin, ProfileAdmin,
+    ProfileUserAdmin, QuestionBannerAdmin, RestoreAdmin, SecureAdmin,
+    SubscriptionAdmin, TariffAdmin, TaskAdmin, TasksAdmin, UserAdmin,
 )
 
 admin_models = [
-    # category = 'accounts'
-    GroupAdmin,
-    UserAdmin,
-    ProfileAdmin,
-    AchievementAdmin,
+    # category = 'ACCOUNTS'
+    GroupAdmin, UserAdmin, ProfileAdmin, AchievementAdmin,
 
-    # category = 'Tariff'
+    # category = 'TARIFF'
     TariffAdmin,
 
-    # category = 'training'
-    CourseAdmin,
-    TaskAdmin,
-    ExaminationAdmin,
+    # category = 'TRAINING'
+    CourseAdmin, TaskAdmin, ExaminationAdmin,
+
+    # category = 'LANGUAGES'
+    LocaleAdmin, CommonAdmin, HeaderAdmin, AuthAdmin, ContactsAdmin,
+    HelpAdmin, MainAdmin, RestoreAdmin, SubscriptionAdmin,
+    ProfileUserAdmin, SecureAdmin, AchievementsAdmin, TasksAdmin,
+    QuestionBannerAdmin, ErrorsAdmin, MonthsAdmin,
 ]
 
 

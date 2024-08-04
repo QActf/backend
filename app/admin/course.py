@@ -18,6 +18,6 @@ class CourseAdmin(ModelView, model=Course):
     name = 'Course'
     name_plural = 'Courses'
     icon = 'fa-solid fa-book'
-    category = 'training'
+    category = 'TRAINING'
     column_searchable_list = [Course.name]
     column_sortable_list = [Course.id]

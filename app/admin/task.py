@@ -12,4 +12,4 @@ class TaskAdmin(ModelView, model=Task):
     name = 'Task'
     name_plural = 'Tasks'
     icon = 'fa-solid fa-list-check'
-    category = 'training'
+    category = 'TRAINING'

@@ -12,6 +12,6 @@ class ExaminationAdmin(ModelView, model=Examination):
     name = 'Examination'
     name_plural = 'Examinations'
     icon = 'fa-solid fa-graduation-cap'
-    category = 'training'
+    category = 'TRAINING'
     column_searchable_list = [Examination.name]
     column_sortable_list = [Examination.id]

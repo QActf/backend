@@ -26,6 +26,9 @@ class Locale(Base):
     errors: Mapped[Errors] = relationship(back_populates='locale')
     months: Mapped[Months] = relationship(back_populates='locale')
 
+    def __repr__(self):
+        return self.language
+
 
 class Common(Base):
     all_notification: Mapped[str]
