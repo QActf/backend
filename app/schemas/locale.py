@@ -53,13 +53,14 @@ class AuthCreate(BaseModel):
     auth_title2: str
     forgot_password: str
     enter: str
-    register: str
+    register_: str
 
 
 class AuthRead(AuthCreate):
     auth_title1: str = Field(serialization_alias='authTitle1')
     auth_title2: str = Field(serialization_alias='authTitle2')
     forgot_password: str = Field(serialization_alias='forgotPassword')
+    register_: str = Field(serialization_alias='register')
 
 
 class ContactsCreate(BaseModel):
