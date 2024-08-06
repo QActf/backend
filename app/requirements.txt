@@ -9,6 +9,8 @@ itsdangerous==2.1.2
 passlib==1.7.4
 pydantic==2.5.2
 pydantic-settings==2.1.0
+pytest==7.4.3
+pytest-asyncio==0.23.2
 sqladmin==0.16.0
 SQLAlchemy==2.0.23
 SQLAlchemy-Utils==0.41.2
