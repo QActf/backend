@@ -43,7 +43,7 @@ CREATE_SCHEMA = {
         'auth_title2': 'Введите свои данные',
         'forgot_password': 'Забыли пароль?',
         'enter': 'Войти в систему',
-        'register': 'Зарегистрироваться',
+        'register_': 'Зарегистрироваться',
     },
     'contacts': {
         'support': 'Служба поддержки',

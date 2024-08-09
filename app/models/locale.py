@@ -75,7 +75,7 @@ class Auth(Base):
     auth_title2: Mapped[str]
     forgot_password: Mapped[str]
     enter: Mapped[str]
-    register: Mapped[str]
+    register_: Mapped[str]
     locale_id = mapped_column(
         Integer, ForeignKey('locale.id')
     )
