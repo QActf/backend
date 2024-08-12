@@ -211,4 +211,3 @@ class TestGetLocale:
         response = await new_client.get('/locales/')
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == locales_count
-

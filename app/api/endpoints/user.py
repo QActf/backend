@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Depends, HTTPException, status, Form
+from fastapi import APIRouter, Body, Depends, Form, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.endpoints import register
@@ -11,10 +11,10 @@ from app.api_docs_responses.user import (
 from app.api_docs_responses.utils_docs import USER_VALUE
 from app.core.db import get_async_session
 from app.core.user import (
-    auth_backend_cookie, auth_backend_jwt, fastapi_users, current_user
+    auth_backend_cookie, auth_backend_jwt, current_user, fastapi_users,
 )
-from app.crud.user import user_crud
 from app.crud.question import question_crud
+from app.crud.user import user_crud
 from app.models import User
 from app.schemas.user import UserCreate, UserRead, UserReadRegister, UserUpdate
 from app.services.token_generator.tokens import token_generator

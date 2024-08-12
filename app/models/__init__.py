@@ -8,9 +8,9 @@ from .locale import (  # noqa
 )
 from .notification import Notification  # noqa
 from .profile import Profile  # noqa
+from .question import Question  # noqa
 from .tariff import Tariff  # noqa
 from .task import Task  # noqa
-from .user import User  # noqa
 from .theme import Theme  # noqa
 from .themescategory import ThemesCategory  # noqa
-from .question import Question  # noqa
+from .user import User  # noqa
