@@ -4,7 +4,7 @@ from fastapi_users.manager import BaseUserManager
 from fastapi_users.router.common import ErrorCode
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api_docs_responses.register import CREATE_REGISTER
+from app.api_docs_responses.register import CREATE_REGISTER, REGISTER_SUMMARY
 from app.core.db import get_async_session
 from app.core.user import get_user_manager
 from app.crud import profile_crud
@@ -24,7 +24,8 @@ def get_register_router(
         response_model=user_schema,
         status_code=status.HTTP_201_CREATED,
         name='register:register',
-        responses=CREATE_REGISTER
+        responses=CREATE_REGISTER,
+        summary=REGISTER_SUMMARY,
     )
     async def register(
         request: Request,

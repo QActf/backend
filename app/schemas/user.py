@@ -36,3 +36,7 @@ class UserCreate(schemas.BaseUserCreate):
 class UserUpdate(schemas.BaseUserUpdate):
     role: Optional[Role]
     username: Optional[str]
+
+
+class UserChangePassword(schemas.BaseUserUpdate):
+    password: str

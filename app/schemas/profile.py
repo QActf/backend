@@ -51,4 +51,4 @@ class ProfileUpdate(BaseModel):
 
 
 class ProfileCreate(ProfileUpdate):
-    pass
+    user_id: int

@@ -4,8 +4,8 @@ from sqlalchemy.orm import selectinload
 
 from app.crud.base import CRUDBase
 from app.models import (
-    Auth, Common, Contacts, Errors, Header, Help, Locale, Main, Restore,
-    Subscription, Tasks,
+    Achievements, Auth, Common, Contacts, Errors, Header, Help, Locale, Main,
+    Months, ProfileUser, QuestionBanner, Restore, Secure, Subscription, Tasks,
 )
 from app.schemas.locale import LocaleCreate
 
@@ -32,24 +32,48 @@ class LocaleCRUD(CRUDBase):
         restore = Restore(**restore_data, locale_id=language.id)
         subscription_data = locale.subscription.model_dump()
         subscription = Subscription(**subscription_data, locale_id=language.id)
+        profile_user_data = locale.profile_user.model_dump()
+        profile_user = ProfileUser(
+            **profile_user_data, locale_id=language.id
+        )
+        secure_data = locale.secure.model_dump()
+        secure = Secure(**secure_data, locale_id=language.id)
+        achievements_data = locale.achievements.model_dump()
+        achievements = Achievements(**achievements_data, locale_id=language.id)
         tasks_data = locale.tasks.model_dump()
         tasks = Tasks(**tasks_data, locale_id=language.id)
+        question_banner_data = locale.question_banner.model_dump()
+        question_banner = QuestionBanner(
+            **question_banner_data, locale_id=language.id
+        )
         errors_data = locale.errors.model_dump()
         errors = Errors(**errors_data, locale_id=language.id)
+        months_data = locale.months.model_dump()
+        months = Months(**months_data, locale_id=language.id)
         session.add_all(
             (
                 common, header, auth, contacts, help_, main,
-                restore, subscription, tasks, errors
+                restore, subscription, profile_user, secure, achievements,
+                tasks, question_banner, errors, months,
             )
         )
         await session.commit()
         await session.refresh(language)
-        return await self.get_by_id(language.id, session)
+        return await self.get_by_attr(
+            attr_name='id',
+            attr_value=language.id,
+            session=session,
+        )
 
-    async def get_by_id(self, id, session: AsyncSession):
+    async def get_by_attr(
+            self,
+            attr_name: str,
+            attr_value: str,
+            session: AsyncSession,
+    ):
         stmt = (
             select(Locale)
-            .where(Locale.id == id)
+            .where(getattr(Locale, attr_name) == attr_value)
             .options(
                 selectinload(Locale.common),
                 selectinload(Locale.header),
@@ -59,12 +83,54 @@ class LocaleCRUD(CRUDBase):
                 selectinload(Locale.main),
                 selectinload(Locale.restore),
                 selectinload(Locale.subscription),
+                selectinload(Locale.profile_user),
+                selectinload(Locale.secure),
+                selectinload(Locale.achievements),
                 selectinload(Locale.tasks),
-                selectinload(Locale.errors)
+                selectinload(Locale.question_banner),
+                selectinload(Locale.errors),
+                selectinload(Locale.months),
             )
         )
         locale = await session.execute(stmt)
         return locale.scalars().first()
+
+    async def update(
+            self,
+            db_obj: Locale,
+            obj_in: LocaleCreate,
+            session: AsyncSession,
+    ):
+        attributes = obj_in.__annotations__
+
+        for attr in attributes:
+            if attr == 'language':
+                db_obj.language = obj_in.language
+            else:
+                data = getattr(obj_in, attr).model_dump()
+                for key, value in data.items():
+                    setattr(getattr(db_obj, attr), key, value)
+
+        session.add(db_obj)
+        await session.commit()
+        await session.refresh(db_obj)
+        return db_obj
+
+    async def remove(
+            self,
+            db_obj: Locale,
+            session: AsyncSession,
+    ):
+        attributes = db_obj.__annotations__
+
+        for attr in attributes:
+            if attr != 'language':
+                related_obj = getattr(db_obj, attr)
+                await session.delete(related_obj)
+
+        await session.delete(db_obj)
+        await session.commit()
+        return db_obj
 
 
 locale_crud = LocaleCRUD(Locale)
