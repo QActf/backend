@@ -1,3 +1,5 @@
+import logging.config
+
 from fastapi import FastAPI, applications
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
@@ -9,6 +11,10 @@ from app.api.routers import main_router
 from app.core.config import settings
 from app.core.db import engine
 from app.core.init_db import create_first_superuser
+from app.logger_config import LOGGING_CONFIG
+
+logging.config.dictConfig(LOGGING_CONFIG)
+logger = logging.getLogger(__name__)
 
 
 def swagger_monkey_patch(*args, **kwargs):
@@ -54,3 +60,10 @@ admin = Admin(
 async def startup():
     await create_first_superuser()
     await add_admin_models(admin)
+
+    logger.info("app startup complete")
+
+
+@app.on_event('shutdown')
+async def shutdown():
+    logger.info("app shutdown complete")

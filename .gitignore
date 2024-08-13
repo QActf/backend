@@ -142,3 +142,4 @@ dmypy.json
 
 # fastapi stuff
 fastapi.db
+/app/logs/
