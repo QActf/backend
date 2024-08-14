@@ -11,7 +11,7 @@ from app.api.routers import main_router
 from app.core.config import settings
 from app.core.db import engine
 from app.core.init_db import create_first_superuser
-from app.logger_config import LOGGING_CONFIG
+from app.core.logger_config import LOGGING_CONFIG
 
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
