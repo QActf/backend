@@ -19,41 +19,36 @@ logger = logging.getLogger(__name__)
 
 def swagger_monkey_patch(*args, **kwargs):
     return get_swagger_ui_html(
-        *args, **kwargs,
+        *args,
+        **kwargs,
         swagger_js_url=(
-            'https://cdn.staticfile.net/swagger-ui/5.1.0/'
-            'swagger-ui-bundle.min.js'
+            'https://cdn.staticfile.net/swagger-ui/5.1.0/' 'swagger-ui-bundle.min.js'
         ),
         swagger_css_url=(
             'https://cdn.staticfile.net/swagger-ui/5.1.0/swagger-ui.min.css'
-        ))
+        ),
+    )
 
 
 applications.get_swagger_ui_html = swagger_monkey_patch
 
 app = FastAPI(title=settings.app_title)
 
-origins = [
-    f'http://{settings.host}'
-]
+origins = [f'http://{settings.host}']
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=['*'],
-    allow_headers=['*']
+    allow_headers=['*'],
 )
 
 app.include_router(main_router)
 
 authentication_backend = AdminAuth(secret_key=settings.secret)
 
-admin = Admin(
-    engine=engine,
-    app=app,
-    authentication_backend=authentication_backend
-)
+admin = Admin(engine=engine, app=app, authentication_backend=authentication_backend)
 
 
 @app.on_event('startup')
@@ -61,9 +56,9 @@ async def startup():
     await create_first_superuser()
     await add_admin_models(admin)
 
-    logger.info("app startup complete")
+    logger.info("Application started.")
 
 
 @app.on_event('shutdown')
 async def shutdown():
-    logger.info("app shutdown complete")
+    logger.info("Application stopped.")
