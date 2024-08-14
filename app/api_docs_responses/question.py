@@ -1,4 +1,6 @@
-from app.api_docs_responses.utils_docs import get_200_docs, get_404_docs
+from app.api_docs_responses.utils_docs import (
+    get_200_docs, get_401_docs, get_404_docs,
+)
 
 questions_with_all_fields = {
     'id': 0,
@@ -43,10 +45,12 @@ content_question = {
 
 get_questions_response = {
     **get_200_docs(content_questions),
+    **get_401_docs(content_questions),
 }
 
 get_question_response = {
     **get_200_docs(content_question),
+    **get_401_docs(content_questions),
     **get_404_docs('Объект question не найден.'),
 }
 
@@ -62,6 +66,7 @@ GET_QUESTIONS = dict(
 
     Returns:
     - HTTP 200 OK: Если список часто задаваемых вопросов успешно получен.
+    - HTTP 401 Unauthorized: Если пользователь не авторизован.
     """
 )
 
@@ -76,6 +81,7 @@ GET_QUESTION = dict(
 
     Returns:
     - HTTP 200 OK: Если вопрос успешно получен.
+    - HTTP 401 Unauthorized: Если пользователь не авторизован.
     - HTTP 404 Not Found: Если вопрос с указанным `question_id` не существует.
     """
 )
