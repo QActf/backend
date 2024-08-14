@@ -33,6 +33,11 @@ LOGGING_CONFIG = {
             "datefmt": "%Y.%m.%d %H:%M:%S",
             "fmt": "[%(asctime)s.%(msecs)03d] %(levelname)s | %(name)s:%(funcName)s.%(lineno)d - %(message)s",
         },
+        "app_middleware_formatter": {
+            "()": "logging.Formatter",
+            "datefmt": "%Y.%m.%d %H:%M:%S",
+            "fmt": "[%(asctime)s.%(msecs)03d] %(levelname)s - %(message)s",
+        },
     },
     "handlers": {
         Handlers.console.value: {
@@ -45,11 +50,28 @@ LOGGING_CONFIG = {
             "class": "logging.FileHandler",
             "filename": LOGGER_FILE_PATH,
         },
+        Handlers.console.value
+        + "_middleware": {
+            "formatter": "app_middleware_formatter",
+            "class": "logging.StreamHandler",
+            "stream": "ext://sys.stdout",
+        },
+        Handlers.app_file.value
+        + "_middleware": {
+            "formatter": "app_middleware_formatter",
+            "class": "logging.FileHandler",
+            "filename": LOGGER_FILE_PATH,
+        },
     },
     "loggers": {
         "app": {
             "handlers": HANDLERS,
             "level": LOG_LEVEL,
+        },
+        "app.core.middleware": {
+            "handlers": [h + "_middleware" for h in HANDLERS],
+            "level": LOG_LEVEL,
+            "propagate": False,
         },
     },
 }
