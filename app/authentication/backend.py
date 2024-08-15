@@ -12,12 +12,12 @@ class AuthenticationBackendWithLogger(backend.AuthenticationBackend):
         self, strategy: Strategy[models.UP, models.ID], user: models.UP
     ) -> Response:
         response = await super().login(strategy, user)
-        logger.info(f"Logged in by `{user.email}`.")
+        logger.info(f"Пользователь `{user.email}` вошел.")
         return response
 
     async def logout(
         self, strategy: Strategy[models.UP, models.ID], user: models.UP, token: str
     ) -> Response:
         response = await super().logout(strategy, user, token)
-        logger.info(f"Logged out by `{user.email}`.")
+        logger.info(f"Пользователь `{user.email}` вышел.")
         return response
