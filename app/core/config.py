@@ -33,8 +33,8 @@ class Settings(BaseSettings):
     host: str = 'localhost'
 
     # =========== logging ============
-    HANDLERS: str
-    LOG_LEVEL: str
+    HANDLERS: str = "console"
+    LOG_LEVEL: str = "INFO"
 
     class Config:
         env_file = 'infra/.env'
