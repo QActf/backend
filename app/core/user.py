@@ -90,12 +90,14 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         request: Optional[Request] = None,
     ) -> models.UP:
         user_role = user.role
-        new_role = user_update.role
+        user_is_superuser = user.is_superuser
         updated_user = await super().update(user_update, user, safe, request)
-        if user_role != new_role:
+        if user_role != updated_user.role:
             logger.warning(
-                f"User `{user.email}` change role from `{user_role}` to `{new_role}`."
+                f"Пользователь `{user.email}` сменил роль с `{user_role}` на `{updated_user.role}`."
             )
+        if not user_is_superuser and updated_user.is_superuser:
+            logger.warning(f"Пользователь `{user.email}` теперь `superuser`.")
         return updated_user
 
 
