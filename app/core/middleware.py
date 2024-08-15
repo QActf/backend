@@ -31,7 +31,11 @@ class LoggerMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next):
         await self.set_body(request)
-        json_body = await request.json()
+        try:
+            json_body = await request.json()
+        except Exception as e:
+            json_body = {}
+            logger.error(e)
 
         start_time = time.time()
         response = await call_next(request)
@@ -43,8 +47,8 @@ class LoggerMiddleware(BaseHTTPMiddleware):
             ensure_ascii=False,
         )
         msg = (
-            f"\"{request.method} {request.url.path}\" {response_time}s\n"
-            f"{data}"
+            f"\"{request.method} {request.url.path} {response.status_code}\""
+            f" {response_time}s\ndata = {data}"
         )
         (logger.error if response.status_code >= 400 else logger.info)(msg)
 
