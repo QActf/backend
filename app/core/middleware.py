@@ -47,7 +47,7 @@ class LoggerMiddleware(BaseHTTPMiddleware):
             ensure_ascii=False,
         )
         msg = (
-            f"\"{request.method} {request.url.path} {response.status_code}\""
+            f"\"{request.method} {request.url.path}\" {response.status_code}"
             f" {response_time}s\ndata = {data}"
         )
         (logger.error if response.status_code >= 400 else logger.info)(msg)
