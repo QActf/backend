@@ -31,7 +31,7 @@ LOGGING_CONFIG = {
         "app_formatter": {
             "()": "logging.Formatter",
             "datefmt": "%Y.%m.%d %H:%M:%S",
-            "fmt": "[%(asctime)s.%(msecs)03d] %(levelname)s | %(name)s:%(funcName)s.%(lineno)d - %(message)s",
+            "fmt": "[%(asctime)s.%(msecs)03d] %(levelname)s | %(name)s:%(funcName)s.%(lineno)d - %(message)s",  # noqa
         },
         "app_middleware_formatter": {
             "()": "logging.Formatter",

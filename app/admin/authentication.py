@@ -21,7 +21,9 @@ class AdminAuth(AuthenticationBackend):
     ) -> bool:
         form = await request.form()
         email, password = form['username'], form['password']
-        user = await user_crud.get_user_by_credentials(email, password, session)
+        user = await user_crud.get_user_by_credentials(
+            email, password, session
+        )
         if not user:
             return False
         token = await strategy.write_token(user)
@@ -33,7 +35,7 @@ class AdminAuth(AuthenticationBackend):
 
     async def logout(self, request: Request) -> bool:
         # Usually you'd want to just clear the session
-        logger.info(f"Admin logged out.")
+        logger.info("Admin logged out.")
         request.session.clear()
         return True
 

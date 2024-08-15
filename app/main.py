@@ -23,7 +23,8 @@ def swagger_monkey_patch(*args, **kwargs):
         *args,
         **kwargs,
         swagger_js_url=(
-            'https://cdn.staticfile.net/swagger-ui/5.1.0/' 'swagger-ui-bundle.min.js'
+            'https://cdn.staticfile.net/swagger-ui/5.1.0/'
+            'swagger-ui-bundle.min.js'
         ),
         swagger_css_url=(
             'https://cdn.staticfile.net/swagger-ui/5.1.0/swagger-ui.min.css'
@@ -50,7 +51,9 @@ app.include_router(main_router)
 
 authentication_backend = AdminAuth(secret_key=settings.secret)
 
-admin = Admin(engine=engine, app=app, authentication_backend=authentication_backend)
+admin = Admin(
+    engine=engine, app=app, authentication_backend=authentication_backend
+)
 
 
 @app.on_event('startup')

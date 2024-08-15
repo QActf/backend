@@ -69,9 +69,13 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
                 reason='Password should be at least 3 characters'
             )
         if user.email in password:
-            raise InvalidPasswordException(reason='Password should not contain e-mail')
+            raise InvalidPasswordException(
+                reason='Password should not contain e-mail'
+            )
 
-    async def on_after_register(self, user: User, request: Optional[Request] = None):
+    async def on_after_register(
+        self, user: User, request: Optional[Request] = None
+    ):
         logging.info(f'Пользователь {user.email} зарегистрирован.')
         user_uid = crypto.encode_uid(user.id)
         user_code = tokens.token_generator.make_token(user)
@@ -94,7 +98,8 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         updated_user = await super().update(user_update, user, safe, request)
         if user_role != updated_user.role:
             logger.warning(
-                f"Пользователь `{user.email}` сменил роль с `{user_role}` на `{updated_user.role}`."
+                f"Пользователь `{user.email}` сменил роль с `{user_role}`"
+                f" на `{updated_user.role}`."
             )
         if not user_is_superuser and updated_user.is_superuser:
             logger.warning(f"Пользователь `{user.email}` теперь `superuser`.")
