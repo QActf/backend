@@ -98,11 +98,13 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         updated_user = await super().update(user_update, user, safe, request)
         if user_role != updated_user.role:
             logger.warning(
-                f"Пользователь `{user.email}` сменил роль с `{user_role}`"
-                f" на `{updated_user.role}`."
+                "Пользователь `%s` сменил роль с `%s` на `%s`.",
+                user.email,
+                user_role,
+                updated_user.role,
             )
         if not user_is_superuser and updated_user.is_superuser:
-            logger.warning(f"Пользователь `{user.email}` теперь `superuser`.")
+            logger.warning("Пользователь `%s` теперь `superuser`.", user.email)
         return updated_user
 
 

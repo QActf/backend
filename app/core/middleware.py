@@ -35,7 +35,7 @@ class LoggerMiddleware(BaseHTTPMiddleware):
             json_body = await request.json()
         except Exception as e:
             json_body = {}
-            logger.error(e)
+            logger.exception("Request json failed\n%s", e)
 
         start_time = time.time()
         response = await call_next(request)
@@ -46,10 +46,13 @@ class LoggerMiddleware(BaseHTTPMiddleware):
             indent=2,
             ensure_ascii=False,
         )
-        msg = (
-            f"\"{request.method} {request.url.path}\" {response.status_code}"
-            f" {response_time}s\ndata = {data}"
+        logger.info(
+            "\"%s %s\" %d %ds\nwith data = %s",
+            request.method,
+            request.url.path,
+            response.status_code,
+            response_time,
+            data,
         )
-        (logger.error if response.status_code >= 400 else logger.info)(msg)
 
         return response

@@ -33,5 +33,5 @@ async def get_async_session():
         try:
             yield async_session
         except HTTPException as e:
-            logger.exception(e)
+            logger.exception("HTTPException %s", e)
             raise e

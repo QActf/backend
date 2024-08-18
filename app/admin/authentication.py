@@ -29,7 +29,7 @@ class AdminAuth(AuthenticationBackend):
         token = await strategy.write_token(user)
         request.session.update({'token': token})
 
-        logger.info(f"Admin `{email}` logged.")
+        logger.info("Admin `%s` logged.", email)
 
         return True
 
