@@ -38,8 +38,8 @@ class Settings(BaseSettings):
 
 
 class LoggerSettings(BaseSettings):
-    HANDLERS: str = "console"
-    LOG_LEVEL: str = "INFO"
+    HANDLERS: str
+    LOG_LEVEL: str
     LOGGER_FILE_PATH: str = "app/logs/app_logger.log"
 
     model_config = SettingsConfigDict(env_file='infra/.env', extra="ignore")
