@@ -38,8 +38,8 @@ class Settings(BaseSettings):
 
 
 class LoggerSettings(BaseSettings):
-    HANDLERS: str
-    LOG_LEVEL: str
+    HANDLERS: str = ""
+    LOG_LEVEL: str = ""
     LOGGER_FILE_PATH: str = "app/logs/app_logger.log"
     HIDE_DETAILS: bool = True
 
