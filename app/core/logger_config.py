@@ -2,13 +2,9 @@ import logging
 from enum import Enum
 from pathlib import Path
 
-from app.core.config import settings
+from app.core.config import logger_settings
 
-LOGGER_FILE_PATH = "app/logs/app_logger.log"
-
-file_path = Path(LOGGER_FILE_PATH)
-if not file_path.exists():
-    file_path.parent.mkdir(parents=True, exist_ok=True)
+Path(logger_settings.LOGGER_FILE_PATH).parent.mkdir(exist_ok=True)
 
 
 class Handlers(Enum):
@@ -18,10 +14,10 @@ class Handlers(Enum):
 
 HANDLERS = [
     handler
-    for handler in settings.HANDLERS.split(",")
+    for handler in logger_settings.HANDLERS.split(",")
     if handler in Handlers.__members__.keys()
 ]
-LOG_LEVEL = logging._nameToLevel.get(settings.LOG_LEVEL.upper(), "INFO")
+LOG_LEVEL = logging._nameToLevel.get(logger_settings.LOG_LEVEL.upper(), "INFO")
 
 
 LOGGING_CONFIG = {
@@ -48,7 +44,7 @@ LOGGING_CONFIG = {
         Handlers.app_file.value: {
             "formatter": "app_formatter",
             "class": "logging.FileHandler",
-            "filename": LOGGER_FILE_PATH,
+            "filename": logger_settings.LOGGER_FILE_PATH,
         },
         Handlers.console.value
         + "_middleware": {
@@ -60,7 +56,7 @@ LOGGING_CONFIG = {
         + "_middleware": {
             "formatter": "app_middleware_formatter",
             "class": "logging.FileHandler",
-            "filename": LOGGER_FILE_PATH,
+            "filename": logger_settings.LOGGER_FILE_PATH,
         },
     },
     "loggers": {
