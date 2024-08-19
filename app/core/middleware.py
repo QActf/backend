@@ -57,9 +57,8 @@ class LoggerMiddleware(BaseHTTPMiddleware):
 
         if logger.isEnabledFor(logging.INFO):
             response_time = round(time.time() - start_time, 5)
-            # json_body = await self._get_request_json(request)
-            json_body = {}
-            # hide_details(json_body)
+            json_body = await self._get_request_json(request)
+            hide_details(json_body)
             data = json.dumps(
                 get_request_data(request, json_body),
                 indent=2,

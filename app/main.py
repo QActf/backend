@@ -1,4 +1,5 @@
 import logging.config
+import sys
 
 from fastapi import FastAPI, applications
 from fastapi.middleware.cors import CORSMiddleware
@@ -45,7 +46,8 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*'],
 )
-app.add_middleware(LoggerMiddleware)
+if "pytest" not in sys.modules:
+    app.add_middleware(LoggerMiddleware)
 
 app.include_router(main_router)
 
