@@ -12,6 +12,7 @@ from app.core.config import settings
 from app.core.db import engine
 from app.core.init_db import create_first_superuser
 from app.core.logger_config import LOGGING_CONFIG
+from app.core.middleware import LoggerMiddleware
 
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
@@ -44,7 +45,7 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*'],
 )
-# app.add_middleware(LoggerMiddleware)
+app.add_middleware(LoggerMiddleware)
 
 app.include_router(main_router)
 
