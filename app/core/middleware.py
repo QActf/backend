@@ -52,27 +52,27 @@ def hide_details(json_body: dict) -> None:
 
 class LoggerMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next) -> Response:
-        json_body = await self._get_request_json(request)
-
         start_time = time.time()
         response = await call_next(request)
-        response_time = round(time.time() - start_time, 5)
 
-        hide_details(json_body)
-
-        data = json.dumps(
-            get_request_data(request, json_body),
-            indent=2,
-            ensure_ascii=False,
-        )
-        logger.info(
-            "\"%s %s\" %d %ds\nwith data = %s",
-            request.method,
-            request.url.path,
-            response.status_code,
-            response_time,
-            data,
-        )
+        if logger.isEnabledFor(logging.INFO):
+            response_time = round(time.time() - start_time, 5)
+            # json_body = await self._get_request_json(request)
+            json_body = {}
+            # hide_details(json_body)
+            data = json.dumps(
+                get_request_data(request, json_body),
+                indent=2,
+                ensure_ascii=False,
+            )
+            logger.info(
+                "\"%s %s\" %d %ds\nwith data = %s",
+                request.method,
+                request.url.path,
+                response.status_code,
+                response_time,
+                data,
+            )
 
         return response
 
