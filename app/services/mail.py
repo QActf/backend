@@ -1,11 +1,21 @@
 import re
 from email.message import EmailMessage
-from http import HTTPStatus
 
+from aiosmtpd.controller import Controller
 from aiosmtplib import SMTP, errors
-from fastapi import HTTPException
 
 from app.core.config import settings
+
+
+class MockEmailServer:
+    def __init__(self, port=settings.EMAIL_PORT):
+        self.port = port
+        self.controller = Controller(handler=None, port=self.port)
+
+    def start(self):
+        """Запустит почтовый сервер."""
+        self.controller.start()
+        print(f'Email server started on port {self.port}.')
 
 
 class MailMessage:
@@ -37,28 +47,22 @@ class MailMessage:
         message['Subject'] = self.subject
         message.set_content(self.text)
 
-        smtp_client = SMTP(
-            hostname=settings.EMAIL_HOST,
-            port=settings.EMAIL_PORT,
-            username=settings.EMAIL_HOST_USER,
-            password=settings.EMAIL_HOST_PASSWORD,
-            use_tls=settings.EMAIL_USE_TLS,
-        )
+        if settings.EMAIL_MOCK_SERVER:
+            smtp_client = SMTP(port=settings.EMAIL_PORT)
+        else:
+            smtp_client = SMTP(
+                hostname=settings.EMAIL_HOST,
+                port=settings.EMAIL_PORT,
+                username=settings.EMAIL_HOST_USER,
+                password=settings.EMAIL_HOST_PASSWORD,
+                use_tls=settings.EMAIL_USE_TLS,
+            )
         try:
             async with smtp_client:
                 await smtp_client.send_message(message)
         except errors.SMTPConnectError:
-            raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST,
-                detail='Нет соединения с SMTP сервером.',
-            )
+            print('Нет соединения с SMTP сервером.')
         except errors.SMTPAuthenticationError:
-            raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST,
-                detail='Ошибка соединения с SMTP сервером.',
-            )
-        except Exception:
-            raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST,
-                detail='Увы, что-то пошло не так.',
-            )
+            print('Ошибка соединения с SMTP сервером.')
+        except Exception as error:
+            print(f'Во время отправки email что-то пошло не так: {error}.')

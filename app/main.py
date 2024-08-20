@@ -9,6 +9,7 @@ from app.api.routers import main_router
 from app.core.config import settings
 from app.core.db import engine
 from app.core.init_db import create_first_superuser
+from app.services.mail import MockEmailServer
 
 
 def swagger_monkey_patch(*args, **kwargs):
@@ -54,3 +55,7 @@ admin = Admin(
 async def startup():
     await create_first_superuser()
     await add_admin_models(admin)
+
+if settings.EMAIL_MOCK_SERVER:
+    email_server = MockEmailServer()
+    email_server.start()
