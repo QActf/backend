@@ -18,7 +18,7 @@ class MockEmailServer:
     def start(self):
         """Запустит почтовый сервер."""
         self.controller.start()
-        print(f'Email server started on port {self.port}.')
+        logger.info('Email server started on port %s.', self.port)
 
 
 class MailMessage:
