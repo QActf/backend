@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.base import CRUDBase
@@ -40,6 +40,15 @@ class CRUDUser(CRUDBase):
         if not is_password_pass:
             return None
         return res
+
+    async def get_users(
+        self,
+        session: AsyncSession,
+    ):
+        db_objs = await session.execute(
+            select(self.model).order_by(desc('id'))
+        )
+        return db_objs.scalars().all()
 
 
 user_crud = CRUDUser(User)
