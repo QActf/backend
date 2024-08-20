@@ -1,3 +1,4 @@
+import logging
 import re
 from email.message import EmailMessage
 
@@ -5,6 +6,8 @@ from aiosmtpd.controller import Controller
 from aiosmtplib import SMTP, errors
 
 from app.core.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 class MockEmailServer:
@@ -60,9 +63,11 @@ class MailMessage:
         try:
             async with smtp_client:
                 await smtp_client.send_message(message)
-        except errors.SMTPConnectError:
-            print('Нет соединения с SMTP сервером.')
-        except errors.SMTPAuthenticationError:
-            print('Ошибка соединения с SMTP сервером.')
-        except Exception as error:
-            print(f'Во время отправки email что-то пошло не так: {error}.')
+        except errors.SMTPConnectError as e:
+            logger.exception('Нет соединения с SMTP сервером. %s', e)
+        except errors.SMTPAuthenticationError as e:
+            logger.exception('Ошибка соединения с SMTP сервером. %s', e)
+        except Exception as e:
+            logger.exception(
+                f'Во время отправки email что-то пошло не так: %s', e
+            )
