@@ -69,5 +69,5 @@ class MailMessage:
             logger.exception('Ошибка соединения с SMTP сервером. %s', e)
         except Exception as e:
             logger.exception(
-                f'Во время отправки email что-то пошло не так: %s', e
+                'Во время отправки email что-то пошло не так: %s', e
             )
