@@ -55,6 +55,7 @@ jobs:
       - name: Test with pytest
         env:
           DATABASE_URL: postgresql+asyncpg://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@${{ secrets.POSTGRES_HOST_TEST }}:5432/${{ secrets.POSTGRES_DB }}
+          EMAIL_MOCK_SERVER: ${{ secrets.EMAIL_MOCK_SERVER }}
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
           EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
           EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
