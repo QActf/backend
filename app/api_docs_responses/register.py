@@ -2,7 +2,6 @@ from fastapi_users.router.common import ErrorCode
 
 from app.api_docs_responses.utils_docs import get_201_docs
 
-
 REGISTER_SUMMARY = 'Регистрация нового пользователя.'
 
 CREATE_REGISTER = {

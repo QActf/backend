@@ -9,6 +9,7 @@ from app.admin.locale import (  # noqa
     SubscriptionAdmin, TasksAdmin,
 )
 from app.admin.profile import ProfileAdmin  # noqa
+from app.admin.question import QuestionAdmin  # noqa
 from app.admin.tariff import TariffAdmin  # noqa
 from app.admin.task import TaskAdmin  # noqa
 from app.admin.user import UserAdmin  # noqa

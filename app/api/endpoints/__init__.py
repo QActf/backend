@@ -5,6 +5,7 @@ from .group import router as group_router  # noqa
 from .locale import router as locale_router  # noqa
 from .notification import router as notification_router  # noqa
 from .profile import router as profile_router  # noqa
+from .question import router as question_router  # noqa
 from .tariff import router as tariff_router  # noqa
 from .task import router as task_router  # noqa
 from .user import router as user_router  # noqa
