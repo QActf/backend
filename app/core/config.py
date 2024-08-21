@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     limit: int = 10
 
     # ======== email config ==========
+    EMAIL_MOCK_SERVER: bool
     EMAIL_FROM: str
     EMAIL_HOST: str
     EMAIL_PORT: int
