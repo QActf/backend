@@ -14,6 +14,7 @@ from app.core.db import engine
 from app.core.init_db import create_first_superuser
 from app.core.logger_config import LOGGING_CONFIG
 from app.core.middleware import LoggerMiddleware
+from app.services.mail import MockEmailServer
 
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
@@ -69,3 +70,8 @@ async def startup():
 @app.on_event('shutdown')
 async def shutdown():
     logger.info("Application stopped.")
+
+
+if settings.EMAIL_MOCK_SERVER:
+    email_server = MockEmailServer()
+    email_server.start()

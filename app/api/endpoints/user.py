@@ -3,25 +3,43 @@ from typing import Annotated
 from fastapi import APIRouter, Body, Depends, HTTPException, status
 from fastapi_users import InvalidPasswordException
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.responses import Response
 
 from app.api.endpoints import register
 from app.api.validators import check_obj_exists
 from app.api_docs_responses.user import (
-    USER_CONFIRM_DESCRIPTION, add_router_doc,
+    USER_CONFIRM_DESCRIPTION,
+    USERS_DESCRIPTION,
+    add_router_doc,
 )
 from app.api_docs_responses.utils_docs import USER_VALUE
 from app.core.db import get_async_session
 from app.core.user import (
-    UserManager, auth_backend_cookie, auth_backend_jwt, current_user,
-    fastapi_users, get_user_manager,
+    UserManager,
+    auth_backend_cookie,
+    auth_backend_jwt,
+    current_user,
+    fastapi_users,
+    get_user_manager,
 )
 from app.crud.hasher import Hasher
 from app.crud.user import user_crud
 from app.models import User
 from app.schemas.user import (
-    UserChangePassword, UserCreate, UserRead, UserReadRegister, UserUpdate,
+    UserChangePassword,
+    UserCreate,
+    UserList,
+    UserRead,
+    UserReadRegister,
+    UserUpdate,
 )
 from app.services.token_generator.tokens import token_generator
+from app.services.utils import (
+    Pagination,
+    add_response_headers,
+    get_pagination_params,
+    paginated,
+)
 
 router = APIRouter()
 
@@ -39,21 +57,39 @@ router.include_router(
 
 router.include_router(
     register.get_register_router(
-        UserReadRegister,
-        Annotated[UserCreate, Body(example=USER_VALUE)]
+        UserReadRegister, Annotated[UserCreate, Body(example=USER_VALUE)]
     ),
     prefix='/auth',
     tags=['auth'],
 )
 
+
 router.include_router(
     fastapi_users.get_users_router(
-        UserRead,
-        Annotated[UserUpdate, Body(example=USER_VALUE)]
+        UserRead, Annotated[UserUpdate, Body(example=USER_VALUE)]
     ),
     prefix='/users',
     tags=['users'],
 )
+
+
+@router.get(
+    "/users",
+    response_model=list[UserList],
+    tags=["users"],
+    summary='Получение всех пользователей.',
+    status_code=status.HTTP_200_OK,
+    description=USERS_DESCRIPTION,
+    dependencies=[Depends(current_user)],
+)
+async def get_users(
+    response: Response,
+    session: AsyncSession = Depends(get_async_session),
+    pagination: Pagination = Depends(get_pagination_params),
+):
+    users = await user_crud.get_users(session)
+    add_response_headers(response, users, pagination)
+    return paginated(users, pagination)
 
 
 @router.post(
@@ -139,5 +175,6 @@ async def change_password(
         )
 
     return {'detail': 'Пароль был успешно изменен.'}
+
 
 add_router_doc(router)
