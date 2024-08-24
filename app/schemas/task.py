@@ -6,12 +6,16 @@ from pydantic import BaseModel, Field
 class TaskCreate(BaseModel):
     name: str
     description: Optional[str]
+    difficult: int
 
 
 class TaskRead(BaseModel):
-    id: int
-    name: Optional[str]
+    id: int = Field(serialization_alias='key')
+    difficult: int
+    name: Optional[str] = Field(serialization_alias='title')
     description: Optional[str]
+    time: Optional[str]
+    solvers: int
 
     class Config:
         from_attributes = True
@@ -20,3 +24,6 @@ class TaskRead(BaseModel):
 class TaskUpdate(BaseModel):
     name: Optional[str] = Field(None)
     description: Optional[str] = Field(None)
+    difficult: Optional[int] = Field(None)
+    time: Optional[str] = Field(None)
+    solvers: Optional[int] = Field(None)
