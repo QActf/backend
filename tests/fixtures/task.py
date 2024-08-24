@@ -11,7 +11,8 @@ async def moc_tasks(
     moc_tasks = [
         Task(
             name=f'Task_{i}',
-            description=f'Description of Task_{i}'
+            description=f'Description of Task_{i}',
+            difficult=i
         ) for i in range(1, 6)
     ]
     db_session.add_all(moc_tasks)
