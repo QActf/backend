@@ -67,7 +67,7 @@ async def get_all_user_courses(
     dependencies=[Depends(current_user)],
     response_model_by_alias=False,
 )
-async def get_all_user_courses(
+async def get_available_started_user_courses(
     response: Response,
     pagination: Pagination = Depends(get_pagination_params),
     user: User = Depends(current_user),
