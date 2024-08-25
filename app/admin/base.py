@@ -2,8 +2,9 @@ from app.admin import (
     AchievementAdmin, AchievementsAdmin, AuthAdmin, CommonAdmin, ContactsAdmin,
     CourseAdmin, ErrorsAdmin, ExaminationAdmin, GroupAdmin, HeaderAdmin,
     HelpAdmin, LocaleAdmin, MainAdmin, MonthsAdmin, ProfileAdmin,
-    ProfileUserAdmin, QuestionBannerAdmin, RestoreAdmin, SecureAdmin,
-    SubscriptionAdmin, TariffAdmin, TaskAdmin, TasksAdmin, UserAdmin,
+    ProfileUserAdmin, QuestionAdmin, QuestionBannerAdmin, RestoreAdmin,
+    SecureAdmin, SubscriptionAdmin, TariffAdmin, TaskAdmin, TasksAdmin,
+    UserAdmin,
 )
 
 admin_models = [
@@ -21,6 +22,9 @@ admin_models = [
     HelpAdmin, MainAdmin, RestoreAdmin, SubscriptionAdmin,
     ProfileUserAdmin, SecureAdmin, AchievementsAdmin, TasksAdmin,
     QuestionBannerAdmin, ErrorsAdmin, MonthsAdmin,
+
+    # category = 'HELP'
+    QuestionAdmin,
 ]
 
 

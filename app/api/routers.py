@@ -23,6 +23,9 @@ main_router.include_router(
     profile_router, prefix='/profiles', tags=['Profiles']
 )
 main_router.include_router(
+    question_router, prefix='/questions', tags=['Questions']
+)
+main_router.include_router(
     locale_router, prefix='/locales', tags=['Locales']
 )
 main_router.include_router(
