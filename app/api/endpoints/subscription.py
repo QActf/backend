@@ -92,32 +92,39 @@ async def get_tariff_planes(
 
     Если курс закрыт и нет связи курс-пользователь, то он будет исключен из
     ответа.
+    Если тариф закрыт и нет связи тариф-пользователь, то он будет исключен из
+    ответа.
     """
-    courses = await course_crud.get_multi_courses_with_users(session=session)
-    tariffs = await tariff_crud.get_tariff(
+    db_courses = await course_crud.get_multi_courses_with_users(
+        session=session,
+    )
+    db_tariffs = await tariff_crud.get_tariff(
         courses=True,
+        users=True,
         multi=True,
-        is_closed=False,
         session=session,
     )
 
     courses_with_tariff_flags = list()
-    for course in courses:
-        if course.is_closed and user not in course.users:
-            continue
-        tariff_flags = dict()
-        for tariff in tariffs:
-            tariff_flags[tariff.name] = course in tariff.courses
-        courses_with_tariff_flags.append(
-            {
-                'name': course.name,
-                **tariff_flags
-            }
-        )
+    for course in db_courses:
+        if not (course.is_closed and user not in course.users):
+            tariff_flags = dict()
+            for tariff in db_tariffs:
+                if not (tariff.is_closed and user not in tariff.users):
+                    tariff_flags[tariff.name] = course in tariff.courses
+            courses_with_tariff_flags.append(
+                {
+                    'name': course.name,
+                    **tariff_flags
+                }
+            )
 
-    for tariff in tariffs:
-        setattr(tariff, 'dataIndex', tariff.name)
-        setattr(tariff, 'key', tariff.name)
+    tariffs = list()
+    for tariff in db_tariffs:
+        if not (tariff.is_closed and user not in tariff.users):
+            tariff.dataIndex = tariff.name
+            tariff.key = tariff.name
+            tariffs.append(tariff)
 
     response = PlanRead(
         courses=courses_with_tariff_flags,
