@@ -22,7 +22,7 @@ class CRUDTariff(CRUDBase):
         """Вернет тариф(ы)."""
         stmt = select(self.model)
 
-        conditions = []
+        conditions = list()
         if attr_name and attr_value is not None:
             conditions.append(getattr(self.model, attr_name) == attr_value)
         if is_closed is not None:
