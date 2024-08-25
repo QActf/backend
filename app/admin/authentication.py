@@ -1,3 +1,5 @@
+import logging
+
 from fastapi_users.authentication import JWTStrategy
 from sqladmin.authentication import AuthenticationBackend
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,13 +9,15 @@ from app.core.db import AsyncSessionLocal
 from app.core.user import get_jwt_strategy
 from app.crud import user_crud
 
+logger = logging.getLogger(__name__)
+
 
 class AdminAuth(AuthenticationBackend):
     async def login(
         self,
         request: Request,
         session: AsyncSession = AsyncSessionLocal(),
-        strategy: JWTStrategy = get_jwt_strategy()
+        strategy: JWTStrategy = get_jwt_strategy(),
     ) -> bool:
         form = await request.form()
         email, password = form['username'], form['password']
@@ -25,17 +29,18 @@ class AdminAuth(AuthenticationBackend):
         token = await strategy.write_token(user)
         request.session.update({'token': token})
 
+        logger.info("Admin `%s` logged.", email)
+
         return True
 
     async def logout(self, request: Request) -> bool:
         # Usually you'd want to just clear the session
+        logger.info("Admin logged out.")
         request.session.clear()
         return True
 
     async def authenticate(
-        self,
-        request: Request,
-        session: AsyncSession = AsyncSessionLocal()
+        self, request: Request, session: AsyncSession = AsyncSessionLocal()
     ) -> bool:
         token = request.session.get('token')
         if not token:

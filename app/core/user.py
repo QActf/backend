@@ -3,14 +3,22 @@ from typing import Optional, Union
 
 from fastapi import Depends, Request
 from fastapi_users import (
-    BaseUserManager, FastAPIUsers, IntegerIDMixin, InvalidPasswordException,
+    BaseUserManager,
+    FastAPIUsers,
+    IntegerIDMixin,
+    InvalidPasswordException,
+    models,
+    schemas,
 )
 from fastapi_users.authentication import (
-    AuthenticationBackend, BearerTransport, CookieTransport, JWTStrategy,
+    CookieTransport,
+    JWTStrategy,
+    BearerTransport,
 )
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.authentication.backend import AuthenticationBackendWithLogger
 from app.core.config import settings
 from app.core.db import get_async_session
 from app.models.user import User
@@ -19,6 +27,7 @@ from app.services import mail
 from app.services.token_generator import crypto, tokens
 
 URL = 'http://127.0.0.1:8000'
+logger = logging.getLogger(__name__)
 
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
@@ -36,13 +45,13 @@ def get_jwt_strategy() -> JWTStrategy:
     )
 
 
-auth_backend_jwt = AuthenticationBackend(
+auth_backend_jwt = AuthenticationBackendWithLogger(
     name='jwt_auth',
     transport=bearer_transport,
     get_strategy=get_jwt_strategy,
 )
 
-auth_backend_cookie = AuthenticationBackend(
+auth_backend_cookie = AuthenticationBackendWithLogger(
     name='cookie_auth',
     transport=cookie_transport,
     get_strategy=get_jwt_strategy,
@@ -76,6 +85,27 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
             f'{URL}/auth/confirm/{user_uid}/{user_code}',
         )
         await cofirm_email.send_email_message()
+
+    async def update(
+        self,
+        user_update: schemas.UU,
+        user: models.UP,
+        safe: bool = False,
+        request: Optional[Request] = None,
+    ) -> models.UP:
+        user_role = user.role
+        user_is_superuser = user.is_superuser
+        updated_user = await super().update(user_update, user, safe, request)
+        if user_role != updated_user.role:
+            logger.warning(
+                "Пользователь `%s` сменил роль с `%s` на `%s`.",
+                user.email,
+                user_role,
+                updated_user.role,
+            )
+        if not user_is_superuser and updated_user.is_superuser:
+            logger.warning("Пользователь `%s` теперь `superuser`.", user.email)
+        return updated_user
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):

@@ -1,8 +1,13 @@
+import logging
+
+from fastapi import HTTPException
 from sqlalchemy import Column, Integer
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base, declared_attr, sessionmaker
 
 from app.core.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 class PreBase:
@@ -25,4 +30,8 @@ AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession)
 
 async def get_async_session():
     async with AsyncSessionLocal() as async_session:
-        yield async_session
+        try:
+            yield async_session
+        except HTTPException as e:
+            logger.exception("HTTPException %s", e)
+            raise e

@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Optional
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -35,6 +35,17 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = 'infra/.env'
+        extra = "ignore"
+
+
+class LoggerSettings(BaseSettings):
+    HANDLERS: str = ""
+    LOG_LEVEL: str = ""
+    LOGGER_FILE_PATH: str = "app/logs/app_logger.log"
+    HIDE_DETAILS: bool = True
+
+    model_config = SettingsConfigDict(env_file='infra/.env', extra="ignore")
 
 
 settings = Settings()
+logger_settings = LoggerSettings()
