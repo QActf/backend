@@ -13,7 +13,8 @@ async def moc_tariffs(
     moc_tariffs = [
         Tariff(
             name=f'Tariff_{i}',
-            description=f'Description of Tariff_{i}'
+            description=f'Description of Tariff_{i}',
+            cost=i,
         ) for i in range(TEST_TARIFF_COUNT)
     ]
     db_session.add_all(moc_tariffs)

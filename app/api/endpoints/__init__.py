@@ -9,3 +9,4 @@ from .question import router as question_router  # noqa
 from .tariff import router as tariff_router  # noqa
 from .task import router as task_router  # noqa
 from .user import router as user_router  # noqa
+from .subscription import router as subscription_router  # noqa

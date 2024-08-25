@@ -10,14 +10,17 @@ content_tariffs = {
                 'value': [{
                     'id': 0,
                     'name': 'Название тарифа',
-                    'description': 'Описание тарифа'
+                    'description': 'Описание тарифа',
+                    'cost': 0
                 }]
             },
             'tariffs_without_description': {
                 'summary': 'Тариф без описания',
                 'value': [{
                     'id': 0,
-                    'name': 'Название тарифа'
+                    'name': 'Название тарифа',
+                    'cost': 0
+
                 }]
             }
         }
@@ -28,18 +31,20 @@ content_tariff = {
     'application/json': {
         'examples': {
             'tariff_with_all_fields': {
-                'summary': 'Тариф со всеми заполнеными полями',
+                'summary': 'Тариф со всеми заполненными полями',
                 'value': {
                     'id': 0,
                     'name': 'Название тарифа',
-                    'description': 'Описание тарифа'
+                    'description': 'Описание тарифа',
+                    'cost': 0
                 }
             },
             'tariff_without_description': {
                 'summary': 'Тариф без описания',
                 'value': {
                     'id': 0,
-                    'name': 'Название тарифа'
+                    'name': 'Название тарифа',
+                    'cost': 0
                 }
             }
         }
@@ -120,3 +125,26 @@ TARIFF_ID_DELETE = """
     Permissions:\n
         Только суперпользователь.\n
 """
+
+REQUEST_NAME_DESCRIPTION_COST_VALUE = {
+    'all_data': {
+        'summary': 'Все поля заполнены.',
+        'value': {
+            'name': 'Имя',
+            'description': 'Описание',
+            'cost': 0
+        }
+    },
+    'not_all_data': {
+        'summary': 'Только имя и стоимость, без описания.',
+        'value': {
+            'name': 'Имя',
+            'cost': 0
+        },
+    },
+    'empty_data': {
+        'summary': 'Без данных',
+        'description': 'Validation Error 422',
+        'value': {}
+    }
+}
