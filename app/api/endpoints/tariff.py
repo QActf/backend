@@ -8,9 +8,7 @@ from app.api_docs_responses.tariff import (
     ALL_TARIFFS_DECRIPTION, CREATE_TARIFF, DELETE_TARIFF, GET_TARIFF,
     GET_TARIFFS, TARIFF_CREATE_DESCRIPTION, TARIFF_ID_DELETE,
     TARIFF_ID_DESCRIPTION, TARIFF_ID_PATCH_ODESCRIPTION, UPDATE_TARIFF,
-)
-from app.api_docs_responses.utils_docs import (
-    REQUEST_NAME_AND_DESCRIPTION_VALUE,
+    REQUEST_NAME_DESCRIPTION_COST_VALUE,
 )
 from app.core.db import get_async_session
 from app.core.user import current_superuser
@@ -70,7 +68,7 @@ async def get_tariff(
 async def update_tariff(
     tariff_id: int,
     data: TariffUpdate = Body(
-        openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
+        openapi_examples=REQUEST_NAME_DESCRIPTION_COST_VALUE),
     session: AsyncSession = Depends(get_async_session)
 ):
     """Частичное обновление информации о тарифе по его идентификатору."""
@@ -98,7 +96,7 @@ async def update_tariff(
 )
 async def create_tariff(
     tariff: TariffCreate = Body(
-        openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
+        openapi_examples=REQUEST_NAME_DESCRIPTION_COST_VALUE),
     session: AsyncSession = Depends(get_async_session)
 ):
     """Создание тарифа."""
