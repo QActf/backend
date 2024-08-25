@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from app.api.endpoints import (
     achievement_router, course_router, examination_router, group_router,
-    locale_router, notification_router, profile_router, question_router, 
+    locale_router, notification_router, profile_router, question_router,
     subscription_router, tariff_router, task_router, user_router,
 )
 
