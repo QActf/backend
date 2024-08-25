@@ -110,8 +110,8 @@ async def get_notifications_for_user(
     response: Response,
     pagination: Pagination = Depends(get_pagination_params),
     user: User = Depends(current_user),
-    viewed: bool = Query(default=False, alias="viewed"),
-    bell: bool = Query(default=False, alias="bell"),
+    viewed: bool = Query(default=False, alias='viewed'),
+    bell: bool = Query(default=False, alias='bell'),
     session: AsyncSession = Depends(get_async_session),
 ):
     """

@@ -40,3 +40,11 @@ class UserUpdate(schemas.BaseUserUpdate):
 
 class UserChangePassword(schemas.BaseUserUpdate):
     password: str
+
+
+class UserTariffUpdate(schemas.BaseUserUpdate):
+    tariff_id: int
+
+
+class UserTariffDelete(schemas.BaseUserUpdate):
+    tariff_id: None

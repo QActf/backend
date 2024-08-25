@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Body, Depends, Path, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Path, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.responses import JSONResponse
 from typing_extensions import Annotated
 
 from app.api.validators import check_obj_duplicate, check_obj_exists
@@ -30,9 +31,7 @@ router = APIRouter()
 async def get_all_tariffs(
     session: AsyncSession = Depends(get_async_session),
 ) -> list[TariffRead]:
-    """
-    Получение всех тарифов, который есть в БД.
-    """
+    """Получение всех тарифов, которые есть в БД."""
     return await tariff_crud.get_multi(session)
 
 
@@ -74,9 +73,7 @@ async def update_tariff(
         openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
     session: AsyncSession = Depends(get_async_session)
 ):
-    """
-    Частичное обновление информации о тарифе по его идентификатору.
-    """
+    """Частичное обновление информации о тарифе по его идентификатору."""
     obj = await tariff_crud.get_by_attr(
         attr_name='id',
         attr_value=tariff_id,
@@ -119,7 +116,7 @@ async def create_tariff(
     dependencies=[Depends(current_superuser)],
     status_code=status.HTTP_204_NO_CONTENT,
     responses=DELETE_TARIFF,
-    summary='Удаление тарфиа по id.',
+    summary='Удаление тарифа по id.',
     description=TARIFF_ID_DELETE,
 )
 async def delete_tariff(
@@ -128,9 +125,36 @@ async def delete_tariff(
 ):
     """
     Удаление тарифа по его идентификатору.
+
+    Нельзя удалить тариф, пока есть подписка у пользователей.
+    В этом случае он будет закрыт.
     """
-    return await delete_obj(
-        obj_id=tariff_id,
-        crud=tariff_crud,
+    obj = await tariff_crud.get_tariff(
+        attr_name='id',
+        attr_value=tariff_id,
+        users=True,
         session=session,
+    )
+    await check_obj_exists(obj=obj)
+
+    if not obj.users:
+        await delete_obj(
+            obj_id=tariff_id,
+            crud=tariff_crud,
+            session=session,
+        )
+        return
+    if obj.is_closed:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Данный тариф уже закрыт.',
+        )
+
+    await tariff_crud.close_tariff(
+        tariff=obj,
+        session=session,
+    )
+    return JSONResponse(
+        content={'detail': 'Тариф успешно закрыт.'},
+        status_code=200,
     )

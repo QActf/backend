@@ -17,6 +17,22 @@ class CourseRead(BaseModel):
         from_attributes = True
 
 
+class MultiCourseRead(BaseModel):
+    id: int
+    name: str
+    description: str
+    is_available: bool
+    is_started: bool
+
+    class Config:
+        from_attributes = True
+
+
+class CourseTariffCreate(BaseModel):
+    course_id: int
+    tariff_id: int
+
+
 class CourseUpdate(BaseModel):
     name: Optional[str] = Field(None)
     description: Optional[str] = Field(None)
