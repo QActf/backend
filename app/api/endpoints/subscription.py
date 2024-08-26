@@ -120,20 +120,16 @@ async def get_tariff_planes(
                 }
             )
 
-    tariffs = list()
-    tariffs.append(
-        TariffPlanRead(id=0, name='', description='', cost=0, dataIndex='',
-                       key='', is_active=False, this_tariff=False)
-    )
+    tariffs = [TariffPlanRead(id=0, name='', description='', cost=0,
+                              dataIndex='', key='', is_active=False,
+                              this_tariff=False)]
     for tariff in db_tariffs:
         if not (tariff.is_closed and user not in tariff.users):
             tariff.dataIndex = tariff.name
             tariff.key = tariff.name
-            tariff.this_tariff = True if tariff.id == user.tariff_id else False
+            tariff.this_tariff = tariff.id == user.tariff_id
             if user.tariff_id:
-                tariff.is_active = (
-                    True if tariff.id <= user.tariff_id else False
-                )
+                tariff.is_active = tariff.id <= user.tariff_id
             else:
                 tariff.is_active = False
             tariffs.append(tariff)
