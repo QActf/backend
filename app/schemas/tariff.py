@@ -35,3 +35,5 @@ class TariffUpdate(BaseModel):
 class TariffPlanRead(TariffRead):
     dataIndex: str
     key: str
+    is_active: bool
+    this_tariff: bool
