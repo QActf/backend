@@ -10,6 +10,7 @@ from app.core.user import (
 from app.crud import course_crud, tariff_crud, user_crud
 from app.models import User
 from app.schemas.subscription import PlanRead, SubscriptionCreate
+from app.schemas.tariff import TariffPlanRead
 from app.schemas.user import UserTariffDelete, UserTariffUpdate
 
 router = APIRouter()
@@ -119,11 +120,18 @@ async def get_tariff_planes(
                 }
             )
 
-    tariffs = list()
+    tariffs = [TariffPlanRead(id=0, name='', description='', cost=0,
+                              dataIndex='', key='', is_active=False,
+                              this_tariff=False)]
     for tariff in db_tariffs:
         if not (tariff.is_closed and user not in tariff.users):
             tariff.dataIndex = tariff.name
             tariff.key = tariff.name
+            tariff.this_tariff = tariff.id == user.tariff_id
+            if user.tariff_id:
+                tariff.is_active = tariff.id <= user.tariff_id
+            else:
+                tariff.is_active = False
             tariffs.append(tariff)
 
     response = PlanRead(

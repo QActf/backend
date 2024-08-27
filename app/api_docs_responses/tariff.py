@@ -68,11 +68,9 @@ DELETE_TARIFF = {
     **get_401_docs()
 }
 
-ALL_TARIFFS_DECRIPTION = """
-    Получение всех тарифов, который есть в БД.
+ALL_TARIFFS_DESCRIPTION = """
+    Получение всех тарифов, которые есть в БД.
 
-    Args:\n
-        tariff_id (int): Идентификатор тарифа.\n
     Returns:\n
         list: dict(Информация о тарифе).\n
     Permissions:\n
@@ -118,12 +116,12 @@ TARIFF_ID_DELETE = """
     Удаление тарифа по его идентификатору.
 
     Args:\n
-        tariff(dict): Данные нового тарифа.\n
-        data (TariffUpdate): Данные для обновления.\n
-    Returns:\n
-        dict: Новый тариф.\n
+        tariff_id (int): Идентификатор тарифа.\n
     Permissions:\n
         Только суперпользователь.\n
+    Notes:\n
+        Нельзя удалить тариф, пока есть подписка у пользователей.
+        В этом случае он будет закрыт.
 """
 
 REQUEST_NAME_DESCRIPTION_COST_VALUE = {

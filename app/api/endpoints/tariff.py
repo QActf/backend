@@ -5,10 +5,10 @@ from typing_extensions import Annotated
 
 from app.api.validators import check_obj_duplicate, check_obj_exists
 from app.api_docs_responses.tariff import (
-    ALL_TARIFFS_DECRIPTION, CREATE_TARIFF, DELETE_TARIFF, GET_TARIFF,
-    GET_TARIFFS, TARIFF_CREATE_DESCRIPTION, TARIFF_ID_DELETE,
-    TARIFF_ID_DESCRIPTION, TARIFF_ID_PATCH_ODESCRIPTION, UPDATE_TARIFF,
-    REQUEST_NAME_DESCRIPTION_COST_VALUE,
+    ALL_TARIFFS_DESCRIPTION, CREATE_TARIFF, DELETE_TARIFF, GET_TARIFF,
+    GET_TARIFFS, REQUEST_NAME_DESCRIPTION_COST_VALUE,
+    TARIFF_CREATE_DESCRIPTION, TARIFF_ID_DELETE, TARIFF_ID_DESCRIPTION,
+    TARIFF_ID_PATCH_ODESCRIPTION, UPDATE_TARIFF,
 )
 from app.core.db import get_async_session
 from app.core.user import current_superuser
@@ -24,7 +24,7 @@ router = APIRouter()
     response_model=list[TariffRead],
     responses=GET_TARIFFS,
     summary='Получение всех тарифов.',
-    description=ALL_TARIFFS_DECRIPTION,
+    description=ALL_TARIFFS_DESCRIPTION,
 )
 async def get_all_tariffs(
     session: AsyncSession = Depends(get_async_session),
