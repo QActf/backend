@@ -60,16 +60,11 @@ router.include_router(
     dependencies=[Depends(current_user)]
 )
 async def send_message(
-    email: str = Form(),
     message: str = Form(),
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session)
 ):
-    if email != user.email:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail='Проверьте, что вы правильно указали свою почту.'
-        )
+    email = user.email
     await question_crud.create(email, message, session)
     return {'result': 'The message has been sent.'}
 
