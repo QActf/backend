@@ -9,14 +9,16 @@ from app.api_docs_responses.utils_docs import (
 
 
 class RouteEnum(enum.IntEnum):
-    auth_login = 0
-    auth_logout = 1
-    auth_register = 2
-    get_users_me = 3
-    patch_users_me = 4
-    get_users_id = 5
-    update_user_id = 6
-    del_users_id = 7
+    auth_jwt_login = 0
+    auth_jwt_logout = 1
+    auth_cookie_login = 2
+    auth_cookie_logout = 3
+    auth_register = 4
+    get_users_me = 5
+    patch_users_me = 6
+    get_users_id = 7
+    update_user_id = 8
+    del_users_id = 9
 
 
 auth_context = {
@@ -134,7 +136,10 @@ DELETE_USER = {
     **get_405_docs('Удаление пользователей запрещено!')
 }
 
-USER_ME_SUMMARY = 'Получение информации о текущем ползователе.'
+LOGIN_JWT_SUMMARY = 'Аутентификация на основе токена jwt.'
+LOGIN_COOKIE_SUMMARY = 'Аутентификация на основе cookie.'
+
+USER_ME_SUMMARY = 'Получение информации о текущем пользователе.'
 USER_ME_DESCRIPTION = """
     Получение информации о текущем зарегистрированным пользователем.
 
@@ -194,6 +199,17 @@ USER_ID_DEL_DESCRIPTION = """
         Только суперпользователь.\n
 """
 
+USERS_DESCRIPTION = """
+    Получение информации о пользователях.
+
+    Args:\n
+        None.\n
+    Returns:\n
+        list: dict: Пользователь.\n
+    Permissions:\n
+        Только зарегистрированный пользователь.\n
+"""
+
 USER_CONFIRM_DESCRIPTION = """
     По полученной пользователем ссылке на почту происходит подтверждение
     а верификация пользователя с его ящиком.
@@ -209,26 +225,30 @@ USER_CONFIRM_DESCRIPTION = """
 
 
 def add_router_doc(router):
-    router.routes[RouteEnum.auth_login].responses = LOGIN_USER
-    router.routes[RouteEnum.auth_login].description = LOGIN_WARNING
+    router.routes[RouteEnum.auth_jwt_login].summary = LOGIN_JWT_SUMMARY
+    router.routes[RouteEnum.auth_jwt_login].description = LOGIN_WARNING
+    router.routes[RouteEnum.auth_jwt_login].responses = LOGIN_USER
 
-    router.routes[RouteEnum.auth_logout].responses = LOGOUT_USER
+    router.routes[RouteEnum.auth_jwt_logout].responses = LOGOUT_USER
 
-    router.routes[RouteEnum.get_users_me].responses = GET_CURRENT_USER
+    router.routes[RouteEnum.auth_cookie_login].summary = LOGIN_COOKIE_SUMMARY
+    router.routes[RouteEnum.auth_cookie_login].description = LOGIN_WARNING
+
     router.routes[RouteEnum.get_users_me].summary = USER_ME_SUMMARY
     router.routes[RouteEnum.get_users_me].description = USER_ME_DESCRIPTION
+    router.routes[RouteEnum.get_users_me].responses = GET_CURRENT_USER
 
-    router.routes[RouteEnum.patch_users_me].responses = UPDATE_CURRENT_USER
     router.routes[RouteEnum.patch_users_me].summary = USER_ME_PATCH_SUMMARY
+    router.routes[RouteEnum.patch_users_me].responses = UPDATE_CURRENT_USER
     router.routes[
         RouteEnum.patch_users_me].description = USER_ME_PATCH_DESCRIPTION
 
-    router.routes[RouteEnum.get_users_id].responses = GET_USER_BY_ID
     router.routes[RouteEnum.get_users_id].summary = USER_ID_SUMMARY
+    router.routes[RouteEnum.get_users_id].responses = GET_USER_BY_ID
     router.routes[RouteEnum.get_users_id].description = USER_ID_DESCRIPTION
 
-    router.routes[RouteEnum.update_user_id].responses = UPDATE_USER_BY_ID
     router.routes[RouteEnum.update_user_id].summary = USER_ID_PATCH_SUMMARY
+    router.routes[RouteEnum.update_user_id].responses = UPDATE_USER_BY_ID
     router.routes[
         RouteEnum.update_user_id].description = USER_ID_PATCH_DESCRIPTION
 

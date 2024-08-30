@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, String, Text
+from sqlalchemy import Boolean, Column, Integer, String, Text
 from sqlalchemy.orm import Mapped, relationship
 
 from app.core.config import settings
@@ -20,10 +20,12 @@ class Tariff(Base):
         String(length=settings.max_length_string), unique=True, nullable=False
     )
     description: Mapped[str] = Column(Text)
+    cost: int = Column(Integer, nullable=False)
     users: Mapped[list[User]] = relationship(back_populates='tariff')
     courses: Mapped[list[Course]] = relationship(
         secondary=course_tariff_association, back_populates='tariffs'
     )
+    is_closed: bool = Column(Boolean, default=False)
 
     def __repr__(self):
         return self.name

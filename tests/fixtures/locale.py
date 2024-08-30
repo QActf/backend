@@ -2,10 +2,10 @@ import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import (
-    Auth, Common, Contacts, Errors, Header, Help, Locale, Main, Restore,
-    Subscription, Tasks,
+    Achievements, Auth, Common, Contacts, Errors, Header, Help, Locale, Main,
+    Months, ProfileUser, QuestionBanner, Restore, Secure, Subscription, Tasks,
 )
-from tests.test_locale import CREATE_SCHEME
+from tests.test_locale import CREATE_SCHEMA
 
 LANGUAGES = ('en', 'ru', 'ch')
 
@@ -16,16 +16,21 @@ async def mock_locales(db_session: AsyncSession) -> None:
     mock_locales = [
         Locale(
             language=language,
-            common=Common(**CREATE_SCHEME['common']),
-            header=Header(**CREATE_SCHEME['header']),
-            auth=Auth(**CREATE_SCHEME['auth']),
-            contacts=Contacts(**CREATE_SCHEME['contacts']),
-            help=Help(**CREATE_SCHEME['help']),
-            main=Main(**CREATE_SCHEME['main']),
-            restore=Restore(**CREATE_SCHEME['restore']),
-            subscription=Subscription(**CREATE_SCHEME['subscription']),
-            tasks=Tasks(**CREATE_SCHEME['tasks']),
-            errors=Errors(**CREATE_SCHEME['errors']),
+            common=Common(**CREATE_SCHEMA['common']),
+            header=Header(**CREATE_SCHEMA['header']),
+            auth=Auth(**CREATE_SCHEMA['auth']),
+            contacts=Contacts(**CREATE_SCHEMA['contacts']),
+            help=Help(**CREATE_SCHEMA['help']),
+            main=Main(**CREATE_SCHEMA['main']),
+            restore=Restore(**CREATE_SCHEMA['restore']),
+            subscription=Subscription(**CREATE_SCHEMA['subscription']),
+            profile_user=ProfileUser(**CREATE_SCHEMA['profile_user']),
+            secure=Secure(**CREATE_SCHEMA['secure']),
+            achievements=Achievements(**CREATE_SCHEMA['achievements']),
+            tasks=Tasks(**CREATE_SCHEMA['tasks']),
+            question_banner=QuestionBanner(**CREATE_SCHEMA['question_banner']),
+            errors=Errors(**CREATE_SCHEMA['errors']),
+            months=Months(**CREATE_SCHEMA['months']),
         ) for language in LANGUAGES
     ]
     db_session.add_all(mock_locales)

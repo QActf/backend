@@ -1,11 +1,19 @@
 from typing import Optional
 
 from fastapi_users import schemas
-from pydantic import WithJsonSchema, field_serializer
+from pydantic import BaseModel, WithJsonSchema, field_serializer
 from sqlalchemy_utils import Choice
 from typing_extensions import Annotated
 
 from app.core.constants import Role
+
+
+class RoleMixin:
+    role: Annotated[Choice, WithJsonSchema({'type': 'str'})]
+
+    @field_serializer('role')
+    def serialize_role(self, role: Choice, _info):
+        return role.code
 
 
 class UserReadRegister(schemas.BaseUser[int]):
@@ -17,15 +25,17 @@ class UserReadRegister(schemas.BaseUser[int]):
         arbitrary_types_allowed = True
 
 
-class UserRead(UserReadRegister):
-    role: Annotated[
-        Choice,
-        WithJsonSchema({'type': 'str'})
-    ]
+class UserRead(RoleMixin, UserReadRegister):
+    pass
 
-    @field_serializer('role')
-    def serialize_role(self, role: Choice, _info):
-        return role.code
+
+class UserList(RoleMixin, BaseModel):
+    id: int
+    email: str
+    username: str
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 class UserCreate(schemas.BaseUserCreate):
@@ -36,3 +46,15 @@ class UserCreate(schemas.BaseUserCreate):
 class UserUpdate(schemas.BaseUserUpdate):
     role: Optional[Role]
     username: Optional[str]
+
+
+class UserChangePassword(schemas.BaseUserUpdate):
+    password: str
+
+
+class UserTariffUpdate(schemas.BaseUserUpdate):
+    tariff_id: int
+
+
+class UserTariffDelete(schemas.BaseUserUpdate):
+    tariff_id: None

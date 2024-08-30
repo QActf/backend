@@ -1,7 +1,8 @@
-from typing import Any
+from typing import Any, Optional
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 
 async def get_obj_count(
@@ -17,9 +18,16 @@ async def get_obj_count(
 async def get_obj_by_id(
         index: int,
         model,
-        session: AsyncSession
+        session: AsyncSession,
+        related_objects: Optional[list] = None,
 ) -> Any | None:
     """Возвращает объект по id."""
-    stmt = select(model).where(model.id == index)
+    load_related = list()
+
+    if related_objects:
+        for obj in related_objects:
+            load_related.append(selectinload(obj))
+
+    stmt = select(model).where(model.id == index).options(*load_related)
     obj = await session.execute(stmt)
     return obj.scalar()

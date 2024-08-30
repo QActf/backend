@@ -51,6 +51,7 @@ async def get_all_profiles(
 @router.get(
     '/me',
     response_model=ProfileRead,
+    dependencies=[Depends(current_user)],
     response_model_exclude_none=True,
     **GET_ME_PROFILE,
 )
@@ -59,10 +60,12 @@ async def get_current_user_profile(
         user: User = Depends(current_user)
 ) -> ProfileRead:
     """Возвращает профиль текущего пользователя."""
-    return await profile_crud.get_users_obj(
+    obj = await profile_crud.get_users_obj(
         user_id=user.id,
         session=session
     )
+    await check_obj_exists(obj=obj)
+    return obj
 
 
 @router.get(
@@ -91,7 +94,9 @@ async def get_user_photo(
     session: AsyncSession = Depends(get_async_session)
 ):
     """Возвращает фото профиля."""
-    return await profile_crud.get_user_photo(user_id=user.id, session=session)
+    obj = await profile_crud.get_user_photo(user_id=user.id, session=session)
+    await check_obj_exists(obj=obj)
+    return obj
 
 
 @router.patch(
@@ -107,6 +112,7 @@ async def update_profile(
 ):
     """Обновить профиль текущего пользователя."""
     obj = await profile_crud.get_users_obj(user_id=user.id, session=session)
+    await check_obj_exists(obj=obj)
     return await profile_crud.update(
         db_obj=obj,
         obj_in=profile,

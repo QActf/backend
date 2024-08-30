@@ -1,4 +1,3 @@
-import pytest
 from fastapi import status
 
 from tests.fixtures.user import USER_EMAIL, USER_PASSWORD, USER_USERNAME
@@ -12,10 +11,39 @@ REGISTRATION_SCHEMA = {
 
 WRONG_EMAIL = 'wrongtestuser@example.com'
 WRONG_PASSWORD = 'wrongpassword'
+NEW_PASSWORD = 'new_pass'
+
+CHANGE_PASSWORD_SCHEMA = {
+    'old_password': USER_PASSWORD,
+    'new_password': NEW_PASSWORD,
+    'confirm_new_password': NEW_PASSWORD,
+}
+
+WRONG_CHANGE_PASSWORD_SCHEMA_NO_FIELD = {
+    'old_password': USER_PASSWORD,
+    'new_password': NEW_PASSWORD,
+}
+
+WRONG_CHANGE_PASSWORD_SCHEMA_DUPLICATE = {
+    'old_password': USER_PASSWORD,
+    'new_password': USER_PASSWORD,
+    'confirm_new_password': USER_PASSWORD,
+}
+
+WRONG_CHANGE_PASSWORD_SCHEMA_CONFIRMATION = {
+    'old_password': USER_PASSWORD,
+    'new_password': NEW_PASSWORD,
+    'confirm_new_password': WRONG_PASSWORD,
+}
+
+WRONG_CHANGE_PASSWORD_SCHEMA_WRONG_PWD = {
+    'old_password': WRONG_PASSWORD,
+    'new_password': NEW_PASSWORD,
+    'confirm_new_password': NEW_PASSWORD,
+}
 
 
 class TestRegister:
-    @pytest.mark.skip
     async def test_register_new_user(self, new_client):
         """Тест регистрации пользователя с корректными данными."""
         response = await new_client.post(
@@ -154,3 +182,53 @@ class TestLogout:
             'При попытке выхода из системы незалогиненного пользователя, '
             'должен возвращаться статус-код 401.'
         )
+
+
+class TestChangePassword:
+    async def test_change_pwd_auth(self, auth_client):
+        """Тест смены пароля авторизованным пользователем."""
+        response = await auth_client.post(
+            '/auth/change-password',
+            json=CHANGE_PASSWORD_SCHEMA,
+        )
+        assert response.status_code == status.HTTP_200_OK
+
+    async def test_change_pwd_unauthorized_nonauth(self, new_client):
+        """Тест попытки смены пароля неавторизованным пользователем."""
+        response = await new_client.post(
+            '/auth/change-password',
+            json=CHANGE_PASSWORD_SCHEMA,
+        )
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    async def test_change_pwd_wrong_schema(self, auth_client):
+        """Тест попытки смены пароля с отсутствующими данными."""
+        response = await auth_client.post(
+            '/auth/change-password',
+            json=WRONG_CHANGE_PASSWORD_SCHEMA_NO_FIELD,
+        )
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+    async def test_change_pwd_same_pwd(self, auth_client):
+        """Тест попытки смены пароля на аналогичный."""
+        response = await auth_client.post(
+            '/auth/change-password',
+            json=WRONG_CHANGE_PASSWORD_SCHEMA_DUPLICATE,
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    async def test_change_pwd_wrong_confirm(self, auth_client):
+        """Тест попытки смены пароля с неверным подтверждением."""
+        response = await auth_client.post(
+            '/auth/change-password',
+            json=WRONG_CHANGE_PASSWORD_SCHEMA_CONFIRMATION,
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    async def test_change_pwd_wrong_old_pwd(self, auth_client):
+        """Тест попытки смены пароля с неверным текущим паролем."""
+        response = await auth_client.post(
+            '/auth/change-password',
+            json=WRONG_CHANGE_PASSWORD_SCHEMA_WRONG_PWD,
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
