@@ -14,8 +14,8 @@ from app.core.user import current_superuser, current_user
 from app.crud import course_crud, tariff_crud
 from app.models import User
 from app.schemas.course import (
-    CourseCreate, CourseRead, CourseTariffCreate, CourseUpdate,
-    MultiCourseRead,
+    CourseCreate, CourseRead, CourseTariffCreate, CourseTasksRead,
+    CourseUpdate, MultiCourseRead,
 )
 from app.services.endpoints_services import delete_obj
 from app.services.utils import (
@@ -100,7 +100,7 @@ async def get_available_started_user_courses(
 
 @router.get(
     '/me/{course_id}',
-    response_model=CourseRead,
+    response_model=CourseTasksRead,
     dependencies=[Depends(current_user)],
     **GET_USER_COURSE,
 )
@@ -108,7 +108,7 @@ async def get_user_course_id(
     course_id: int,
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session),
-) -> CourseRead:
+) -> CourseTasksRead:
     """Возвращает конкретный курс текущего пользователя по id."""
     obj = await course_crud.get_course(course_id=course_id, session=session)
     await check_obj_exists(obj=obj)

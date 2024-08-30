@@ -37,7 +37,8 @@ class CRUDCourse(CRUDBase):
             select(Course)
             .where(Course.id == course_id)
             .options(
-                selectinload(Course.users)
+                selectinload(Course.users),
+                selectinload(Course.tasks),
             )
         )
         course = await session.execute(course_query)
