@@ -2,6 +2,8 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, validator
 
+from app.schemas.task import TaskRead
+
 
 class CourseCreate(BaseModel):
     name: str
@@ -15,6 +17,10 @@ class CourseRead(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class CourseTasksRead(CourseRead):
+    tasks: Optional[list[TaskRead]]
 
 
 class MultiCourseRead(BaseModel):

@@ -136,6 +136,7 @@ GET_USER_COURSE = dict(
     - HTTP 200 OK: Если курс успешно получен.
 
     Errors:
+    - HTTP 403 Forbidden: Если пользователь не подписан на курс.
     - HTTP 404 Not Found: Если курс с указанным `course_id` не существует.
     """
 )
