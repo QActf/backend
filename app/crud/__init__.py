@@ -6,6 +6,7 @@ from .locale import locale_crud  # noqa
 from .notification import notification_crud  # noqa
 from .profile import profile_crud  # noqa
 from .question import question_crud  # noqa
+from .userquestion import user_question_crud  # noqa
 from .tariff import tariff_crud  # noqa
 from .task import task_crud  # noqa
 from .user import user_crud  # noqa
