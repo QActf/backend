@@ -8,13 +8,17 @@ from .utils import get_obj_by_id, get_obj_count
 
 CREATE_SCHEME = {
     'name': 'Task name',
-    'description': 'Task description'
+    'description': 'Task description',
+    'difficult': 5
 }
 WRONG_CREATE_SCHEME = {
     'description': 'Task description'
 }
-UPDATE_SCHEME = {
+UPDATE_NAME_SCHEME = {
     'name': 'New name of task'
+}
+UPDATE_DIFFICULT_SCHEME = {
+    'difficult': 10
 }
 
 
@@ -108,7 +112,7 @@ class TestGetTask:
             db_session: AsyncSession,
             auth_superuser: TestClient
     ):
-        """Тест получения всех таск."""
+        """Тест получения всех таск суперюзером."""
         tasks_count = await get_obj_count(Task, db_session)
         response = await auth_superuser.get('/tasks/')
         assert response.status_code == status.HTTP_200_OK
@@ -123,7 +127,7 @@ class TestGetTask:
         """Получение таски по id."""
         response = await auth_superuser.get('/tasks/1')
         assert response.status_code == status.HTTP_200_OK
-        assert response.json()['id'] == 1
+        assert response.json()['key'] == 1
 
 
 class TestUpdateTask:
@@ -132,7 +136,7 @@ class TestUpdateTask:
             new_client: TestClient
     ):
         """Тест запрета апдейта таск неавторизованным."""
-        response = await new_client.patch('/tasks/1', json=UPDATE_SCHEME)
+        response = await new_client.patch('/tasks/1', json=UPDATE_NAME_SCHEME)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_forbidden_update_task_user(
@@ -140,7 +144,7 @@ class TestUpdateTask:
             auth_client: TestClient
     ):
         """Тест запрета апдейта таск юзером."""
-        response = await auth_client.patch('/tasks/1', json=UPDATE_SCHEME)
+        response = await auth_client.patch('/tasks/1', json=UPDATE_NAME_SCHEME)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_update_task_superuser(
@@ -153,12 +157,28 @@ class TestUpdateTask:
         task: Task = await get_obj_by_id(1, Task, db_session)
         response = await auth_superuser.patch(
             '/tasks/1',
-            json=UPDATE_SCHEME
+            json=UPDATE_NAME_SCHEME
         )
         assert response.status_code == status.HTTP_200_OK
         check_task: Task = await get_obj_by_id(1, Task, db_session)
-        assert check_task.name == UPDATE_SCHEME['name']
+        assert check_task.name == UPDATE_NAME_SCHEME['name']
         assert check_task.description == task.description
+
+    async def test_update_wrong_difficult_task(
+            self,
+            moc_tasks,
+            db_session: AsyncSession,
+            auth_superuser: TestClient
+    ):
+        """Тест апдейта таски с неверной сложностью."""
+        task: Task = await get_obj_by_id(1, Task, db_session)
+        response = await auth_superuser.patch(
+            '/tasks/1',
+            json=UPDATE_DIFFICULT_SCHEME
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        check_task: Task = await get_obj_by_id(1, Task, db_session)
+        assert check_task == task
 
 
 class TestDeleteTask:

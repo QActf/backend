@@ -17,3 +17,11 @@ async def check_obj_duplicate(obj):
             status_code=HTTPStatus.BAD_REQUEST,
             detail='Объект с таким именем уже существует.',
         )
+
+
+async def check_difficult_task(data):
+    if data.difficult not in range(1, 10):
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='Сложность задачи должна быть в диапазоне [1, 9].',
+        )
