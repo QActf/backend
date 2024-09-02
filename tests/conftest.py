@@ -21,6 +21,7 @@ pytest_plugins = [
     f'{fixtures}.profile',
     f'{fixtures}.group',
     f'{fixtures}.achievement',
+    f'{fixtures}.question',
     f'{fixtures}.tariff',
     f'{fixtures}.task',
     f'{fixtures}.course',

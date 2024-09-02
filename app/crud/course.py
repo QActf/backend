@@ -1,9 +1,13 @@
-from sqlalchemy import select
+from sqlalchemy import and_, select
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.crud.base import CRUDBase
 from app.models import Course, User
+from app.models.course import (
+    course_tariff_association, course_user_association,
+)
 
 
 class CRUDCourse(CRUDBase):
@@ -33,7 +37,8 @@ class CRUDCourse(CRUDBase):
             select(Course)
             .where(Course.id == course_id)
             .options(
-                selectinload(Course.users)
+                selectinload(Course.users),
+                selectinload(Course.tasks),
             )
         )
         course = await session.execute(course_query)
@@ -50,6 +55,76 @@ class CRUDCourse(CRUDBase):
         await session.commit()
         await session.refresh(course)
         return course
+
+    async def get_multi_courses_with_users(
+            self,
+            session: AsyncSession,
+    ):
+        """Вернет курсы с пользователями."""
+        stmt = select(self.model).options(
+            selectinload(self.model.users)
+        )
+        objs = await session.execute(stmt)
+        return objs.scalars().all()
+
+    async def create_course_tariff_association(
+            self,
+            obj_in,
+            session: AsyncSession,
+    ):
+        """Создаст ассоциацию курса и тарифа."""
+        stmt = course_tariff_association.insert().values(
+            course_id=obj_in.course_id,
+            tariff_id=obj_in.tariff_id,
+        )
+        await session.execute(stmt)
+        await session.commit()
+
+    async def get_course_tariff_association(
+            self,
+            course_id: int,
+            tariff_id: int,
+            session: AsyncSession,
+    ):
+        """Вернет ассоциацию курса и тарифа."""
+        stmt = select(course_tariff_association).where(
+            and_(
+                course_tariff_association.c.course_id == course_id,
+                course_tariff_association.c.tariff_id == tariff_id
+            )
+        )
+        obj = await session.execute(stmt)
+        return obj.scalars().first()
+
+    async def delete_course_tariff_association(
+            self,
+            course_id: int,
+            tariff_id: int,
+            session: AsyncSession,
+    ):
+        """Удалит ассоциацию курса и тарифа."""
+        stmt = course_tariff_association.delete().where(
+            and_(
+                course_tariff_association.c.course_id == course_id,
+                course_tariff_association.c.tariff_id == tariff_id
+            )
+        )
+        await session.execute(stmt)
+        await session.commit()
+
+    async def create_course_user_association(
+            self,
+            course_id: int,
+            user_id: int,
+            session: AsyncSession,
+    ):
+        """Создаст ассоциацию курса и пользователя."""
+        stmt = insert(course_user_association).values(
+            course_id=course_id,
+            user_id=user_id,
+        ).on_conflict_do_nothing(index_elements=['course_id', 'user_id'])
+        await session.execute(stmt)
+        await session.commit()
 
 
 course_crud = CRUDCourse(Course)

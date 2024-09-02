@@ -3,12 +3,14 @@ from typing import List
 from fastapi import APIRouter, Body, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import check_obj_duplicate, check_obj_exists
+from app.api.validators import (
+    check_difficult_task, check_obj_duplicate, check_obj_exists,
+)
 from app.api_docs_responses.task import (
     CREATE_TASK, DELETE_TASK, GET_TASK, GET_TASKS, PATCH_TASK,
 )
 from app.api_docs_responses.utils_docs import (
-    REQUEST_NAME_AND_DESCRIPTION_VALUE,
+    TASK_CREATE_VALUE, TASK_UPDATE_VALUE,
 )
 from app.core.db import get_async_session
 from app.core.user import current_superuser
@@ -61,10 +63,10 @@ async def get_task_by_id(
 )
 async def create_task(
     task: TaskCreate = Body(
-        openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
+        openapi_examples=TASK_CREATE_VALUE),
     session: AsyncSession = Depends(get_async_session)
 ):
-    """Создать задачу"""
+    """Создать задачу."""
     obj = await task_crud.get_by_attr(
         attr_name='name',
         attr_value=task.name,
@@ -83,7 +85,7 @@ async def create_task(
 async def update_task(
     task_id: int,
     data: TaskUpdate = Body(
-        openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
+        openapi_examples=TASK_UPDATE_VALUE),
     session: AsyncSession = Depends(get_async_session)
 ):
     """Обновление задачи."""
@@ -93,6 +95,8 @@ async def update_task(
         session=session,
     )
     await check_obj_exists(obj=obj)
+    if data.difficult:
+        await check_difficult_task(data)
     return await task_crud.update(db_obj=obj, obj_in=data, session=session)
 
 

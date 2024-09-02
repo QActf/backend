@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 
 from app.api.endpoints import (
-    achievement_router, contact_info_router, course_router, examination_router,
-    group_router, locale_router, profile_router, tariff_router, task_router,
-    user_router,
+    achievement_router, course_router, examination_router, group_router,
+    locale_router, notification_router, profile_router, question_router,
+    subscription_router, tariff_router, task_router, user_router,
 )
 
 main_router = APIRouter()
@@ -23,7 +23,16 @@ main_router.include_router(
     profile_router, prefix='/profiles', tags=['Profiles']
 )
 main_router.include_router(
+    question_router, prefix='/questions', tags=['Questions']
+)
+main_router.include_router(
     locale_router, prefix='/locales', tags=['Locales']
+)
+main_router.include_router(
+    notification_router, prefix='/notifications', tags=['Notifications']
+)
+main_router.include_router(
+    subscription_router, prefix='/subscriptions', tags=['Subscriptions']
 )
 main_router.include_router(
     contact_info_router, prefix='/contact_info', tags=['Contact info']

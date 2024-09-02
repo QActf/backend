@@ -1,74 +1,58 @@
 from app.api_docs_responses.utils_docs import (
     get_200_docs, get_201_docs, get_204_docs, get_400_docs, get_401_docs,
-    get_404_docs,
+    get_403_docs, get_404_docs,
 )
 
 tasks_with_all_fields = {
     'id': 0,
+    'difficult': 1,
     'name': 'Название задачи',
     'description': 'Описание задачи',
+    'time': '1',
+    'solvers': 2,
 }
 
-tasks_without_description = {
-    'id': 0,
-    'name': 'Название задачи',
-}
-
-content_tasks = {
+content_task = {
     'application/json': {
         'examples': {
             'tasks_with_all_fields': {
                 'summary': 'Задача со всеми заполненными полями',
                 'value': [tasks_with_all_fields],
             },
-            'tasks_without_description': {
-                'summary': 'Задача без описания',
-                'value': [tasks_without_description],
-            }
-        }
-    }
-}
-
-content_task = {
-    'application/json': {
-        'examples': {
-            'task_with_all_fields': {
-                'summary': 'Задача со всеми заполненными полями',
-                'value': tasks_with_all_fields,
-            },
-            'task_without_description': {
-                'summary': 'Задача без описания',
-                'value': tasks_without_description,
-            }
         }
     }
 }
 
 get_tasks_response = {
-    **get_200_docs(content_tasks),
+    **get_200_docs(content_task),
     **get_401_docs(),
+    **get_403_docs('Forbidden', 'Нужны права admin.'),
 }
 
 get_task_response = {
     **get_200_docs(content_task),
     **get_401_docs(),
+    **get_403_docs('Forbidden', 'Нужны права admin.'),
 }
 
 create_task_response = {
     **get_201_docs(content_task),
     **get_401_docs(),
+    **get_403_docs('Forbidden', 'Нужны права admin.'),
 }
 
 update_task_response = {
     **get_200_docs(content_task),
     **get_401_docs(),
     **get_400_docs('Объект tasks с таким именем уже существует!'),
+    **get_403_docs('Forbidden', 'Нужны права admin.'),
     **get_404_docs('Объект tasks не найден.'),
 }
 
 delete_task_response = {
     **get_204_docs(),
     **get_401_docs(),
+    **get_403_docs('Forbidden', 'Нужны права admin.'),
     **get_404_docs('Объект tasks не найден.'),
 }
 
@@ -84,6 +68,7 @@ GET_TASKS = dict(
     Returns:
     - HTTP 200 OK: Если список задач успешно получен.
     - HTTP 401 Unauthorized: Если пользователь не авторизован.
+    - HTTP 403 Forbidden: Если прав недостаточно.
     """
 )
 
@@ -99,6 +84,7 @@ GET_TASK = dict(
     Returns:
     - HTTP 200 OK: Если задача успешно получена.
     - HTTP 401 Unauthorized: Если пользователь не авторизован.
+    - HTTP 403 Forbidden: Если прав недостаточно.
     """
 )
 
@@ -116,6 +102,7 @@ CREATE_TASK = dict(
     - HTTP 400 Bad Request: Если попытка создания задачи невозможна,
     потому что задача с таким именем уже создан.
     - HTTP 401 Unauthorized: Если пользователь не авторизован.
+    - HTTP 403 Forbidden: Если прав недостаточно.
     """
 )
 
@@ -154,6 +141,7 @@ DELETE_TASK = dict(
     Returns:
     - HTTP 204 No Content: Если задача успешно удалена.
     - HTTP 401 Unauthorized: Если пользователь не авторизован.
+    - HTTP 403 Forbidden: Если прав недостаточно.
     - HTTP 404 Not Found: Если задача с `task_id` не существует.
     """
 )

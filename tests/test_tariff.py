@@ -10,7 +10,8 @@ from .utils import get_obj_by_id, get_obj_count
 
 CREATE_SCHEME = {
     'name': 'Test tariff',
-    'description': 'Test tariff description'
+    'description': 'Test tariff description',
+    'cost': 80
 }
 UPDATE_SCHEME = {
     'name': 'New tariff name'
