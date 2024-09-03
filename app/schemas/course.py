@@ -13,7 +13,7 @@ class CourseCreate(BaseModel):
 class CourseRead(BaseModel):
     id: int
     name: Optional[str] = Field(serialization_alias='title')
-    description: Optional[str]
+    description: Optional[str] = Field(serialization_alias='subtitle')
 
     class Config:
         from_attributes = True
@@ -26,7 +26,7 @@ class CourseTasksRead(CourseRead):
 class MultiCourseRead(BaseModel):
     id: int
     name: str = Field(serialization_alias='title')
-    description: str
+    description: str = Field(serialization_alias='subtitle')
     is_available: bool
     is_started: bool
 

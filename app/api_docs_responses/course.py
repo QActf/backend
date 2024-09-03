@@ -23,7 +23,7 @@ def get_custom_204_docs():
 courses_with_all_fields = {
     'id': 0,
     'title': 'Название курса',
-    'description': 'Описание курса'
+    'subtitle': 'Описание курса'
 }
 
 courses_without_description = {
