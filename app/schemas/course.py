@@ -14,6 +14,7 @@ class CourseRead(BaseModel):
     id: int
     name: Optional[str] = Field(serialization_alias='title')
     description: Optional[str] = Field(serialization_alias='subtitle')
+    icon: Optional[str]
 
     class Config:
         from_attributes = True
@@ -29,6 +30,7 @@ class MultiCourseRead(BaseModel):
     description: str = Field(serialization_alias='subtitle')
     is_available: bool
     is_started: bool
+    icon: Optional[str]
 
     class Config:
         from_attributes = True
@@ -42,6 +44,7 @@ class CourseTariffCreate(BaseModel):
 class CourseUpdate(BaseModel):
     name: Optional[str] = Field(None)
     description: Optional[str] = Field(None)
+    icon: Optional[str] = Field(None)
 
     @validator('name')
     def name_cannot_be_null(cls, value):

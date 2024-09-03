@@ -1,10 +1,15 @@
-from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
+import re
+
+from fastapi import (
+    APIRouter, Body, Depends, File, HTTPException, Response, UploadFile,
+    status,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_obj_duplicate, check_obj_exists
 from app.api_docs_responses.course import (
     CREATE_COURSE, DELETE_COURSE, GET_COURSE, GET_COURSES, GET_USER_COURSE,
-    GET_USER_COURSES, PATCH_COURSE,
+    GET_USER_COURSES, PATCH_COURSE, PATCH_COURSE_ICON,
 )
 from app.api_docs_responses.utils_docs import (
     REQUEST_NAME_AND_DESCRIPTION_VALUE,
@@ -12,14 +17,15 @@ from app.api_docs_responses.utils_docs import (
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import course_crud, tariff_crud
-from app.models import User
+from app.models import Course, User
 from app.schemas.course import (
     CourseCreate, CourseRead, CourseTariffCreate, CourseTasksRead,
     CourseUpdate, MultiCourseRead,
 )
 from app.services.endpoints_services import delete_obj
 from app.services.utils import (
-    Pagination, add_response_headers, get_pagination_params, paginated,
+    Pagination, add_response_headers, create_filename,
+    get_pagination_params, paginated, remove_content, save_content,
 )
 
 router = APIRouter()
@@ -184,6 +190,33 @@ async def update_course(
         db_obj=obj,
         obj_in=obj_in,
         session=session,
+    )
+
+
+@router.patch(
+    '/update_icon/{course_id}',
+    response_model=CourseRead,
+    dependencies=[Depends(current_superuser)],
+    **PATCH_COURSE_ICON,
+)
+async def update_photo(
+    course_id: int,
+    file: UploadFile = File(...),
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Обновить icon курса."""
+    course: Course = await course_crud.get_course(
+        course_id=course_id, session=session
+    )
+    await check_obj_exists(obj=course)
+    if not re.match(r'^.+icon\d+\.png$', course.icon):
+        remove_content(course.icon)
+    file.filename = create_filename(file, 'icon_course')
+    await save_content(file)
+    return await course_crud.update_icon(
+        course.id,
+        file.filename,
+        session
     )
 
 

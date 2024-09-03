@@ -27,6 +27,7 @@ services:
       - db
     volumes:
       - backend_static:/app/media/photo_profile/
+      - backend_static:/app/media/icon_course/
 
   nginx:
     container_name: proxy

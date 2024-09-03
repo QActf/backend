@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from pathlib import Path
+from random import randint
 
 from sqlalchemy import (
     Boolean, Column, ForeignKey, Integer, String, Table, Text,
@@ -40,6 +42,13 @@ course_tariff_association = Table(
 )
 
 
+def _random_photo(path: Path):
+    """Возвращает рандомный файл из указанной папки."""
+    files = [f'default_icon/{file.name}' for file in path.iterdir()]
+    random_index = randint(0, len(files) - 1)
+    return str(files[random_index])
+
+
 class Course(Base):
     name: str = Column(
         String(length=settings.max_length_string), unique=True, nullable=False
@@ -55,6 +64,12 @@ class Course(Base):
     tasks: Mapped[list[Task]] = relationship(
         secondary=task_course_association, back_populates='courses'
     )
-
+    icon: Mapped[str] = Column(
+        String(),
+        nullable=True,
+        default=_random_photo(
+            settings.base_dir / settings.media_url / 'default_icon/'
+        )
+    )
     def __repr__(self):
         return self.name

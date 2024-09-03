@@ -23,7 +23,8 @@ def get_custom_204_docs():
 courses_with_all_fields = {
     'id': 0,
     'title': 'Название курса',
-    'subtitle': 'Описание курса'
+    'subtitle': 'Описание курса',
+    'icon': 'Ссылка на изображение'
 }
 
 courses_without_description = {
@@ -75,6 +76,12 @@ get_user_course_response = {
 
 get_course_response = {
     **get_200_docs(content_course),
+    **get_404_docs('Объект course не найден.'),
+}
+
+get_course_update_icon_response = {
+    **get_200_docs(content_course),
+    **get_403_docs('Недостаточно прав.'),
     **get_404_docs('Объект course не найден.'),
 }
 
@@ -196,6 +203,29 @@ PATCH_COURSE = dict(
     - HTTP 401 Unauthorized: Если пользователь не авторизован.
     - HTTP 403 Forbidden: Если у пользователя нет прав на изменение
     данного курса или курс не существует.
+    - HTTP 404 Not Found: Если курс с указанным `course_id` не существует.
+    """
+)
+
+PATCH_COURSE_ICON = dict(
+    responses=get_course_update_icon_response,
+    summary='Изменение иконки курса',
+    description="""
+    ## Изменение иконки курса по его идентификатору.
+
+    Permissions:
+    - Требуется аутентификация ну уровне admin.
+
+    Parameters:
+    - `course_id` (int): Идентификатор курса, иконку которого нужно заменить.
+
+    Returns:
+    - HTTP 200 OK: Если иконка курса успешно изменена.
+
+    Raises:
+    - HTTP 401 Unauthorized: Если пользователь не авторизован.
+    - HTTP 403 Forbidden: Если у пользователя нет прав на изменение
+    данного курса.
     - HTTP 404 Not Found: Если курс с указанным `course_id` не существует.
     """
 )

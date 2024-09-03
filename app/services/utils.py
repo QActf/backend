@@ -16,10 +16,10 @@ class Pagination(namedtuple('Pagination', 'offset limit')):
         return self.offset + self.limit
 
 
-def create_filename(file: UploadFile) -> str:
+def create_filename(file: UploadFile, prefix_folder: str) -> str:
     """Создаёт имя файла."""
     file_extension = file.filename.split('.')[-1]
-    return f'photo_profile/{uuid4()}.{file_extension}'
+    return f'{prefix_folder}/{uuid4()}.{file_extension}'
 
 
 async def save_content(file: UploadFile):
