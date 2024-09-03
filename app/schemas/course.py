@@ -12,7 +12,7 @@ class CourseCreate(BaseModel):
 
 class CourseRead(BaseModel):
     id: int
-    name: Optional[str]
+    name: Optional[str] = Field(serialization_alias='title')
     description: Optional[str]
 
     class Config:
