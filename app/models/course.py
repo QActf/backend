@@ -1,16 +1,18 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
 from pathlib import Path
 from random import randint
+from typing import TYPE_CHECKING
 
 from sqlalchemy import (
     Boolean, Column, ForeignKey, Integer, String, Table, Text,
     UniqueConstraint,
 )
 from sqlalchemy.orm import Mapped, relationship
+from sqlalchemy_utils import ChoiceType
 
 from app.core.config import settings
+from app.core.constants import StatusCourse
 from app.core.db import Base
 
 from .task import task_course_association
@@ -50,6 +52,7 @@ def _random_photo(path: Path):
 
 
 class Course(Base):
+    STATUS = [(status.name, status.value) for status in StatusCourse]
     name: str = Column(
         String(length=settings.max_length_string), unique=True, nullable=False
     )
@@ -71,5 +74,11 @@ class Course(Base):
             settings.base_dir / settings.media_url / 'default_icon/'
         )
     )
+    status: Mapped[str] = Column(
+        ChoiceType(STATUS),
+        nullable=False,
+        default='development',
+    )
+
     def __repr__(self):
         return self.name

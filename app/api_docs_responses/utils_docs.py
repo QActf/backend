@@ -92,6 +92,29 @@ USER_VALUE = {
     'role': 'user',
     'username': 'Имя'
 }
+COURSE_VALUE = {
+    'all_data': {
+        'summary': 'Все поля заполнены.',
+        'value': {
+            'name': 'Новое название курса',
+            'description': 'Новое описание курса',
+            'status': 'sealed'
+        }
+    },
+    'only_name_data': {
+        'summary': 'Только имя.',
+        'value': {'name': 'Новое название курса'}
+    },
+    'only_status_data': {
+        'summary': 'Только статус.',
+        'value': {'status': 'development'}
+    },
+    'empty_data': {
+        'summary': 'Без данных',
+        'description': 'Validation Error 422',
+        'value': {}
+    }
+}
 
 
 def get_200_docs(content):

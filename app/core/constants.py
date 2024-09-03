@@ -12,3 +12,10 @@ class Role(str, Enum):
 class Gender(str, Enum):
     male = 'male'
     female = 'female'
+
+
+class StatusCourse(str, Enum):
+    available = 'available'
+    sealed = 'sealed'
+    subscription = 'subscription'
+    development = 'development'

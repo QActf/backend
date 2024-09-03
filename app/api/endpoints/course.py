@@ -12,7 +12,7 @@ from app.api_docs_responses.course import (
     GET_USER_COURSES, PATCH_COURSE, PATCH_COURSE_ICON,
 )
 from app.api_docs_responses.utils_docs import (
-    REQUEST_NAME_AND_DESCRIPTION_VALUE,
+    COURSE_VALUE, REQUEST_NAME_AND_DESCRIPTION_VALUE,
 )
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
@@ -24,8 +24,8 @@ from app.schemas.course import (
 )
 from app.services.endpoints_services import delete_obj
 from app.services.utils import (
-    Pagination, add_response_headers, create_filename,
-    get_pagination_params, paginated, remove_content, save_content,
+    Pagination, add_response_headers, create_filename, get_pagination_params,
+    paginated, remove_content, save_content,
 )
 
 router = APIRouter()
@@ -177,7 +177,7 @@ async def create_course(
 async def update_course(
     course_id: int,
     obj_in: CourseUpdate = Body(
-        openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
+        openapi_examples=COURSE_VALUE),
     session: AsyncSession = Depends(get_async_session),
 ) -> CourseRead:
     """Обновит курс по его id."""

@@ -24,7 +24,8 @@ courses_with_all_fields = {
     'id': 0,
     'title': 'Название курса',
     'subtitle': 'Описание курса',
-    'icon': 'Ссылка на изображение'
+    'icon': 'Ссылка на изображение',
+    'status': 'available'
 }
 
 courses_without_description = {

@@ -126,7 +126,6 @@ class CRUDCourse(CRUDBase):
         await session.execute(stmt)
         await session.commit()
 
-
     async def update_icon(
             self,
             course_id: int,
