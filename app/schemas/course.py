@@ -25,7 +25,7 @@ class CourseTasksRead(CourseRead):
 
 class MultiCourseRead(BaseModel):
     id: int
-    name: str
+    name: str = Field(serialization_alias='title')
     description: str
     is_available: bool
     is_started: bool
