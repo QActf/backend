@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Depends, HTTPException, status
+from fastapi import APIRouter, Body, Depends, Form, HTTPException, status
 from fastapi_users import InvalidPasswordException
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
@@ -23,6 +23,7 @@ from app.core.user import (
     get_user_manager,
 )
 from app.crud.hasher import Hasher
+from app.crud.userquestion import user_question_crud
 from app.crud.user import user_crud
 from app.models import User
 from app.schemas.user import (
@@ -90,6 +91,23 @@ async def get_users(
     users = await user_crud.get_users(session)
     add_response_headers(response, users, pagination)
     return paginated(users, pagination)
+
+
+@router.post(
+    '/users/send_message',
+    tags=['users'],
+    status_code=status.HTTP_201_CREATED,
+    summary='Отправка сообщения от пользователя сервису.',
+    dependencies=[Depends(current_user)]
+)
+async def send_message(
+    message: str = Form(),
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    email = user.email
+    await user_question_crud.create(email, message, session)
+    return {'result': 'Сообщение успешно отправлено.'}
 
 
 @router.post(
