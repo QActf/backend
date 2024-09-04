@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
-from random import randint
 from typing import TYPE_CHECKING
 
 from sqlalchemy import (
@@ -9,11 +7,10 @@ from sqlalchemy import (
     UniqueConstraint,
 )
 from sqlalchemy.orm import Mapped, relationship
-from sqlalchemy_utils import ChoiceType
 
 from app.core.config import settings
-from app.core.constants import StatusCourse
 from app.core.db import Base
+from app.services.utils import random_photo
 
 from .task import task_course_association
 
@@ -44,15 +41,7 @@ course_tariff_association = Table(
 )
 
 
-def _random_photo(path: Path):
-    """Возвращает рандомный файл из указанной папки."""
-    files = [f'default_icon/{file.name}' for file in path.iterdir()]
-    random_index = randint(0, len(files) - 1)
-    return str(files[random_index])
-
-
 class Course(Base):
-    STATUS = [(status.name, status.value) for status in StatusCourse]
     name: str = Column(
         String(length=settings.max_length_string), unique=True, nullable=False
     )
@@ -70,14 +59,10 @@ class Course(Base):
     icon: Mapped[str] = Column(
         String(),
         nullable=True,
-        default=_random_photo(
-            settings.base_dir / settings.media_url / 'default_icon/'
+        default=random_photo(
+            settings.base_dir / settings.media_url / 'default_icon/',
+            'default_icon',
         )
-    )
-    status: Mapped[str] = Column(
-        ChoiceType(STATUS),
-        nullable=False,
-        default='development',
     )
 
     def __repr__(self):

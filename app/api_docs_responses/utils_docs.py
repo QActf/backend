@@ -98,16 +98,15 @@ COURSE_VALUE = {
         'value': {
             'name': 'Новое название курса',
             'description': 'Новое описание курса',
-            'status': 'sealed'
         }
     },
     'only_name_data': {
         'summary': 'Только имя.',
         'value': {'name': 'Новое название курса'}
     },
-    'only_status_data': {
-        'summary': 'Только статус.',
-        'value': {'status': 'development'}
+    'only_description_data': {
+        'summary': 'Только описание.',
+        'value': {'description': 'Новое описание курса'}
     },
     'empty_data': {
         'summary': 'Без данных',

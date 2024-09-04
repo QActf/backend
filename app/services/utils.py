@@ -1,5 +1,7 @@
 import os
 from collections import namedtuple
+from pathlib import Path
+from random import randint
 from typing import Any, Sequence
 from uuid import uuid4
 
@@ -14,6 +16,13 @@ class Pagination(namedtuple('Pagination', 'offset limit')):
     @property
     def end(self):
         return self.offset + self.limit
+
+
+def random_photo(path: Path, prefix_folder: str):
+    """Возвращает рандомный файл из указанной папки."""
+    files = [f'{prefix_folder}/{file.name}' for file in path.iterdir()]
+    random_index = randint(0, len(files) - 1)
+    return str(files[random_index])
 
 
 def create_filename(file: UploadFile, prefix_folder: str) -> str:
