@@ -95,6 +95,7 @@ async def get_tariff_planes(
     ответа.
     Если тариф закрыт и нет связи тариф-пользователь, то он будет исключен из
     ответа.
+    Сортировка тарифных планов происходит по полю cost.
     """
     db_courses = await course_crud.get_multi_courses_with_users(
         session=session,
@@ -123,19 +124,30 @@ async def get_tariff_planes(
     tariffs = [TariffPlanRead(id=0, name='', description='', cost=0,
                               dataIndex='', key='', is_active=False,
                               this_tariff=False)]
+    user_tariff_cost = None
+    if user.tariff_id:
+        db_user_tariff = await tariff_crud.get_tariff(
+            attr_name='id',
+            attr_value=user.tariff_id,
+            session=session,
+        )
+        if db_user_tariff:
+            user_tariff_cost = db_user_tariff.cost
+
     for tariff in db_tariffs:
         if not (tariff.is_closed and user not in tariff.users):
             tariff.dataIndex = tariff.name
             tariff.key = tariff.name
             tariff.this_tariff = tariff.id == user.tariff_id
-            if user.tariff_id:
-                tariff.is_active = tariff.id <= user.tariff_id
-            else:
-                tariff.is_active = False
+            tariff.is_active = (
+                False if user_tariff_cost is None
+                else tariff.cost <= user_tariff_cost
+            )
             tariffs.append(tariff)
 
+    sorted_tariffs = sorted(tariffs, key=lambda tar: tar.cost)
     response = PlanRead(
         courses=courses_with_tariff_flags,
-        tariffs=tariffs,
+        tariffs=sorted_tariffs,
     )
     return response
