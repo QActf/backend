@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import datetime
 from pathlib import Path
-from random import randint
 from typing import TYPE_CHECKING
 
 from sqlalchemy import Column, DateTime, ForeignKey, String
@@ -12,7 +11,6 @@ from sqlalchemy_utils import ChoiceType
 from app.core.config import settings
 from app.core.constants import Gender
 from app.core.db import Base
-
 from .achievement import achievement_profile_association
 
 if TYPE_CHECKING:

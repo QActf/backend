@@ -6,7 +6,7 @@ from app.api.endpoints import (
     subscription_router, tariff_router, task_router, user_router,
 )
 
-main_router = APIRouter()
+main_router = APIRouter(prefix="/api")
 
 main_router.include_router(user_router)
 main_router.include_router(group_router, prefix='/groups', tags=['Groups'])
