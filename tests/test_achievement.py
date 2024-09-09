@@ -7,8 +7,8 @@ from sqlalchemy.orm import selectinload
 from app.models import Achievement, Profile, User
 from .utils import get_obj_by_id, get_obj_count
 
-API_ACHIEVEMENTS_URL = '/api/achievements/'
-API_ACHIEVEMENTS_URL_first = '%s1' % API_ACHIEVEMENTS_URL
+API_ACHIEVEMENTS_URL = '/api/achievements'
+API_ACHIEVEMENTS_URL_first = '%s/1' % API_ACHIEVEMENTS_URL
 API_ACHIEVEMENTS_ME_URL = '%s/me' % API_ACHIEVEMENTS_URL
 
 
@@ -310,14 +310,14 @@ class TestPaginationGroup:
     ):
         """Тест пагинации профилей."""
         response = await auth_superuser.get(
-            '%s?limit=2' % API_ACHIEVEMENTS_URL
+            '%s/?limit=2' % API_ACHIEVEMENTS_URL
         )
         result = response.json()
         assert len(result) == 2
         assert result[0]['id'] == 1
         assert result[1]['id'] == 2
         response = await auth_superuser.get(
-            '%s?offset=2&limit=2' % API_ACHIEVEMENTS_URL
+            '%s/?offset=2&limit=2' % API_ACHIEVEMENTS_URL
         )
         result = response.json()
         assert len(result) == 2
