@@ -5,8 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.models import Group, User
-
 from .utils import get_obj_count
+
+API_GROUPS_URL = '/api/groups'
+API_GROUPS_ME_URL = '%s/me' % API_GROUPS_URL
+API_GROUPS_FIRST_URL = '%s/1' % API_GROUPS_URL
 
 GROUP_SCHEME = {
     'name': 'Test Group',
@@ -49,7 +52,7 @@ class TestCreateGroup:
         """Создание группы суперюзером."""
         groups = await get_obj_count(Group, db_session)
         response = await auth_superuser.post(
-            '/groups/',
+            API_GROUPS_URL,
             json=GROUP_SCHEME
         )
         assert response.status_code == status.HTTP_201_CREATED
@@ -62,7 +65,7 @@ class TestCreateGroup:
     ):
         """Тест запрета создания группы юзером."""
         response = await auth_client.post(
-            '/groups/',
+            API_GROUPS_URL,
 
             json=GROUP_SCHEME
         )
@@ -74,7 +77,7 @@ class TestCreateGroup:
     ):
         """Тест запрета создания группы неавторизованным."""
         response = await new_client.post(
-            '/groups/',
+            API_GROUPS_URL,
             json=GROUP_SCHEME
         )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
@@ -90,7 +93,7 @@ class TestGetGroup:
         """Получение всех групп суперюзером."""
         groups = await get_obj_count(Group, db_session)
         response = await auth_superuser.get(
-            '/groups/'
+            API_GROUPS_URL
         )
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == groups
@@ -102,7 +105,7 @@ class TestGetGroup:
             auth_client: TestClient
     ):
         """Тест запрета получения всех групп юзером."""
-        response = await auth_client.get('/groups/')
+        response = await auth_client.get(API_GROUPS_URL)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_forbidden_get_all_groups_nonauth(
@@ -111,7 +114,7 @@ class TestGetGroup:
             new_client: TestClient
     ):
         """Тест запрета получения групп неавторизованным."""
-        response = await new_client.get('/groups/')
+        response = await new_client.get(API_GROUPS_URL)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_get_group_by_id_superuser(
@@ -122,7 +125,7 @@ class TestGetGroup:
     ):
         """Получение суперюзером группы по id."""
         response = await auth_superuser.get(
-            '/groups/1'
+            API_GROUPS_FIRST_URL
         )
         assert response.json()['id'] == 1
 
@@ -132,7 +135,7 @@ class TestGetGroup:
             new_client: TestClient
     ):
         """Тест запрета получения группы по id неавторизованным."""
-        response = await new_client.get('/groups/1')
+        response = await new_client.get(API_GROUPS_FIRST_URL)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_forbidden_get_group_by_id_user(
@@ -140,7 +143,7 @@ class TestGetGroup:
             auth_client: TestClient
     ):
         """Тест запрета получения группы по id юзером."""
-        response = await auth_client.get('/groups/1')
+        response = await auth_client.get(API_GROUPS_FIRST_URL)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_get_self_groups_user(
@@ -157,7 +160,7 @@ class TestGetGroup:
         group_2.users.append(user)
         await db_session.commit()
         response = await auth_client.get(
-            '/groups/me',
+            API_GROUPS_ME_URL,
         )
         assert response.status_code == status.HTTP_200_OK
         result = response.json()
@@ -181,12 +184,12 @@ class TestGetGroup:
         group_2 = await _get_group_by_id(2, db_session)
         group_2.users.append(user)
         await db_session.commit()
-        response = await auth_client.get('groups/me/1')
+        response = await auth_client.get('%s/1' % API_GROUPS_ME_URL)
         assert response.status_code == status.HTTP_200_OK
         assert response.json()['id'] == 1
-        response = await auth_client.get('/groups/me/3')
+        response = await auth_client.get('%s/3' % API_GROUPS_ME_URL)
         assert response.status_code == status.HTTP_403_FORBIDDEN
-        response = await auth_client.get('/groups/me/22')
+        response = await auth_client.get('%s/22' % API_GROUPS_ME_URL)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -200,7 +203,7 @@ class TestDeleteGroup:
         """Тест удаления группы суперюзером."""
         groups = await get_obj_count(Group, db_session)
         response = await auth_superuser.delete(
-            '/groups/1'
+            API_GROUPS_FIRST_URL
         )
         assert response.status_code == status.HTTP_204_NO_CONTENT
         groups_after_remove = await get_obj_count(Group, db_session)
@@ -215,7 +218,7 @@ class TestDeleteGroup:
     ):
         """Тест запрета удаления группы юзером."""
         response = await auth_client.delete(
-            '/groups/1'
+            API_GROUPS_FIRST_URL
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
@@ -225,7 +228,7 @@ class TestDeleteGroup:
     ):
         """Тест запрета удаления группы неавторизованным пользователем."""
         response = await new_client.delete(
-            '/groups/1'
+            API_GROUPS_FIRST_URL
         )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -243,7 +246,7 @@ class TestUpdateGroup:
         assert group.name != UPDATE_SCHEME['name']
         assert group.description != UPDATE_SCHEME['description']
         response = await auth_superuser.patch(
-            '/groups/1',
+            API_GROUPS_FIRST_URL,
             json=UPDATE_SCHEME
         )
         assert response.status_code == status.HTTP_200_OK
@@ -258,7 +261,7 @@ class TestUpdateGroup:
     ):
         """Тест запрета апдейта группы юзером."""
         response = await auth_client.patch(
-            '/groups/1',
+            API_GROUPS_FIRST_URL,
             json=UPDATE_SCHEME
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -269,7 +272,7 @@ class TestUpdateGroup:
     ):
         """Тест запрета апдейта неавторизованным пользователем."""
         response = await new_client.patch(
-            '/groups/1',
+            API_GROUPS_FIRST_URL,
             json=UPDATE_SCHEME
         )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
@@ -283,14 +286,14 @@ class TestPaginationGroup:
     ):
         """Тест пагинации профилей."""
         response = await auth_superuser.get(
-            '/groups/?limit=2'
+            '%s/?limit=2' % API_GROUPS_URL
         )
         result = response.json()
         assert len(result) == 2
         assert result[0]['id'] == 1
         assert result[1]['id'] == 2
         response = await auth_superuser.get(
-            '/groups/?offset=2&limit=2'
+            '%s/?offset=2&limit=2' % API_GROUPS_URL
         )
         result = response.json()
         assert len(result) == 2
