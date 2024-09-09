@@ -13,6 +13,8 @@ USER_EMAIL = 'testuser@example.com'
 USER_PASSWORD = 'password'
 USER_USERNAME = 'testuser'
 
+API_AUTH_URL = '/api/auth'
+API_LOGIN_URL = '%s/jwt/login' % API_AUTH_URL
 
 @pytest_asyncio.fixture
 async def new_client(
@@ -56,7 +58,7 @@ async def auth_client(
 ) -> AsyncGenerator | TestClient:
     """Фикстура для клиента, вошедшего в систему."""
     response = await new_client.post(
-        '/auth/jwt/login',
+        API_LOGIN_URL,
         data={'username': USER_EMAIL, 'password': USER_PASSWORD})
     assert response.status_code == status.HTTP_200_OK
     access_token = response.json().get('access_token')
@@ -94,7 +96,7 @@ async def auth_superuser(
         'password': 'admin'
     }
     response = await new_client.post(
-        '/auth/jwt/login', data=data,
+        API_LOGIN_URL, data=data,
     )
     assert response.status_code == status.HTTP_200_OK
     access_token = response.json().get('access_token')
