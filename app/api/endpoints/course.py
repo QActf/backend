@@ -89,7 +89,11 @@ async def get_available_started_user_courses(
             session=session,
             courses=True,
         )
-        tariff_courses = db_tariff.courses
+        if db_tariff and db_tariff.courses:
+            tariff_courses = [
+                course for course in db_tariff.courses if
+                not course.is_closed
+            ]
 
     user_courses = await course_crud.get_users_obj(
         user_id=user.id,
@@ -342,6 +346,12 @@ async def start_course(
         session=session,
     )
     await check_obj_exists(obj=db_course)
+    if db_course.is_closed:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Нельзя начать закрытый курс.'
+        )
+
     db_tariff = await tariff_crud.get_tariff(
         attr_name='id',
         attr_value=user.tariff_id,

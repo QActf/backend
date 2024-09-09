@@ -47,6 +47,7 @@ class Course(Base):
     )
     description: str = Column(Text)
     is_closed: bool = Column(Boolean, default=False)
+    in_development: bool = Column(Boolean, default=True)
     users: Mapped[list[User]] = relationship(
         secondary=course_user_association, back_populates='courses'
     )
