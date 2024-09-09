@@ -16,9 +16,9 @@ from tests.fixtures.user import USER_EMAIL, USER_PASSWORD, USER_USERNAME
 from .utils import get_obj_count
 
 API_AUTH_URL = '/api/auth/'
-API_PROFILES_URL = '/api/profiles/'
+API_PROFILES_URL = '/api/profiles'
 
-API_PROFILES_ME_URL = '%sme' % API_PROFILES_URL
+API_PROFILES_ME_URL = '%s/me' % API_PROFILES_URL
 API_AUTH_REGISTER_URL = '%sregister' % API_AUTH_URL
 API_AUTH_LOGIN_URL = '%sjwt/login' % API_AUTH_URL
 
