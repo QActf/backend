@@ -7,8 +7,8 @@ from app.models import Question
 from .fixtures.question import TEST_QUESTION_COUNT
 from .utils import get_obj_count
 
-API_QUESTIONS_URL = '/api/questions'
-API_QUESTIONS_FIRST_URL = '%s/1' % API_QUESTIONS_URL
+API_QUESTIONS_URL = '/api/questions/'
+API_QUESTIONS_FIRST_URL = '%s1' % API_QUESTIONS_URL
 
 
 class TestQuestion:
@@ -66,7 +66,7 @@ class TestQuestion:
         question = await db_session.execute(stmt)
         question = question.scalar()
         response = await auth_client.get(
-            f'{API_QUESTIONS_URL}/{TEST_QUESTION_COUNT + 1}'
+            f'{API_QUESTIONS_URL}{TEST_QUESTION_COUNT + 1}'
         )
         assert response.status_code == status.HTTP_404_NOT_FOUND
 

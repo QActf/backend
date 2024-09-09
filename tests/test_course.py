@@ -7,10 +7,10 @@ from sqlalchemy.orm import selectinload
 from app.models import Course, User
 from .utils import get_obj_by_id, get_obj_count
 
-API_COURSES_URL = '/api/courses'
-API_COURSES_ME_URL = '%s/me' % API_COURSES_URL
-API_COURSES_FIRST_URL = '%s/1' % API_COURSES_URL
-API_COURSES_ONE_HUNDRED_URL = '%s/100' % API_COURSES_URL
+API_COURSES_URL = '/api/courses/'
+API_COURSES_ME_URL = '%sme' % API_COURSES_URL
+API_COURSES_FIRST_URL = '%s1' % API_COURSES_URL
+API_COURSES_ONE_HUNDRED_URL = '%s100' % API_COURSES_URL
 
 CREATE_SCHEME = {
     'name': 'Course name',

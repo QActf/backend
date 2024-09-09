@@ -7,9 +7,9 @@ from sqlalchemy.orm import selectinload
 from app.models import Examination, User
 from .utils import get_obj_by_id, get_obj_count
 
-API_EXAMINATIONS_URL = '/api/examinations'
-API_EXAMINATIONS_ME_URL = '%s/me' % API_EXAMINATIONS_URL
-API_EXAMINATIONS_FIRST_URL = '%s/1' % API_EXAMINATIONS_URL
+API_EXAMINATIONS_URL = '/api/examinations/'
+API_EXAMINATIONS_ME_URL = '%sme' % API_EXAMINATIONS_URL
+API_EXAMINATIONS_FIRST_URL = '%s1' % API_EXAMINATIONS_URL
 
 CREATE_SCHEME = {
     'name': 'Examination name',

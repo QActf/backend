@@ -15,12 +15,12 @@ from app.models import Profile, User
 from tests.fixtures.user import USER_EMAIL, USER_PASSWORD, USER_USERNAME
 from .utils import get_obj_count
 
-API_AUTH_URL = '/api/auth'
-API_PROFILES_URL = '/api/profiles'
+API_AUTH_URL = '/api/auth/'
+API_PROFILES_URL = '/api/profiles/'
 
-API_PROFILES_ME_URL = '%s/me' % API_PROFILES_URL
-API_AUTH_REGISTER_URL = '%s/register' % API_AUTH_URL
-API_AUTH_LOGIN_URL = '%s/jwt/login' % API_AUTH_URL
+API_PROFILES_ME_URL = '%sme' % API_PROFILES_URL
+API_AUTH_REGISTER_URL = '%sregister' % API_AUTH_URL
+API_AUTH_LOGIN_URL = '%sjwt/login' % API_AUTH_URL
 
 
 REGISTRATION_SCHEMA = {
@@ -102,11 +102,11 @@ class TestProfile:
     ):
         """Тест фильтрации профилей."""
         response = await auth_superuser.get(
-            '%s/?first_name__ilike=3' % API_PROFILES_URL
+            '%s?first_name__ilike=3' % API_PROFILES_URL
         )
         assert len(response.json()) == 1
         response = await auth_superuser.get(
-            '%s/?last_name__ilike=4' % API_PROFILES_URL
+            '%s?last_name__ilike=4' % API_PROFILES_URL
         )
         assert len(response.json()) == 1
 
@@ -117,14 +117,14 @@ class TestProfile:
     ):
         """Тест пагинации профилей"""
         response = await auth_superuser.get(
-            '%s/?limit=2' % API_PROFILES_URL
+            '%s?limit=2' % API_PROFILES_URL
         )
         result = response.json()
         assert len(result) == 2
         assert result[0]['user_id'] == 1
         assert result[1]['user_id'] == 2
         response = await auth_superuser.get(
-            '%s/?offset=2&limit=2' % API_PROFILES_URL
+            '%s?offset=2&limit=2' % API_PROFILES_URL
         )
         result = response.json()
         assert len(result) == 2

@@ -7,8 +7,8 @@ from app.models import Tariff
 from .fixtures.tariff import TEST_TARIFF_COUNT
 from .utils import get_obj_by_id, get_obj_count
 
-API_TARIFFS_URL = '/api/tariffs'
-API_TARIFFS_FIRST_URL = '%s/1' % API_TARIFFS_URL
+API_TARIFFS_URL = '/api/tariffs/'
+API_TARIFFS_FIRST_URL = '%s1' % API_TARIFFS_URL
 
 CREATE_SCHEME = {
     'name': 'Test tariff',
@@ -92,7 +92,7 @@ class TestGetTariff:
         stmt = select(Tariff).where(Tariff.id == TEST_TARIFF_COUNT + 1)
         tariff = await db_session.execute(stmt)
         tariff = tariff.scalar()
-        response = await new_client.get(f'{API_TARIFFS_URL}/{TEST_TARIFF_COUNT+1}')
+        response = await new_client.get(f'{API_TARIFFS_URL}{TEST_TARIFF_COUNT+1}')
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
 

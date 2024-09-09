@@ -7,9 +7,9 @@ from sqlalchemy.orm import selectinload
 from app.models import Group, User
 from .utils import get_obj_count
 
-API_GROUPS_URL = '/api/groups'
-API_GROUPS_ME_URL = '%s/me' % API_GROUPS_URL
-API_GROUPS_FIRST_URL = '%s/1' % API_GROUPS_URL
+API_GROUPS_URL = '/api/groups/'
+API_GROUPS_ME_URL = '%sme' % API_GROUPS_URL
+API_GROUPS_FIRST_URL = '%s1' % API_GROUPS_URL
 
 GROUP_SCHEME = {
     'name': 'Test Group',
@@ -286,14 +286,14 @@ class TestPaginationGroup:
     ):
         """Тест пагинации профилей."""
         response = await auth_superuser.get(
-            '%s/?limit=2' % API_GROUPS_URL
+            '%s?limit=2' % API_GROUPS_URL
         )
         result = response.json()
         assert len(result) == 2
         assert result[0]['id'] == 1
         assert result[1]['id'] == 2
         response = await auth_superuser.get(
-            '%s/?offset=2&limit=2' % API_GROUPS_URL
+            '%s?offset=2&limit=2' % API_GROUPS_URL
         )
         result = response.json()
         assert len(result) == 2

@@ -5,8 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import Task
 from .utils import get_obj_by_id, get_obj_count
 
-API_TASKS_URL = '/api/tasks'
-API_TASKS_FIRST_URL = '%s/1' % API_TASKS_URL
+API_TASKS_URL = '/api/tasks/'
+API_TASKS_FIRST_URL = '%s1' % API_TASKS_URL
 
 CREATE_SCHEME = {
     'name': 'Task name',

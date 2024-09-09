@@ -5,11 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import Locale
 from .utils import get_obj_by_id, get_obj_count
 
-API_LOCALES_URL = '/api/locales'
-API_LOCALES_THREE_URL = '%s/3' % API_LOCALES_URL
-API_LOCALES_ONE_HUNDRED_URL = '%s/100' % API_LOCALES_URL
-API_LOCALES_CH_URL = '%s/lang/ch' % API_LOCALES_URL
-API_LOCALES_XX_URL = '%s/lang/xx' % API_LOCALES_URL
+API_LOCALES_URL = '/api/locales/'
+API_LOCALES_THREE_URL = '%s3' % API_LOCALES_URL
+API_LOCALES_ONE_HUNDRED_URL = '%s100' % API_LOCALES_URL
+API_LOCALES_CH_URL = '%slang/ch' % API_LOCALES_URL
+API_LOCALES_XX_URL = '%slang/xx' % API_LOCALES_URL
 
 CREATE_SCHEMA = {
     'language': 'ru',
