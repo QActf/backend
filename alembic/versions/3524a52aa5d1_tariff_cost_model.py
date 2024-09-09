@@ -5,9 +5,8 @@ Revises: 5a2d8eed5666
 Create Date: 2024-08-24 19:14:38.425032
 
 """
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = '3524a52aa5d1'
@@ -34,14 +33,9 @@ def downgrade():
         batch_op.drop_column('cost')
 
     with op.batch_alter_table('auth', schema=None) as batch_op:
-        batch_op.add_column(sa.Column('register_', sa.VARCHAR(), nullable=False))
+        batch_op.add_column(
+            sa.Column('register_', sa.VARCHAR(), nullable=False)
+        )
         batch_op.drop_column('register')
 
-    op.create_table('question',
-    sa.Column('problem', sa.VARCHAR(length=100), nullable=False),
-    sa.Column('solution', sa.TEXT(), nullable=True),
-    sa.Column('id', sa.INTEGER(), nullable=False),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('problem')
-    )
     # ### end Alembic commands ###
