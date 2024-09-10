@@ -12,8 +12,10 @@ class CourseCreate(BaseModel):
 
 class CourseRead(BaseModel):
     id: int
-    name: Optional[str] = Field(serialization_alias='title')
+    name: str = Field(serialization_alias='title')
     description: Optional[str] = Field(serialization_alias='subtitle')
+    in_development: Optional[bool]
+    is_closed: Optional[bool]
     icon: Optional[str]
 
     class Config:
@@ -25,12 +27,11 @@ class CourseTasksRead(CourseRead):
     tasks: Optional[list[TaskRead]]
 
 
-class MultiCourseRead(BaseModel):
+class MultiCourseForUserRead(BaseModel):
     id: int
     name: str = Field(serialization_alias='title')
     description: str = Field(serialization_alias='subtitle')
-    is_available: bool
-    is_started: bool
+    status: str
     icon: Optional[str]
 
     class Config:
@@ -46,6 +47,7 @@ class CourseTariffCreate(BaseModel):
 class CourseUpdate(BaseModel):
     name: Optional[str] = Field(None)
     description: Optional[str] = Field(None)
+    in_development: Optional[bool] = Field(None)
     icon: Optional[str] = Field(None)
 
     @validator('name')
