@@ -122,7 +122,7 @@ async def get_tariff_planes(
             )
 
     tariffs = [TariffPlanRead(id=0, name='', description='', cost=0,
-                              dataIndex='', key='', is_active=False,
+                              dataIndex='name', key='name', is_active=False,
                               this_tariff=False)]
     user_tariff_cost = None
     if user.tariff_id:
