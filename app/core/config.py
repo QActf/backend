@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     EMAIL_USE_TLS: bool = True
     # ================================
 
-    origins = [
+    origins: list[str] = [
         'http://localhost',
         'http://localhost:3000',
         'http://localhost:8080',
