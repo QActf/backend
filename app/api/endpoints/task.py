@@ -113,6 +113,7 @@ async def delete_task(
     """Удалить задачу"""
     return await delete_obj(obj_id=task_id, crud=task_crud, session=session)
 
+
 @router.post(
     '/task-done/',
     dependencies=[Depends(current_superuser)],
