@@ -20,7 +20,7 @@ from app.crud import course_crud, tariff_crud
 from app.models import Course, User
 from app.schemas.course import (
     CourseCreate, CourseRead, CourseTariffCreate, CourseTasksRead,
-    CourseUpdate, MultiCourseRead,
+    CourseUpdate, MultiCourseForUserRead,
 )
 from app.services.endpoints_services import delete_obj
 from app.services.utils import (
@@ -69,19 +69,18 @@ async def get_all_user_courses(
 
 @router.get(
     '/available-started/me',
-    response_model=list[MultiCourseRead],
+    response_model=list[MultiCourseForUserRead],
     dependencies=[Depends(current_user)],
-    response_model_by_alias=False,
 )
 async def get_available_started_user_courses(
     response: Response,
     pagination: Pagination = Depends(get_pagination_params),
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session),
-) -> list[MultiCourseRead]:
+) -> list[MultiCourseForUserRead]:
     """Вернет начатые и доступные по текущей подписке курсы."""
-    tariff_courses = list()
     tariff_id = user.tariff_id
+    tariff_courses = set()
     if tariff_id:
         db_tariff = await tariff_crud.get_tariff(
             attr_name='id',
@@ -89,21 +88,27 @@ async def get_available_started_user_courses(
             session=session,
             courses=True,
         )
-        if db_tariff and db_tariff.courses:
-            tariff_courses = [
-                course for course in db_tariff.courses if
-                not course.is_closed
-            ]
+        tariff_courses = set(db_tariff.courses) if db_tariff.courses else set()
 
-    user_courses = await course_crud.get_users_obj(
+    user_courses = set(await course_crud.get_users_obj(
         user_id=user.id,
         session=session,
-    )
-    all_courses = list(set(tariff_courses + user_courses))
-    for course in all_courses:
-        setattr(course, 'is_available', course in tariff_courses)
-        setattr(course, 'is_started', course in user_courses)
+    ))
 
+    all_courses = tariff_courses.union(user_courses)
+    common_courses = tariff_courses.intersection(user_courses)
+
+    for course in all_courses:
+        if course.in_development:
+            course.status = 'in_development'
+        elif course in common_courses:
+            course.status = 'started'
+        elif course in tariff_courses and not course.is_closed:
+            course.status = 'available'
+        else:
+            course.status = 'unavailable'
+
+    all_courses = list(all_courses)
     add_response_headers(response, all_courses, pagination)
     return paginated(all_courses, pagination)
 
@@ -350,6 +355,11 @@ async def start_course(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='Нельзя начать закрытый курс.'
+        )
+    if db_course.in_development:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Нельзя начать курс, который ещё в разработке.'
         )
 
     db_tariff = await tariff_crud.get_tariff(

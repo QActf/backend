@@ -98,6 +98,7 @@ COURSE_VALUE = {
         'value': {
             'name': 'Новое название курса',
             'description': 'Новое описание курса',
+            'in_development': False
         }
     },
     'only_name_data': {
@@ -107,6 +108,10 @@ COURSE_VALUE = {
     'only_description_data': {
         'summary': 'Только описание.',
         'value': {'description': 'Новое описание курса'}
+    },
+    'only_in_development': {
+        'summary': 'Только in_development.',
+        'value': {'in_development': False}
     },
     'empty_data': {
         'summary': 'Без данных',
