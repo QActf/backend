@@ -5,8 +5,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.models import Course, User
-
 from .utils import get_obj_by_id, get_obj_count
+
+API_COURSES_URL = '/api/courses/'
+API_COURSES_ME_URL = '%sme' % API_COURSES_URL
+API_COURSES_FIRST_URL = '%s1' % API_COURSES_URL
+API_COURSES_ONE_HUNDRED_URL = '%s100' % API_COURSES_URL
 
 CREATE_SCHEME = {
     'name': 'Course name',
@@ -41,7 +45,7 @@ class TestCreateCourse:
         new_client: TestClient
     ):
         """Тест запрета создания курса неавторизованным."""
-        response = await new_client.post('/courses/', json=CREATE_SCHEME)
+        response = await new_client.post(API_COURSES_URL, json=CREATE_SCHEME)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_create_course_forbidden_user(
@@ -49,7 +53,7 @@ class TestCreateCourse:
         auth_client: TestClient
     ):
         """Тест запрета создания курса юзером."""
-        response = await auth_client.post('/courses/', json=CREATE_SCHEME)
+        response = await auth_client.post(API_COURSES_URL, json=CREATE_SCHEME)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_create_course_superuser(
@@ -59,7 +63,7 @@ class TestCreateCourse:
     ):
         """Тест создания курса."""
         courses_count = await get_obj_count(Course, db_session)
-        response = await auth_superuser.post('/courses/', json=CREATE_SCHEME)
+        response = await auth_superuser.post(API_COURSES_URL, json=CREATE_SCHEME)
         assert response.status_code == status.HTTP_201_CREATED
         check_courses_count = await get_obj_count(Course, db_session)
         assert check_courses_count == courses_count + 1
@@ -72,7 +76,7 @@ class TestCreateCourse:
         """Тест неправильных данных создания курса."""
         courses_count = await get_obj_count(Course, db_session)
         response = await auth_superuser.post(
-            '/courses/', json=WRONG_CREATE_SCHEME
+            API_COURSES_URL, json=WRONG_CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
         check_courses_count = await get_obj_count(Course, db_session)
@@ -84,9 +88,9 @@ class TestCreateCourse:
             auth_superuser: TestClient
     ):
         """Тест запрета создания дубля курса."""
-        await auth_superuser.post('/courses/', json=CREATE_SCHEME)
+        await auth_superuser.post(API_COURSES_URL, json=CREATE_SCHEME)
         courses_count = await get_obj_count(Course, db_session)
-        response = await auth_superuser.post('/courses/', json=CREATE_SCHEME)
+        response = await auth_superuser.post(API_COURSES_URL, json=CREATE_SCHEME)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         check_courses_count = await get_obj_count(Course, db_session)
         assert check_courses_count == courses_count
@@ -101,7 +105,7 @@ class TestGetCourse:
     ):
         """Тест получения всех курсов."""
         courses_count = await get_obj_count(Course, db_session)
-        response = await new_client.get('/courses/')
+        response = await new_client.get(API_COURSES_URL)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == courses_count
 
@@ -112,10 +116,10 @@ class TestGetCourse:
             auth_superuser: TestClient
     ):
         """Тест получения курса по id."""
-        response = await auth_superuser.get('/courses/1')
+        response = await auth_superuser.get(API_COURSES_FIRST_URL)
         assert response.status_code == status.HTTP_200_OK
         assert response.json()['id'] == 1
-        response = await auth_superuser.get('/courses/100')
+        response = await auth_superuser.get(API_COURSES_ONE_HUNDRED_URL)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     async def test_get_self_courses_user(
@@ -132,7 +136,7 @@ class TestGetCourse:
         course_1.users.append(user)
         course_2.users.append(user)
         await db_session.commit()
-        response = await auth_client.get('/courses/me')
+        response = await auth_client.get(API_COURSES_ME_URL)
         assert response.status_code == status.HTTP_200_OK
         result = response.json()
         assert len(result) == 2
@@ -147,7 +151,7 @@ class TestUpdateCourse:
         new_client: TestClient
     ):
         """Тест запрета апдейта курса неавторизованным."""
-        response = await new_client.patch('/courses/1', json=UPDATE_SCHEME)
+        response = await new_client.patch(API_COURSES_FIRST_URL, json=UPDATE_SCHEME)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_update_course_forbidden_user(
@@ -155,7 +159,7 @@ class TestUpdateCourse:
         auth_client: TestClient
     ):
         """Тест запрета апдейта курса юзером."""
-        response = await auth_client.patch('/courses/1', json=UPDATE_SCHEME)
+        response = await auth_client.patch(API_COURSES_FIRST_URL, json=UPDATE_SCHEME)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_update_course_superuser(
@@ -167,7 +171,7 @@ class TestUpdateCourse:
         """Тест апдейта курса."""
         course: Course = await get_obj_by_id(1, Course, db_session)
         response = await auth_superuser.patch(
-            '/courses/1', json=UPDATE_SCHEME
+            API_COURSES_FIRST_URL, json=UPDATE_SCHEME
         )
         assert response.status_code == status.HTTP_200_OK
         check_course: Course = await get_obj_by_id(1, Course, db_session)
@@ -184,7 +188,7 @@ class TestDeleteCourse:
     ):
         """Тест запрета удаления курса неавторизованным."""
         courses_count = await get_obj_count(Course, db_session)
-        response = await new_client.delete('/courses/1')
+        response = await new_client.delete(API_COURSES_FIRST_URL)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
         check_courses_count = await get_obj_count(Course, db_session)
         assert check_courses_count == courses_count
@@ -197,7 +201,7 @@ class TestDeleteCourse:
     ):
         """Тест запрета удаления курса юзером."""
         courses_count = await get_obj_count(Course, db_session)
-        response = await auth_client.delete('/courses/1')
+        response = await auth_client.delete(API_COURSES_FIRST_URL)
         assert response.status_code == status.HTTP_403_FORBIDDEN
         check_courses_count = await get_obj_count(Course, db_session)
         assert check_courses_count == courses_count
@@ -212,7 +216,7 @@ class TestDeleteCourse:
         courses_count = await get_obj_count(Course, db_session)
         course = await get_obj_by_id(1, Course, db_session)
         assert course.id == 1
-        response = await auth_superuser.delete('/courses/1')
+        response = await auth_superuser.delete(API_COURSES_FIRST_URL)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         check_courses_count = await get_obj_count(Course, db_session)
         assert check_courses_count == courses_count - 1

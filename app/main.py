@@ -36,7 +36,12 @@ def swagger_monkey_patch(*args, **kwargs):
 
 applications.get_swagger_ui_html = swagger_monkey_patch
 
-app = FastAPI(title=settings.app_title)
+app = FastAPI(
+    title=settings.app_title,
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    openapi_url="/api/openapi.json",
+)
 
 origins = [f'http://{settings.host}']
 
