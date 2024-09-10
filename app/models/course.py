@@ -10,6 +10,7 @@ from sqlalchemy.orm import Mapped, relationship
 
 from app.core.config import settings
 from app.core.db import Base
+from app.services.utils import random_photo
 
 from .task import task_course_association
 
@@ -46,6 +47,7 @@ class Course(Base):
     )
     description: str = Column(Text)
     is_closed: bool = Column(Boolean, default=False)
+    in_development: bool = Column(Boolean, default=True)
     users: Mapped[list[User]] = relationship(
         secondary=course_user_association, back_populates='courses'
     )
@@ -54,6 +56,14 @@ class Course(Base):
     )
     tasks: Mapped[list[Task]] = relationship(
         secondary=task_course_association, back_populates='courses'
+    )
+    icon: Mapped[str] = Column(
+        String(),
+        nullable=True,
+        default=random_photo(
+            settings.base_dir / settings.media_url / 'default_icon/',
+            'default_icon',
+        )
     )
 
     def __repr__(self):

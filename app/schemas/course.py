@@ -12,26 +12,31 @@ class CourseCreate(BaseModel):
 
 class CourseRead(BaseModel):
     id: int
-    name: Optional[str]
-    description: Optional[str]
+    name: str = Field(serialization_alias='title')
+    description: Optional[str] = Field(serialization_alias='subtitle')
+    in_development: Optional[bool]
+    is_closed: Optional[bool]
+    icon: Optional[str]
 
     class Config:
         from_attributes = True
+        arbitrary_types_allowed = True
 
 
 class CourseTasksRead(CourseRead):
     tasks: Optional[list[TaskRead]]
 
 
-class MultiCourseRead(BaseModel):
+class MultiCourseForUserRead(BaseModel):
     id: int
-    name: str
-    description: str
-    is_available: bool
-    is_started: bool
+    name: str = Field(serialization_alias='title')
+    description: str = Field(serialization_alias='subtitle')
+    status: str
+    icon: Optional[str]
 
     class Config:
         from_attributes = True
+        arbitrary_types_allowed = True
 
 
 class CourseTariffCreate(BaseModel):
@@ -42,6 +47,8 @@ class CourseTariffCreate(BaseModel):
 class CourseUpdate(BaseModel):
     name: Optional[str] = Field(None)
     description: Optional[str] = Field(None)
+    in_development: Optional[bool] = Field(None)
+    icon: Optional[str] = Field(None)
 
     @validator('name')
     def name_cannot_be_null(cls, value):

@@ -1,25 +1,31 @@
-from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
+import re
+
+from fastapi import (
+    APIRouter, Body, Depends, File, HTTPException, Response, UploadFile,
+    status,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_obj_duplicate, check_obj_exists
 from app.api_docs_responses.course import (
     CREATE_COURSE, DELETE_COURSE, GET_COURSE, GET_COURSES, GET_USER_COURSE,
-    GET_USER_COURSES, PATCH_COURSE,
+    GET_USER_COURSES, PATCH_COURSE, PATCH_COURSE_ICON,
 )
 from app.api_docs_responses.utils_docs import (
-    REQUEST_NAME_AND_DESCRIPTION_VALUE,
+    COURSE_VALUE, REQUEST_NAME_AND_DESCRIPTION_VALUE,
 )
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import course_crud, tariff_crud
-from app.models import User
+from app.models import Course, User
 from app.schemas.course import (
     CourseCreate, CourseRead, CourseTariffCreate, CourseTasksRead,
-    CourseUpdate, MultiCourseRead,
+    CourseUpdate, MultiCourseForUserRead,
 )
 from app.services.endpoints_services import delete_obj
 from app.services.utils import (
-    Pagination, add_response_headers, get_pagination_params, paginated,
+    Pagination, add_response_headers, create_filename, get_pagination_params,
+    paginated, remove_content, save_content,
 )
 
 router = APIRouter()
@@ -63,19 +69,18 @@ async def get_all_user_courses(
 
 @router.get(
     '/available-started/me',
-    response_model=list[MultiCourseRead],
+    response_model=list[MultiCourseForUserRead],
     dependencies=[Depends(current_user)],
-    response_model_by_alias=False,
 )
 async def get_available_started_user_courses(
     response: Response,
     pagination: Pagination = Depends(get_pagination_params),
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session),
-) -> list[MultiCourseRead]:
+) -> list[MultiCourseForUserRead]:
     """Вернет начатые и доступные по текущей подписке курсы."""
-    tariff_courses = list()
     tariff_id = user.tariff_id
+    tariff_courses = set()
     if tariff_id:
         db_tariff = await tariff_crud.get_tariff(
             attr_name='id',
@@ -83,17 +88,27 @@ async def get_available_started_user_courses(
             session=session,
             courses=True,
         )
-        tariff_courses = db_tariff.courses
+        tariff_courses = set(db_tariff.courses) if db_tariff.courses else set()
 
-    user_courses = await course_crud.get_users_obj(
+    user_courses = set(await course_crud.get_users_obj(
         user_id=user.id,
         session=session,
-    )
-    all_courses = list(set(tariff_courses + user_courses))
-    for course in all_courses:
-        setattr(course, 'is_available', course in tariff_courses)
-        setattr(course, 'is_started', course in user_courses)
+    ))
 
+    all_courses = tariff_courses.union(user_courses)
+    common_courses = tariff_courses.intersection(user_courses)
+
+    for course in all_courses:
+        if course.in_development:
+            course.status = 'in_development'
+        elif course in common_courses:
+            course.status = 'started'
+        elif course in tariff_courses and not course.is_closed:
+            course.status = 'available'
+        else:
+            course.status = 'unavailable'
+
+    all_courses = list(all_courses)
     add_response_headers(response, all_courses, pagination)
     return paginated(all_courses, pagination)
 
@@ -171,7 +186,7 @@ async def create_course(
 async def update_course(
     course_id: int,
     obj_in: CourseUpdate = Body(
-        openapi_examples=REQUEST_NAME_AND_DESCRIPTION_VALUE),
+        openapi_examples=COURSE_VALUE),
     session: AsyncSession = Depends(get_async_session),
 ) -> CourseRead:
     """Обновит курс по его id."""
@@ -184,6 +199,33 @@ async def update_course(
         db_obj=obj,
         obj_in=obj_in,
         session=session,
+    )
+
+
+@router.patch(
+    '/update_icon/{course_id}',
+    response_model=CourseRead,
+    dependencies=[Depends(current_superuser)],
+    **PATCH_COURSE_ICON,
+)
+async def update_photo(
+    course_id: int,
+    file: UploadFile = File(...),
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Обновить icon курса."""
+    course: Course = await course_crud.get_course(
+        course_id=course_id, session=session
+    )
+    await check_obj_exists(obj=course)
+    if not re.match(r'^.+icon\d+\.png$', course.icon):
+        remove_content(course.icon)
+    file.filename = create_filename(file, 'icon_course')
+    await save_content(file)
+    return await course_crud.update_icon(
+        course.id,
+        file.filename,
+        session
     )
 
 
@@ -309,6 +351,17 @@ async def start_course(
         session=session,
     )
     await check_obj_exists(obj=db_course)
+    if db_course.is_closed:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Нельзя начать закрытый курс.'
+        )
+    if db_course.in_development:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Нельзя начать курс, который ещё в разработке.'
+        )
+
     db_tariff = await tariff_crud.get_tariff(
         attr_name='id',
         attr_value=user.tariff_id,

@@ -135,7 +135,7 @@ async def update_photo(
     _profile: Profile = await profile_crud.get_users_obj(user.id, session)
     if not re.match(r'^.+cat\d+\.png$', _profile.image):
         remove_content(_profile.image)
-    file.filename = create_filename(file)
+    file.filename = create_filename(file, 'photo_profile')
     await save_content(file)
     return await profile_crud.update_photo(
         user.id,

@@ -126,5 +126,21 @@ class CRUDCourse(CRUDBase):
         await session.execute(stmt)
         await session.commit()
 
+    async def update_icon(
+            self,
+            course_id: int,
+            image_url: str,
+            session: AsyncSession
+    ):
+        course = await session.execute(
+            select(Course).where(Course.id == course_id)
+        )
+        course = course.scalars().first()
+        course.icon = image_url
+        session.add(course)
+        await session.commit()
+        await session.refresh(course)
+        return course
+
 
 course_crud = CRUDCourse(Course)
