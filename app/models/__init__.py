@@ -1,4 +1,5 @@
 from .achievement import Achievement  # noqa
+from .contact_information_block import ContactInformationBlock  # noqa
 from .course import Course  # noqa
 from .examination import Examination  # noqa
 from .group import Group  # noqa

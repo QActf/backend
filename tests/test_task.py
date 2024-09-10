@@ -3,8 +3,10 @@ from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Task
-
 from .utils import get_obj_by_id, get_obj_count
+
+API_TASKS_URL = '/api/tasks/'
+API_TASKS_FIRST_URL = '%s1' % API_TASKS_URL
 
 CREATE_SCHEME = {
     'name': 'Task name',
@@ -28,7 +30,7 @@ class TestCreateTask:
             new_client: TestClient
     ):
         """Тест запрета создания таск неавторизованным."""
-        response = await new_client.post('/tasks/')
+        response = await new_client.post(API_TASKS_URL)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_forbidden_create_task_user(
@@ -36,7 +38,7 @@ class TestCreateTask:
             auth_client: TestClient
     ):
         """Тест запрета создания таск юзером."""
-        response = await auth_client.post('/tasks/')
+        response = await auth_client.post(API_TASKS_URL)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_create_task(
@@ -47,7 +49,7 @@ class TestCreateTask:
         """Тест создания таски."""
         tasks = await get_obj_count(Task, db_session)
         response = await auth_superuser.post(
-            '/tasks/',
+            API_TASKS_URL,
             json=CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_201_CREATED
@@ -62,7 +64,7 @@ class TestCreateTask:
         """Тест неполных данных для создания таски."""
         tasks = await get_obj_count(Task, db_session)
         response = await auth_superuser.post(
-            '/tasks/',
+            API_TASKS_URL,
             json=WRONG_CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
@@ -76,12 +78,12 @@ class TestCreateTask:
     ):
         """Тест запрета создания дубля таски."""
         await auth_superuser.post(
-            '/tasks/',
+            API_TASKS_URL,
             json=CREATE_SCHEME
         )
         tasks = await get_obj_count(Task, db_session)
         response = await auth_superuser.post(
-            '/tasks/',
+            API_TASKS_URL,
             json=CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -95,7 +97,7 @@ class TestGetTask:
             new_client: TestClient
     ):
         """Тест запрета получения таск неавторизованным."""
-        response = await new_client.get('/tasks/')
+        response = await new_client.get(API_TASKS_URL)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_forbidden_get_tasks_user(
@@ -103,7 +105,7 @@ class TestGetTask:
             auth_client: TestClient
     ):
         """Тест запрета получения таск юзером."""
-        response = await auth_client.get('/tasks/')
+        response = await auth_client.get(API_TASKS_URL)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_get_tasks_superuser(
@@ -114,7 +116,7 @@ class TestGetTask:
     ):
         """Тест получения всех таск суперюзером."""
         tasks_count = await get_obj_count(Task, db_session)
-        response = await auth_superuser.get('/tasks/')
+        response = await auth_superuser.get(API_TASKS_URL)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == tasks_count
 
@@ -125,7 +127,7 @@ class TestGetTask:
             auth_superuser: TestClient
     ):
         """Получение таски по id."""
-        response = await auth_superuser.get('/tasks/1')
+        response = await auth_superuser.get(API_TASKS_FIRST_URL)
         assert response.status_code == status.HTTP_200_OK
         assert response.json()['key'] == 1
 
@@ -136,7 +138,7 @@ class TestUpdateTask:
             new_client: TestClient
     ):
         """Тест запрета апдейта таск неавторизованным."""
-        response = await new_client.patch('/tasks/1', json=UPDATE_NAME_SCHEME)
+        response = await new_client.patch(API_TASKS_FIRST_URL, json=UPDATE_NAME_SCHEME)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_forbidden_update_task_user(
@@ -144,7 +146,7 @@ class TestUpdateTask:
             auth_client: TestClient
     ):
         """Тест запрета апдейта таск юзером."""
-        response = await auth_client.patch('/tasks/1', json=UPDATE_NAME_SCHEME)
+        response = await auth_client.patch(API_TASKS_FIRST_URL, json=UPDATE_NAME_SCHEME)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_update_task_superuser(
@@ -156,7 +158,7 @@ class TestUpdateTask:
         """Тест апдейта таск."""
         task: Task = await get_obj_by_id(1, Task, db_session)
         response = await auth_superuser.patch(
-            '/tasks/1',
+            API_TASKS_FIRST_URL,
             json=UPDATE_NAME_SCHEME
         )
         assert response.status_code == status.HTTP_200_OK
@@ -173,7 +175,7 @@ class TestUpdateTask:
         """Тест апдейта таски с неверной сложностью."""
         task: Task = await get_obj_by_id(1, Task, db_session)
         response = await auth_superuser.patch(
-            '/tasks/1',
+            API_TASKS_FIRST_URL,
             json=UPDATE_DIFFICULT_SCHEME
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -187,7 +189,7 @@ class TestDeleteTask:
             new_client: TestClient
     ):
         """Тест запрета удаления таск неавторизованным."""
-        response = await new_client.delete('/tasks/1')
+        response = await new_client.delete(API_TASKS_FIRST_URL)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_forbidden_delete_task_user(
@@ -195,7 +197,7 @@ class TestDeleteTask:
             auth_client: TestClient
     ):
         """Тест запрета удаления таск юзером."""
-        response = await auth_client.delete('/tasks/1')
+        response = await auth_client.delete(API_TASKS_FIRST_URL)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_delete_task(
@@ -208,7 +210,7 @@ class TestDeleteTask:
         tasks_count: int = await get_obj_count(Task, db_session)
         task: Task = await get_obj_by_id(1, Task, db_session)
         assert task.id == 1
-        response = await auth_superuser.delete('/tasks/1')
+        response = await auth_superuser.delete(API_TASKS_FIRST_URL)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         check_tasks_count = await get_obj_count(Task, db_session)
         assert check_tasks_count == tasks_count - 1

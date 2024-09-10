@@ -5,8 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.models import Examination, User
-
 from .utils import get_obj_by_id, get_obj_count
+
+API_EXAMINATIONS_URL = '/api/examinations/'
+API_EXAMINATIONS_ME_URL = '%sme' % API_EXAMINATIONS_URL
+API_EXAMINATIONS_FIRST_URL = '%s1' % API_EXAMINATIONS_URL
 
 CREATE_SCHEME = {
     'name': 'Examination name',
@@ -41,7 +44,7 @@ class TestCreateExamination:
         new_client: TestClient
     ):
         """Тест запрета создания экзамена неавторизованным."""
-        response = await new_client.post('/examinations/', json=CREATE_SCHEME)
+        response = await new_client.post(API_EXAMINATIONS_URL, json=CREATE_SCHEME)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_create_examination_forbidden_user(
@@ -49,7 +52,7 @@ class TestCreateExamination:
         auth_client: TestClient
     ):
         """Тест запрета создания экзамена юзером."""
-        response = await auth_client.post('/examinations/', json=CREATE_SCHEME)
+        response = await auth_client.post(API_EXAMINATIONS_URL, json=CREATE_SCHEME)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_create_examination_superuser(
@@ -60,7 +63,7 @@ class TestCreateExamination:
         """Тест создания экзамена."""
         examinations_count = await get_obj_count(Examination, db_session)
         response = await auth_superuser.post(
-            '/examinations/', json=CREATE_SCHEME
+            API_EXAMINATIONS_URL, json=CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_201_CREATED
         check_examinations_count = await get_obj_count(Examination, db_session)
@@ -74,7 +77,7 @@ class TestCreateExamination:
         """Тест неправильных данных создания экзамена."""
         examinations_count = await get_obj_count(Examination, db_session)
         response = await auth_superuser.post(
-            '/examinations/', json=WRONG_CREATE_SCHEME
+            API_EXAMINATIONS_URL, json=WRONG_CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
         check_examinations_count = await get_obj_count(Examination, db_session)
@@ -86,10 +89,10 @@ class TestCreateExamination:
             auth_superuser: TestClient
     ):
         """Тест запрета создания дубля экзамена."""
-        await auth_superuser.post('/examinations/', json=CREATE_SCHEME)
+        await auth_superuser.post(API_EXAMINATIONS_URL, json=CREATE_SCHEME)
         examinations_count = await get_obj_count(Examination, db_session)
         response = await auth_superuser.post(
-            '/examinations/', json=CREATE_SCHEME
+            API_EXAMINATIONS_URL, json=CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         check_examinations_count = await get_obj_count(Examination, db_session)
@@ -105,7 +108,7 @@ class TestGetExamination:
     ):
         """Тест получения всех экзаменов."""
         examinations_count = await get_obj_count(Examination, db_session)
-        response = await new_client.get('/examinations/')
+        response = await new_client.get(API_EXAMINATIONS_URL)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == examinations_count
 
@@ -116,7 +119,7 @@ class TestGetExamination:
             new_client: TestClient
     ):
         """Тест получения экзамена по id."""
-        response = await new_client.get('/examinations/1')
+        response = await new_client.get(API_EXAMINATIONS_FIRST_URL)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_get_self_examinations_user(
@@ -137,7 +140,7 @@ class TestGetExamination:
         examination_1.users.append(user)
         examination_2.users.append(user)
         await db_session.commit()
-        response = await auth_client.get('/examinations/me')
+        response = await auth_client.get(API_EXAMINATIONS_ME_URL)
         assert response.status_code == status.HTTP_200_OK
         result = response.json()
         assert len(result) == 2
@@ -153,7 +156,7 @@ class TestUpdateExamination:
     ):
         """Тест запрета апдейта экзамена неавторизованным."""
         response = await new_client.patch(
-            '/examinations/1', json=UPDATE_SCHEME
+            API_EXAMINATIONS_FIRST_URL, json=UPDATE_SCHEME
         )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -163,7 +166,7 @@ class TestUpdateExamination:
     ):
         """Тест запрета апдейта экзамена юзером."""
         response = await auth_client.patch(
-            '/examinations/1', json=UPDATE_SCHEME
+            API_EXAMINATIONS_FIRST_URL, json=UPDATE_SCHEME
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
@@ -178,7 +181,7 @@ class TestUpdateExamination:
             1, Examination, db_session
         )
         response = await auth_superuser.patch(
-            '/examinations/1', json=UPDATE_SCHEME
+            API_EXAMINATIONS_FIRST_URL, json=UPDATE_SCHEME
         )
         assert response.status_code == status.HTTP_200_OK
         check_examination: Examination = await get_obj_by_id(
@@ -197,7 +200,7 @@ class TestDeleteExamination:
     ):
         """Тест запрета удаления экзамена неавторизованным."""
         examinations_count = await get_obj_count(Examination, db_session)
-        response = await new_client.delete('/examinations/1')
+        response = await new_client.delete(API_EXAMINATIONS_FIRST_URL)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
         check_examinations_count = await get_obj_count(Examination, db_session)
         assert check_examinations_count == examinations_count
@@ -210,7 +213,7 @@ class TestDeleteExamination:
     ):
         """Тест запрета удаления экзамена юзером."""
         examinations_count = await get_obj_count(Examination, db_session)
-        response = await auth_client.delete('/examinations/1')
+        response = await auth_client.delete(API_EXAMINATIONS_FIRST_URL)
         assert response.status_code == status.HTTP_403_FORBIDDEN
         check_examinations_count = await get_obj_count(Examination, db_session)
         assert check_examinations_count == examinations_count
@@ -225,7 +228,7 @@ class TestDeleteExamination:
         examinations_count = await get_obj_count(Examination, db_session)
         examination = await get_obj_by_id(1, Examination, db_session)
         assert examination.id == 1
-        response = await auth_superuser.delete('/examinations/1')
+        response = await auth_superuser.delete(API_EXAMINATIONS_FIRST_URL)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         check_examinations_count = await get_obj_count(Examination, db_session)
         assert check_examinations_count == examinations_count - 1
