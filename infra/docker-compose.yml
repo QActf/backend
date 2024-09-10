@@ -24,7 +24,7 @@ services:
     depends_on:
       - db
     volumes:
-      - backend_default_photo:/app/media/default_photo/
+      - backend_media:/app/media/
       - ./logs:/app/app/logs
 
   nginx:
@@ -37,12 +37,12 @@ services:
       - backend
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - backend_default_photo:/default_photo/
+      - backend_media:/media/
       - frontend_static:/frontend_static/
 
 volumes:
   db_volume_qactf:
-  backend_default_photo:
+  backend_media:
   logs:
   frontend_static:
     name: qactf_frontend
