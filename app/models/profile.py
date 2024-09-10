@@ -61,3 +61,4 @@ class Profile(Base):
         if self.first_name:
             return self.first_name
         return str(self.user_id)
+    
