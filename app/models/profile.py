@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime
 from pathlib import Path
-from random import randint
+from random import choice
 from typing import TYPE_CHECKING
 
 from sqlalchemy import Column, DateTime, ForeignKey, String
@@ -12,7 +12,6 @@ from sqlalchemy_utils import ChoiceType
 from app.core.config import settings
 from app.core.constants import Gender
 from app.core.db import Base
-
 from .achievement import achievement_profile_association
 
 if TYPE_CHECKING:
@@ -23,8 +22,7 @@ if TYPE_CHECKING:
 def _random_photo(path: Path):
     """Возвращает рандомный файл из указанной папки."""
     files = [f'default_photo/{file.name}' for file in path.iterdir()]
-    random_index = randint(0, len(files) - 1)
-    return str(files[random_index])
+    return choice(files) if files else None
 
 
 class Profile(Base):

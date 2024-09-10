@@ -2,6 +2,12 @@ from fastapi import status
 
 from tests.fixtures.user import USER_EMAIL, USER_PASSWORD, USER_USERNAME
 
+API_AUTH_URL = '/api/auth'
+API_REGISTER_URL = '%s/register' % API_AUTH_URL
+API_LOGIN_URL = '%s/jwt/login' % API_AUTH_URL
+API_LOGOUT_URL = '%s/jwt/logout' % API_AUTH_URL
+API_CHANGE_PASSWORD_URL = '%s/change-password' % API_AUTH_URL
+
 REGISTRATION_SCHEMA = {
     'email': USER_EMAIL,
     'password': USER_PASSWORD,
@@ -47,7 +53,7 @@ class TestRegister:
     async def test_register_new_user(self, new_client):
         """Тест регистрации пользователя с корректными данными."""
         response = await new_client.post(
-            '/auth/register', json=REGISTRATION_SCHEMA
+            API_REGISTER_URL, json=REGISTRATION_SCHEMA
         )
         assert response.status_code == status.HTTP_201_CREATED, (
             'При успешной регистрации пользователя, '
@@ -59,7 +65,7 @@ class TestRegister:
     ):
         """Тест регистрации пользователя с некорректными данными."""
         response = await new_client.post(
-            '/auth/register', json=REGISTRATION_SCHEMA
+            API_REGISTER_URL, json=REGISTRATION_SCHEMA
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST, (
             'Некорректные данные при регистрации пользователя, '
@@ -69,7 +75,7 @@ class TestRegister:
     async def test_repeat_register_user(self, register_client, new_client):
         """Тест регистрации пользователя, который уже есть в БД."""
         response = await new_client.post(
-            '/auth/register', json=REGISTRATION_SCHEMA
+            API_REGISTER_URL, json=REGISTRATION_SCHEMA
         )
         assert response.json().get('detail') == (
             'REGISTER_USER_ALREADY_EXISTS'), (
@@ -81,7 +87,7 @@ class TestRegister:
         data_new_client = REGISTRATION_SCHEMA
         data_new_client['password'] = '!'
         response = await new_client.post(
-            '/auth/register', json=data_new_client
+            API_REGISTER_URL, json=data_new_client
         )
         data = response.json()
         assert data == {
@@ -98,7 +104,7 @@ class TestRegister:
         data_new_client = REGISTRATION_SCHEMA
         data_new_client['password'] = USER_EMAIL
         response = await new_client.post(
-            '/auth/register', json=data_new_client
+            API_REGISTER_URL, json=data_new_client
         )
         data = response.json()
         assert data == {
@@ -113,7 +119,7 @@ class TestRegister:
 
     async def test_register_invalid_json(self, new_client):
         """Тест регистрации пользователя с недопустимыми данными."""
-        response = await new_client.post('/auth/register', json={})
+        response = await new_client.post(API_REGISTER_URL, json={})
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, (
             'Недопустимые данные при регистрации пользователя, '
             'должен возвращаться статус-код 422.'
@@ -124,7 +130,7 @@ class TestLogin:
     async def test_login_correct_client(self, new_client, register_client):
         """Тест входа в систему с корректными данными."""
         response = await new_client.post(
-           '/auth/jwt/login',
+            API_LOGIN_URL,
            data={'username': USER_EMAIL, 'password': USER_PASSWORD},
         )
         assert response.status_code == status.HTTP_200_OK, (
@@ -135,7 +141,7 @@ class TestLogin:
     async def test_login_wrong_client(self, new_client):
         """Тест входа в систему с неверными данными."""
         response = await new_client.post(
-           '/auth/jwt/login',
+           API_LOGIN_URL,
            data={'username': WRONG_EMAIL, 'password': WRONG_PASSWORD},
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST, (
@@ -146,7 +152,7 @@ class TestLogin:
     async def test_login_wrong_username(self, new_client, register_client):
         """Тест входа в систему с неверным email."""
         response = await new_client.post(
-           '/auth/jwt/login',
+           API_LOGIN_URL,
            data={'username': WRONG_EMAIL, 'password': USER_PASSWORD},
         )
         assert response.json().get('email') != register_client.email, (
@@ -156,7 +162,7 @@ class TestLogin:
     async def test_login_invalid_data(self, new_client, register_client):
         """Тест входа в систему с недопустимыми данными."""
         response = await new_client.post(
-           '/auth/jwt/login',
+           API_LOGIN_URL,
            data={},
         )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, (
@@ -168,7 +174,7 @@ class TestLogin:
 class TestLogout:
     async def test_logout_auth_client(self, auth_client):
         """Тест выхода из системы залогиненного пользователя."""
-        response = await auth_client.post('/auth/jwt/logout')
+        response = await auth_client.post(API_LOGOUT_URL)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT, (
             'При попытке выхода из системы залогиненного пользователя, '
@@ -177,7 +183,7 @@ class TestLogout:
 
     async def test_logout_new_client(self, new_client):
         """Тест выхода из системы незалогиненного пользователя."""
-        response = await new_client.post('/auth/jwt/logout')
+        response = await new_client.post(API_LOGOUT_URL)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED, (
             'При попытке выхода из системы незалогиненного пользователя, '
             'должен возвращаться статус-код 401.'
@@ -188,7 +194,7 @@ class TestChangePassword:
     async def test_change_pwd_auth(self, auth_client):
         """Тест смены пароля авторизованным пользователем."""
         response = await auth_client.post(
-            '/auth/change-password',
+            API_CHANGE_PASSWORD_URL,
             json=CHANGE_PASSWORD_SCHEMA,
         )
         assert response.status_code == status.HTTP_200_OK
@@ -196,7 +202,7 @@ class TestChangePassword:
     async def test_change_pwd_unauthorized_nonauth(self, new_client):
         """Тест попытки смены пароля неавторизованным пользователем."""
         response = await new_client.post(
-            '/auth/change-password',
+            API_CHANGE_PASSWORD_URL,
             json=CHANGE_PASSWORD_SCHEMA,
         )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
@@ -204,7 +210,7 @@ class TestChangePassword:
     async def test_change_pwd_wrong_schema(self, auth_client):
         """Тест попытки смены пароля с отсутствующими данными."""
         response = await auth_client.post(
-            '/auth/change-password',
+            API_CHANGE_PASSWORD_URL,
             json=WRONG_CHANGE_PASSWORD_SCHEMA_NO_FIELD,
         )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
@@ -212,7 +218,7 @@ class TestChangePassword:
     async def test_change_pwd_same_pwd(self, auth_client):
         """Тест попытки смены пароля на аналогичный."""
         response = await auth_client.post(
-            '/auth/change-password',
+            API_CHANGE_PASSWORD_URL,
             json=WRONG_CHANGE_PASSWORD_SCHEMA_DUPLICATE,
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -220,7 +226,7 @@ class TestChangePassword:
     async def test_change_pwd_wrong_confirm(self, auth_client):
         """Тест попытки смены пароля с неверным подтверждением."""
         response = await auth_client.post(
-            '/auth/change-password',
+            API_CHANGE_PASSWORD_URL,
             json=WRONG_CHANGE_PASSWORD_SCHEMA_CONFIRMATION,
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -228,7 +234,7 @@ class TestChangePassword:
     async def test_change_pwd_wrong_old_pwd(self, auth_client):
         """Тест попытки смены пароля с неверным текущим паролем."""
         response = await auth_client.post(
-            '/auth/change-password',
+            API_CHANGE_PASSWORD_URL,
             json=WRONG_CHANGE_PASSWORD_SCHEMA_WRONG_PWD,
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
