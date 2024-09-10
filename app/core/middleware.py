@@ -23,7 +23,7 @@ HIDDEN_FIELDS: list[str] = [
 def get_request_data(request: Request, json_body: dict) -> dict:
     data = {}
     if request.query_params:
-        data["query_params"] = request.query_params
+        data["query_params"] = str(request.query_params)
     if request.path_params:
         data["path_params"] = request.path_params
     if json_body:
