@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import datetime
+from pathlib import Path
+from random import choice
 from typing import TYPE_CHECKING
 
 from sqlalchemy import Column, DateTime, ForeignKey, String
@@ -10,13 +12,17 @@ from sqlalchemy_utils import ChoiceType
 from app.core.config import settings
 from app.core.constants import Gender
 from app.core.db import Base
-from app.services.utils import random_photo
-
 from .achievement import achievement_profile_association
 
 if TYPE_CHECKING:
     from .achievement import Achievement
     from .user import User
+
+
+def _random_photo(path: Path):
+    """Возвращает рандомный файл из указанной папки."""
+    files = [f'default_photo/{file.name}' for file in path.iterdir()]
+    return choice(files) if files else None
 
 
 class Profile(Base):
@@ -46,9 +52,8 @@ class Profile(Base):
     image: Mapped[str] = Column(
         String(),
         nullable=True,
-        default=random_photo(
-            settings.base_dir / settings.media_url / 'default_photo/',
-            'default_photo',
+        default=_random_photo(
+            settings.base_dir / settings.media_url / 'default_photo/'
         )
     )
 

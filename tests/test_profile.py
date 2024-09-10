@@ -3,9 +3,9 @@ import io
 from pathlib import Path
 from typing import AsyncGenerator
 
+from PIL import Image
 from fastapi import Response, status
 from fastapi.testclient import TestClient
-from PIL import Image
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -13,8 +13,15 @@ from sqlalchemy.orm import selectinload
 from app.core.config import settings
 from app.models import Profile, User
 from tests.fixtures.user import USER_EMAIL, USER_PASSWORD, USER_USERNAME
-
 from .utils import get_obj_count
+
+API_AUTH_URL = '/api/auth/'
+API_PROFILES_URL = '/api/profiles/'
+
+API_PROFILES_ME_URL = '%sme' % API_PROFILES_URL
+API_AUTH_REGISTER_URL = '%sregister' % API_AUTH_URL
+API_AUTH_LOGIN_URL = '%sjwt/login' % API_AUTH_URL
+
 
 REGISTRATION_SCHEMA = {
     'email': USER_EMAIL,
@@ -54,7 +61,7 @@ class TestProfile:
         profiles = await get_obj_count(Profile, db_session)
         users = await get_obj_count(User, db_session)
         response: Response = await new_client.post(
-            '/auth/register', json=REGISTRATION_SCHEMA
+            API_AUTH_REGISTER_URL, json=REGISTRATION_SCHEMA
         )
         assert response.status_code == status.HTTP_201_CREATED
         check_profiles = await get_obj_count(Profile, db_session)
@@ -71,7 +78,7 @@ class TestProfile:
         """Тест получения всех профилей суперюзером."""
         profiles = await get_obj_count(Profile, db_session)
         response: Response = await auth_superuser.get(
-            '/profiles/'
+            API_PROFILES_URL
         )
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == profiles
@@ -83,7 +90,7 @@ class TestProfile:
     ):
         """Тест запрета получения профилей простым пользователем."""
         response = await auth_client.get(
-            '/profiles/'
+            API_PROFILES_URL
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
@@ -95,11 +102,11 @@ class TestProfile:
     ):
         """Тест фильтрации профилей."""
         response = await auth_superuser.get(
-            '/profiles/?first_name__ilike=3'
+            '%s?first_name__ilike=3' % API_PROFILES_URL
         )
         assert len(response.json()) == 1
         response = await auth_superuser.get(
-            '/profiles/?last_name__ilike=4'
+            '%s?last_name__ilike=4' % API_PROFILES_URL
         )
         assert len(response.json()) == 1
 
@@ -110,14 +117,14 @@ class TestProfile:
     ):
         """Тест пагинации профилей"""
         response = await auth_superuser.get(
-            '/profiles/?limit=2'
+            '%s?limit=2' % API_PROFILES_URL
         )
         result = response.json()
         assert len(result) == 2
         assert result[0]['user_id'] == 1
         assert result[1]['user_id'] == 2
         response = await auth_superuser.get(
-            '/profiles/?offset=2&limit=2'
+            '%s?offset=2&limit=2' % API_PROFILES_URL
         )
         result = response.json()
         assert len(result) == 2
@@ -133,13 +140,13 @@ class TestProfile:
         """Тест получения своего профиля текущим юзером."""
         user = await _get_user(1, db_session)
         response: Response = await new_client.post(
-           '/auth/jwt/login',
+            API_AUTH_LOGIN_URL,
            data={'username': user.email, 'password': 'qwerty'},
         )
         access_token = response.json().get('access_token')
         new_client.headers.update({'Authorization': f'Bearer {access_token}'})
         response: Response = await new_client.get(
-            '/profiles/me'
+            API_PROFILES_ME_URL
         )
         result = response.json()
         assert result['first_name'] == user.profile.first_name
@@ -154,13 +161,13 @@ class TestProfile:
         user: User = await _get_user(1, db_session)
         other_user: User = await _get_user(2, db_session)
         response: Response = await new_client.post(
-           '/auth/jwt/login',
+           API_AUTH_LOGIN_URL,
            data={'username': user.email, 'password': 'qwerty'},
         )
         access_token = response.json().get('access_token')
         new_client.headers.update({'Authorization': f'Bearer {access_token}'})
         response = await new_client.get(
-            f'/profiles/{other_user.profile.id}'
+            f'{API_PROFILES_URL}{other_user.profile.id}'
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
@@ -173,13 +180,13 @@ class TestProfile:
         """Тест получения фото своего профиля юзером."""
         user: User = await _get_user(1, db_session)
         response: Response = await new_client.post(
-           '/auth/jwt/login',
+           API_AUTH_LOGIN_URL,
            data={'username': user.email, 'password': 'qwerty'},
         )
         access_token = response.json().get('access_token')
         new_client.headers.update({'Authorization': f'Bearer {access_token}'})
         response = await new_client.get(
-            '/profiles/me/photo'
+            '%s/photo' % API_PROFILES_ME_URL
         )
         assert response.status_code == status.HTTP_200_OK
 
@@ -192,14 +199,14 @@ class TestProfile:
         """Тест апдейта своего профиля."""
         user: User = await _get_user(1, db_session)
         response: Response = await new_client.post(
-           '/auth/jwt/login',
+           API_AUTH_LOGIN_URL,
            data={'username': user.email, 'password': 'qwerty'},
         )
         access_token = response.json().get('access_token')
         new_client.headers.update({'Authorization': f'Bearer {access_token}'})
         data = {'first_name': 'new_first_name'}
         response = await new_client.patch(
-            '/profiles/me',
+            API_PROFILES_ME_URL,
             json=data
         )
         assert response.status_code == status.HTTP_200_OK
@@ -224,7 +231,7 @@ class TestProfile:
         tmp_image.save(buffer, format='JPEG')
         img_str = base64.b64encode(buffer.getvalue())
         response: Response = await new_client.post(
-           '/auth/jwt/login',
+           API_AUTH_LOGIN_URL,
            data={'username': user.email, 'password': 'qwerty'},
         )
         access_token = response.json().get('access_token')
@@ -232,7 +239,7 @@ class TestProfile:
         with open(settings.base_dir / 'media' / photo, 'rb') as f:
             current_photo = base64.b64encode(f.read())
         response = await new_client.patch(
-            '/profiles/me/update_photo',
+            '%s/update_photo' % API_PROFILES_ME_URL,
             files={
                 'file': (
                     'img.jpeg',
@@ -256,7 +263,7 @@ class TestProfile:
     ):
         """Тест запрета создания профиля без создания юзера."""
         response = await new_client.post(
-            '/profiles/',
+            API_PROFILES_URL,
             json={
                 'first_name': 'test_first_name',
                 'last_name': 'test_last_name',
@@ -274,6 +281,6 @@ class TestProfile:
         """Тест запрета удаления профиля."""
         user = await _get_user(1, db_session)
         response = await auth_superuser.delete(
-            f'/profiles/{user.profile.id}'
+            f'{API_PROFILES_URL}{user.profile.id}'
         )
         assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

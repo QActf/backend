@@ -53,7 +53,7 @@ sudo docker compose --file=docker-compose.yml up --build -d
 uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-Документация будет доступна по http://127.0.0.1/docs/
+Документация будет доступна по http://127.0.0.1/api/docs/
 
 ## Полезные материалы
 
@@ -91,4 +91,6 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
  - [Дарья Илий](https://github.com/DariaEaly)
 
  - [Глеб Кондратьев](https://github.com/gleb60)
+
+ - [Кирилл Воробьев](https://github.com/mxnoob)
 ----

@@ -4,9 +4,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Tariff
-
 from .fixtures.tariff import TEST_TARIFF_COUNT
 from .utils import get_obj_by_id, get_obj_count
+
+API_TARIFFS_URL = '/api/tariffs/'
+API_TARIFFS_FIRST_URL = '%s1' % API_TARIFFS_URL
 
 CREATE_SCHEME = {
     'name': 'Test tariff',
@@ -24,7 +26,7 @@ class TestCreateTariff:
             new_client: TestClient
     ):
         response = await new_client.post(
-            '/tariffs/'
+            API_TARIFFS_URL
         )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -33,7 +35,7 @@ class TestCreateTariff:
             auth_client: TestClient
     ):
         response = await auth_client.post(
-            '/tariffs/'
+            API_TARIFFS_URL
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
@@ -44,7 +46,7 @@ class TestCreateTariff:
     ):
         tariffs = await get_obj_count(Tariff, db_session)
         response = await auth_superuser.post(
-            '/tariffs/',
+            API_TARIFFS_URL,
             json=CREATE_SCHEME
         )
         assert response.status_code == status.HTTP_201_CREATED
@@ -61,7 +63,7 @@ class TestGetTariff:
     ):
         """Тест получения всех тарифов."""
         tariffs_count = await get_obj_count(Tariff, db_session)
-        response = await new_client.get('/tariffs/')
+        response = await new_client.get(API_TARIFFS_URL)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == tariffs_count
 
@@ -75,7 +77,7 @@ class TestGetTariff:
         stmt = select(Tariff).where(Tariff.id == 1)
         tariff = await db_session.execute(stmt)
         tariff = tariff.scalar()
-        response = await new_client.get('/tariffs/1')
+        response = await new_client.get(API_TARIFFS_FIRST_URL)
         assert response.status_code == status.HTTP_200_OK
         result = response.json()
         assert result['id'] == tariff.id
@@ -90,7 +92,7 @@ class TestGetTariff:
         stmt = select(Tariff).where(Tariff.id == TEST_TARIFF_COUNT + 1)
         tariff = await db_session.execute(stmt)
         tariff = tariff.scalar()
-        response = await new_client.get(f'/tariffs/{TEST_TARIFF_COUNT+1}')
+        response = await new_client.get(f'{API_TARIFFS_URL}{TEST_TARIFF_COUNT+1}')
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -102,7 +104,7 @@ class TestUpdateTariff:
     ):
         """Тест запрета апдейта тарифа неавторизованным."""
         response = await new_client.patch(
-            '/tariffs/1'
+            API_TARIFFS_FIRST_URL
         )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -113,7 +115,7 @@ class TestUpdateTariff:
     ):
         """Тест запрета апдейта тарифа юзером."""
         response = await auth_client.patch(
-            '/tariffs/1'
+            API_TARIFFS_FIRST_URL
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
@@ -126,7 +128,7 @@ class TestUpdateTariff:
         """Тест апдейта тарифа."""
         tariff = await get_obj_by_id(1, Tariff, db_session)
         response = await auth_superuser.patch(
-            '/tariffs/1',
+            API_TARIFFS_FIRST_URL,
             json=UPDATE_SCHEME
         )
         assert response.status_code == status.HTTP_200_OK
@@ -142,7 +144,7 @@ class TestDeleteTariff:
             new_client: TestClient
     ):
         """Тест запрета удаления тарифа неавторизованным."""
-        response = await new_client.delete('/tariffs/1')
+        response = await new_client.delete(API_TARIFFS_FIRST_URL)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     async def test_forbidden_delete_tariff_user(
@@ -151,7 +153,7 @@ class TestDeleteTariff:
             auth_client: TestClient
     ):
         """Тест запрета удаления тарифа юзером."""
-        response = await auth_client.delete('/tariffs/1')
+        response = await auth_client.delete(API_TARIFFS_FIRST_URL)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     async def test_delete_tariff_superuser(
@@ -162,7 +164,7 @@ class TestDeleteTariff:
     ):
         """Тест удаления тарифа."""
         tariff_count = await get_obj_count(Tariff, db_session)
-        response = await auth_superuser.delete('/tariffs/1')
+        response = await auth_superuser.delete(API_TARIFFS_FIRST_URL)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         check_tariff_count = await get_obj_count(Tariff, db_session)
         assert check_tariff_count == tariff_count - 1
