@@ -4,6 +4,7 @@ from fastapi import (
     APIRouter, Body, Depends, File, HTTPException, Response, UploadFile,
     status,
 )
+from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import check_obj_duplicate, check_obj_exists
@@ -18,6 +19,7 @@ from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import course_crud, tariff_crud
 from app.models import Course, User
+from app.models.task import tasks_solved_user_association
 from app.schemas.course import (
     CourseCreate, CourseRead, CourseTariffCreate, CourseTasksRead,
     CourseUpdate, MultiCourseForUserRead,
@@ -133,6 +135,15 @@ async def get_user_course_id(
             status_code=status.HTTP_403_FORBIDDEN,
             detail='Вы не записаны на данный курс.'
         )
+    for task in obj.tasks:
+        stmt = select(tasks_solved_user_association).where(
+            and_(
+                tasks_solved_user_association.c.task_id == task.id,
+                tasks_solved_user_association.c.user_id == user.id
+            )
+        )
+        obj_task = await session.execute(stmt)
+        task.done = bool(obj_task.scalars().first())
     return obj
 
 

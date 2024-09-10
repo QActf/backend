@@ -15,7 +15,7 @@ from app.api_docs_responses.utils_docs import (
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud import task_crud
-from app.schemas.task import TaskCreate, TaskRead, TaskUpdate
+from app.schemas.task import TaskCreate, TaskDoneCreate, TaskRead, TaskUpdate
 from app.services.endpoints_services import delete_obj
 
 router = APIRouter()
@@ -112,3 +112,24 @@ async def delete_task(
 ):
     """Удалить задачу"""
     return await delete_obj(obj_id=task_id, crud=task_crud, session=session)
+
+@router.post(
+    '/task-done/',
+    dependencies=[Depends(current_superuser)],
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_task_done_association(
+    task_done: TaskDoneCreate,
+    session: AsyncSession = Depends(get_async_session),
+):
+    """Создаст запись о том, что пользователь решил задачу."""
+    db_task_done = await task_crud.get_task_done_user_association(
+        user_id=task_done.user_id,
+        task_id=task_done.task_id,
+        session=session,
+    )
+    await check_obj_duplicate(obj=db_task_done)
+    await task_crud.create_task_done_user_association(
+        obj_in=task_done,
+        session=session,
+    )

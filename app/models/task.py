@@ -24,6 +24,16 @@ task_course_association = Table(
 )
 
 
+tasks_solved_user_association = Table(
+    'tasks_solved_user_association',
+    Base.metadata,
+    Column('id', Integer, primary_key=True),
+    Column('user_id', ForeignKey('user.id')),
+    Column('task_id', ForeignKey('task.id')),
+    UniqueConstraint('user_id', 'task_id', name='constraint_solved_task_user'),
+)
+
+
 class Task(Base):
     name: str = Column(
         String(length=settings.max_length_string), unique=True, nullable=False
