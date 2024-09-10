@@ -21,10 +21,13 @@ class TaskRead(BaseModel):
     description: Optional[str]
     time: Optional[str]
     solvers: int
-    done: Optional[bool]
 
     class Config:
         from_attributes = True
+
+
+class TaskDoneRead(TaskRead):
+    done: Optional[bool]
 
 
 class TaskUpdate(BaseModel):
