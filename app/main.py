@@ -1,8 +1,6 @@
 import logging.config
-import sys
 
 from fastapi import FastAPI, applications
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
 from sqladmin import Admin
 
