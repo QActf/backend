@@ -2,7 +2,6 @@ import logging.config
 import sys
 
 from fastapi import FastAPI, applications
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
 from sqladmin import Admin
 
@@ -43,15 +42,6 @@ app = FastAPI(
     openapi_url="/api/openapi.json",
 )
 
-origins = [f'http://{settings.host}']
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=['*'],
-    allow_headers=['*'],
-)
 if "pytest" not in sys.modules:
     app.add_middleware(LoggerMiddleware)
 
