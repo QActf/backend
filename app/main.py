@@ -43,9 +43,11 @@ app = FastAPI(
     openapi_url="/api/openapi.json",
 )
 
+origins = [f'http://{settings.host}']
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.origins,
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'],
