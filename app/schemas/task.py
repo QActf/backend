@@ -9,6 +9,11 @@ class TaskCreate(BaseModel):
     difficult: int
 
 
+class TaskDoneCreate(BaseModel):
+    user_id: int
+    task_id: int
+
+
 class TaskRead(BaseModel):
     id: int = Field(serialization_alias='key')
     difficult: int
@@ -19,6 +24,10 @@ class TaskRead(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class TaskDoneRead(TaskRead):
+    done: Optional[bool]
 
 
 class TaskUpdate(BaseModel):
