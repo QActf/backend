@@ -10,8 +10,10 @@ from app.core.user import (
 from app.crud import course_crud, tariff_crud, user_crud
 from app.models import User
 from app.schemas.subscription import PlanRead, SubscriptionCreate
-from app.schemas.tariff import TariffPlanRead
 from app.schemas.user import UserTariffDelete, UserTariffUpdate
+from app.services.endpoints_services import (
+    get_courses_with_tariff_flags, get_tariffs_with_extra,
+)
 
 router = APIRouter()
 
@@ -95,6 +97,7 @@ async def get_tariff_planes(
     ответа.
     Если тариф закрыт и нет связи тариф-пользователь, то он будет исключен из
     ответа.
+    Сортировка курсов происходит по количеству тарифов с флагом True.
     Сортировка тарифных планов происходит по полю cost.
     """
     db_courses = await course_crud.get_multi_courses_with_users(
@@ -105,51 +108,14 @@ async def get_tariff_planes(
         users=True,
         multi=True,
         session=session,
+        order_by_cost=True,
     )
 
-    courses_with_tariff_flags = list()
-    for course in db_courses:
-        if not (course.is_closed and user not in course.users):
-            tariff_flags = dict()
-            true_tariffs_count = 0
-            for tariff in db_tariffs:
-                if not (tariff.is_closed and user not in tariff.users):
-                    tariff_flags[tariff.name] = course in tariff.courses
-                    if course in tariff.courses:
-                        true_tariffs_count += 1
-            courses_with_tariff_flags.append(
-                {
-                    'name': course.name,
-                    'true_tariffs_count': true_tariffs_count,
-                    **tariff_flags
-                }
-            )
-
-    tariffs = [TariffPlanRead(id=0, name='', description='', cost=0,
-                              dataIndex='name', key='name', is_active=False,
-                              this_tariff=False)]
-    user_tariff_cost = None
-    if user.tariff_id:
-        db_user_tariff = await tariff_crud.get_tariff(
-            attr_name='id',
-            attr_value=user.tariff_id,
-            session=session,
-        )
-        if db_user_tariff:
-            user_tariff_cost = db_user_tariff.cost
-
-    for tariff in db_tariffs:
-        if not (tariff.is_closed and user not in tariff.users):
-            tariff.dataIndex = tariff.name
-            tariff.key = tariff.name
-            tariff.this_tariff = tariff.id == user.tariff_id
-            tariff.is_active = (
-                False if user_tariff_cost is None
-                else tariff.cost <= user_tariff_cost
-            )
-            tariffs.append(tariff)
-
-    sorted_tariffs = sorted(tariffs, key=lambda tar: tar.cost)
+    courses_with_tariff_flags = get_courses_with_tariff_flags(
+        db_courses=db_courses,
+        db_tariffs=db_tariffs,
+        user=user,
+    )
     sorted_courses_with_tariff_flags = sorted(
         courses_with_tariff_flags,
         key=lambda cour: cour['true_tariffs_count'],
@@ -158,8 +124,14 @@ async def get_tariff_planes(
     for course in sorted_courses_with_tariff_flags:
         course.pop('true_tariffs_count', None)
 
+    tariffs_with_extra = await get_tariffs_with_extra(
+        db_tariffs=db_tariffs,
+        user=user,
+        session=session,
+    )
+
     response = PlanRead(
         courses=sorted_courses_with_tariff_flags,
-        tariffs=sorted_tariffs,
+        tariffs=tariffs_with_extra,
     )
     return response
