@@ -111,12 +111,16 @@ async def get_tariff_planes(
     for course in db_courses:
         if not (course.is_closed and user not in course.users):
             tariff_flags = dict()
+            true_tariffs_count = 0
             for tariff in db_tariffs:
                 if not (tariff.is_closed and user not in tariff.users):
                     tariff_flags[tariff.name] = course in tariff.courses
+                    if course in tariff.courses:
+                        true_tariffs_count += 1
             courses_with_tariff_flags.append(
                 {
                     'name': course.name,
+                    'true_tariffs_count': true_tariffs_count,
                     **tariff_flags
                 }
             )
@@ -146,8 +150,16 @@ async def get_tariff_planes(
             tariffs.append(tariff)
 
     sorted_tariffs = sorted(tariffs, key=lambda tar: tar.cost)
+    sorted_courses_with_tariff_flags = sorted(
+        courses_with_tariff_flags,
+        key=lambda cour: cour['true_tariffs_count'],
+        reverse=True,
+    )
+    for course in sorted_courses_with_tariff_flags:
+        course.pop('true_tariffs_count', None)
+
     response = PlanRead(
-        courses=courses_with_tariff_flags,
+        courses=sorted_courses_with_tariff_flags,
         tariffs=sorted_tariffs,
     )
     return response
