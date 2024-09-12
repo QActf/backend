@@ -31,7 +31,7 @@ class ProfileRead(BaseModel):
 
     @field_serializer('gender')
     def serialize_gender(self, gender: Choice, _info):
-        return gender.code
+        return gender.code if gender else None
 
 
 class ProfileUpdate(BaseModel):
