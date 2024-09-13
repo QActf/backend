@@ -140,11 +140,10 @@ async def get_tariff_planes(
     tariffs = [TariffPlanRead(id=0, name='', description='', cost=0,
                               dataIndex='name', key='name', is_active=False,
                               this_tariff=False)]
-    user_tariff_cost = None
-    if user.tariff_id:
-        user_tariff_cost = next(
-            (t for t in db_tariffs if t.id == user.tariff_id), None
-        ).cost
+    user_tariff_cost = (
+        next((t.cost for t in db_tariffs if t.id == user.tariff_id), None)
+        if user.tariff_id else None
+    )
     for tariff in db_tariffs:
         if not (tariff.is_closed and user not in tariff.users):
             tariff.dataIndex = tariff.name
