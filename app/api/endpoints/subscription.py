@@ -95,6 +95,7 @@ async def get_tariff_planes(
     ответа.
     Если тариф закрыт и нет связи тариф-пользователь, то он будет исключен из
     ответа.
+    Сортировка курсов происходит по количеству тарифов с флагом True.
     Сортировка тарифных планов происходит по полю cost.
     """
     db_courses = await course_crud.get_multi_courses_with_users(
@@ -105,35 +106,44 @@ async def get_tariff_planes(
         users=True,
         multi=True,
         session=session,
+        order_by_cost=True,
     )
 
     courses_with_tariff_flags = list()
     for course in db_courses:
-        if not (course.is_closed and user not in course.users):
-            tariff_flags = dict()
-            for tariff in db_tariffs:
-                if not (tariff.is_closed and user not in tariff.users):
-                    tariff_flags[tariff.name] = course in tariff.courses
-            courses_with_tariff_flags.append(
-                {
-                    'name': course.name,
-                    **tariff_flags
-                }
-            )
+        if course.is_closed and user not in course.users:
+            continue
+        tariff_flags = dict()
+        true_tariffs_count = 0
+        for tariff in db_tariffs:
+            if tariff.is_closed and user not in tariff.users:
+                continue
+            is_course_in_tariff = course in tariff.courses
+            tariff_flags[tariff.name] = is_course_in_tariff
+            if is_course_in_tariff:
+                true_tariffs_count += 1
+
+        courses_with_tariff_flags.append({
+            'name': course.name,
+            'true_tariffs_count': true_tariffs_count,
+            **tariff_flags
+        })
+
+    sorted_courses_with_tariff_flags = sorted(
+        courses_with_tariff_flags,
+        key=lambda cour: cour['true_tariffs_count'],
+        reverse=True
+    )
+    [course.pop('true_tariffs_count', None) for course in
+     sorted_courses_with_tariff_flags]
 
     tariffs = [TariffPlanRead(id=0, name='', description='', cost=0,
                               dataIndex='name', key='name', is_active=False,
                               this_tariff=False)]
-    user_tariff_cost = None
-    if user.tariff_id:
-        db_user_tariff = await tariff_crud.get_tariff(
-            attr_name='id',
-            attr_value=user.tariff_id,
-            session=session,
-        )
-        if db_user_tariff:
-            user_tariff_cost = db_user_tariff.cost
-
+    user_tariff_cost = (
+        next((t.cost for t in db_tariffs if t.id == user.tariff_id), None)
+        if user.tariff_id else None
+    )
     for tariff in db_tariffs:
         if not (tariff.is_closed and user not in tariff.users):
             tariff.dataIndex = tariff.name
@@ -145,9 +155,8 @@ async def get_tariff_planes(
             )
             tariffs.append(tariff)
 
-    sorted_tariffs = sorted(tariffs, key=lambda tar: tar.cost)
     response = PlanRead(
-        courses=courses_with_tariff_flags,
-        tariffs=sorted_tariffs,
+        courses=sorted_courses_with_tariff_flags,
+        tariffs=tariffs,
     )
     return response

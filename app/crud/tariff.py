@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy import and_, select
+from sqlalchemy import and_, select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -10,14 +10,16 @@ from app.models import Tariff
 
 class CRUDTariff(CRUDBase):
     async def get_tariff(
-            self,
-            session: AsyncSession,
-            attr_name: Optional[str] = None,
-            attr_value: Optional[str] = None,
-            courses: bool = False,
-            users: bool = False,
-            multi: bool = False,
-            is_closed: Optional[bool] = None,
+        self,
+        session: AsyncSession,
+        attr_name: Optional[str] = None,
+        attr_value: Optional[str] = None,
+        courses: bool = False,
+        users: bool = False,
+        multi: bool = False,
+        is_closed: Optional[bool] = None,
+        order_by_cost: bool = False,
+        order_desc: bool = False,
     ):
         """Вернет тариф(ы)."""
         stmt = select(self.model)
@@ -37,6 +39,12 @@ class CRUDTariff(CRUDBase):
         if users:
             load_related.append(selectinload(self.model.users))
         stmt = stmt.options(*load_related)
+
+        if order_by_cost:
+            if order_desc:
+                stmt = stmt.order_by(desc(self.model.cost))
+            else:
+                stmt = stmt.order_by(self.model.cost)
 
         result = await session.execute(stmt)
         return result.scalars().all() if multi else result.scalars().first()
