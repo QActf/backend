@@ -109,11 +109,11 @@ async def get_tariff_planes(
         order_by_cost=True,
     )
 
-    courses_with_tariff_flags = []
+    courses_with_tariff_flags = list()
     for course in db_courses:
         if course.is_closed and user not in course.users:
             continue
-        tariff_flags = {}
+        tariff_flags = dict()
         true_tariffs_count = 0
         for tariff in db_tariffs:
             if tariff.is_closed and user not in tariff.users:
